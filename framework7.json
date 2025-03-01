@@ -1,0 +1,18 @@
+{
+  "cwd": "C:\\Users\\natha\\OneDrive - The University of Queensland\\Desktop\\projects\\waypoint",
+  "type": [
+    "web"
+  ],
+  "name": "Waypoint",
+  "framework": "core",
+  "template": "tabs",
+  "bundler": "vite",
+  "cssPreProcessor": false,
+  "theming": {
+    "customColor": true,
+    "color": "#782cf6",
+    "darkMode": true,
+    "iconFonts": true
+  },
+  "customBuild": false
+}
