@@ -1,7 +1,10 @@
 <div align="center">
     <a href="https://waypointuq.com">
-        <img src="./src/assets/logos/logoWhite1024x300.png" width="1024" height="303" alt="Waypoint logo">
+        <img src="./src/assets/logos/logoWhite1024x300.png" width="1024"  alt="ATC logo">
     </a>
+    <h1>
+     
+    </h1>
     <p>
         <strong>Framework7</strong> &bull; <strong>Vite</strong> &bull; <strong>Google Maps</strong>
     </p>     
