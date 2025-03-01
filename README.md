@@ -1,38 +1,48 @@
-# Waypoint
+<div align="center">
+    <a href="https://waypointuq.com">
+        <img src="./public/icons/128x128.png" width="64" height="64" alt="ATC logo">
+    </a>
+    <h1>
+        <a href="https://github.com/NathanPerrier/waypoint">
+            WAYPOINT
+        </a>
+    </h1>
+    <p>
+        <strong>Framework7</strong> &bull; <strong>Vite</strong> &bull; <strong>Google Maps</strong>
+    </p>     
+</div>
 
-## Framework7 CLI Options
+<br />
 
-Framework7 app created with following options:
 
+## About The Project
+
+This website brings an innovative solution to navigating the University of Queensland campus through using AR directions. This website also introduces native mobile design features to the web to seemlessly integrate with both desktop and mobile.
+
+<br />
+
+## Manual Build 
+
+> 👉 Download code
+
+```bash
+git https://github.com/NathanPerrier/waypoint
+cd Waypoint
 ```
-{
-  "cwd": "C:\\Users\\natha\\OneDrive - The University of Queensland\\Desktop\\projects\\waypoint",
-  "type": [
-    "web"
-  ],
-  "name": "Waypoint",
-  "framework": "core",
-  "template": "tabs",
-  "bundler": "vite",
-  "cssPreProcessor": false,
-  "theming": {
-    "customColor": true,
-    "color": "#782cf6",
-    "darkMode": true,
-    "iconFonts": true
-  },
-  "customBuild": false
-}
+
+> 👉 Create `.env` from `env.sample`
+
+```env
+GOOGLE_API_KEY=your-api-key
 ```
 
-## Install Dependencies
+> 👉 Install npm dependencies
 
-First of all we need to install dependencies, run in terminal
-```
+```bash
 npm install
 ```
 
-## NPM Scripts
+> 👉 Run NPM scrips
 
 * 🔥 `start` - run development server
 * 🔧 `dev` - run development server
@@ -41,6 +51,7 @@ npm install
 ## Vite
 
 There is a [Vite](https://vitejs.dev) bundler setup. It compiles and bundles all "front-end" resources. You should work only with files located in `/src` folder. Vite config located in `vite.config.js`.
+
 ## Assets
 
 Assets (icons, splash screens) source images located in `assets-src` folder. To generate your own icons and splash screen images, you will need to replace all assets in this directory with your own images (pay attention to image size and format), and run the following command in the project directory:
