@@ -1,6 +1,6 @@
 <template>
   <div class="page" data-name="home">
-      <div id="hero" clas="">
+      <div id="hero" clas="w-100 h-100">
         <div class="row">
           <div class="col-6">
             <h1>YOUR CAMPUS COMPANION</h1>
@@ -11,6 +11,7 @@
         </div>
       </div>
   </div>
+  <p>Home page content</p>
 </template>
 <script>
 export default () => {

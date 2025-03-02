@@ -3,4 +3,9 @@
         <!-- display qr code page content -->
         <img src="../assets/images/waypointQR1024.png">
     </div>
+    <style>
+        #navbar {
+            display: none;
+        }
+    </style>
 </template>
