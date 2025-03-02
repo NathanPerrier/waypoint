@@ -1,6 +1,6 @@
 /* Your app custom styles here */
 
-#arjs {
+#locarjs {
     object-fit: fill;
 }
 
@@ -14,7 +14,7 @@
     border-radius: 2rem 0rem 0rem 2rem;
 }
 
-#navbar .tab-link:last-child {
+#navbar .tab-link:nth-child(2){
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
