@@ -1,23 +1,6 @@
 <template>
   <div class="page" data-name="home">
-      <div class="row">
-        <div class="col-6">
-          <div class="card">
-            <div class="card-header">Welcome to Waypoint</div>
-            <div class="card-content card-content-padding">
-              <p>Waypoint is a simple app that allows you to create a list of waypoints and navigate to them in order. You can also share your list with others by generating a QR code.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="card">
-            <div class="card-header">Get Started</div>
-            <div class="card-content card-content-padding">
-              <p>Click on the "Waypoint" tab to create a list of waypoints. Click on the "Settings" tab to configure your app settings.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <p>Home Page</p>
   </div>
   <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
     <div class="toolbar-inner">
