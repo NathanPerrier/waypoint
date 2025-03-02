@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as LocAR from 'locar';
+import ReferPage from '../pages/refer.f7';
 
 document.addEventListener('DOMContentLoaded', () => {
     const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
@@ -23,10 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cam = new LocAR.WebcamRenderer(renderer);
     } catch(error) {
         console.error('Webcam Error:', error.name, error.message);
-        const errorPopup = document.createElement('div');
-        errorPopup.id = 'error-popup';
-        errorPopup.className = 'popup';
-        errorPopup.innerHTML = `<h1>Webcam Error</h1><br>${error.message}`;
+        app.dialog.alert('Uh Oh! It Looks like your device is incompatible! Please reopen Waypoint with a mobile device.', 'Webcam Error', ReferPage);
     }
 
     let firstLocation = true;

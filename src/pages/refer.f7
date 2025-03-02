@@ -1,0 +1,6 @@
+<template>
+    <div class="page" data-name="refer">
+        <!-- display qr code page content -->
+        <img src="../assets/images/waypointQR1024.png">
+    </div>
+</template>
