@@ -1,7 +1,18 @@
 <template>
     <div class="page" data-name="route">
-        <div id="locarjs">
-            
+        <div class="page-content">
+            <div id="locarjs">
+                
+            </div>
         </div>
     </div>   
+    
 </template>
+<script>
+    export default (props, { $f7, $on }) => {
+        $on('pageInit', () => {
+            const toolbarEl = document.querySelector('.toolbar');
+            $f7.toolbar.hide(toolbarEl, true); // Set animate to true or false as needed
+        });
+    };
+</script>

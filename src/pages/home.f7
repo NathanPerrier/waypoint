@@ -1,6 +1,6 @@
 <template>
   <div class="page" data-name="home">
-    <div class="page-content hide-toolbar">
+    <div class="page-content">
         <div class="row">
           <div class="col-6">
             <div class="card">
