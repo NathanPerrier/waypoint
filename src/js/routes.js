@@ -2,7 +2,6 @@
 import HomePage from '../pages/home.f7';
 import AboutPage from '../pages/about.f7';
 import RoutePage from '../pages/route.f7';
-import SettingsPage from '../pages/settings.f7';
 import ReferPage from '../pages/refer.f7';
 
 import NotFoundPage from '../pages/404.f7';
@@ -19,10 +18,6 @@ var routes = [
   {
     path: '/route/',
     component: RoutePage,
-  },
-  {
-    path: '/settings/',
-    component: SettingsPage,
   },
   {
     path: '/refer/',
