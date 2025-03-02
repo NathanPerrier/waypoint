@@ -5,8 +5,7 @@
         </div>
     </div>
 
-    <div class="views tabs safe-areas">
-        <!-- Tabbar for switching views-tabs -->
+    
         <div id="route-input" class="toolbar toolbar-bottom tabbar-icons">
           <div class="toolbar-inner">
             <li class="item-content item-input">
@@ -25,5 +24,5 @@
               <button class="button"><i class="icon slider_horizontal_3"></i></button>
           </div>
         </div>
-    </div>
+   
 </template>
