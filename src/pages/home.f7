@@ -19,6 +19,25 @@
         </div>
       </div>
   </div>
+  <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
+    <div class="toolbar-inner">
+      <a href="#view-home" class="tab-link tab-link-active">
+        <i class="icon f7-icons if-not-md">house_fill</i>
+        <i class="icon material-icons if-md">home</i>
+        <span class="tabbar-label">Home</span>
+      </a>
+      <a href="#view-route" class="tab-link">
+        <i class="icon f7-icons if-not-md">map_fill</i>
+        <i class="icon material-icons if-md">map</i>
+        <span class="tabbar-label">Waypoint</span>
+      </a>
+      <a href="#view-settings" class="tab-link">
+        <i class="icon f7-icons if-not-md">gear</i>
+        <i class="icon material-icons if-md">settings</i>
+        <span class="tabbar-label">Settings</span>
+      </a>
+    </div>
+  </div>
 
   
 </template>
