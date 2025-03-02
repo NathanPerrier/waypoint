@@ -14,7 +14,7 @@
     border-radius: 2rem 0rem 0rem 2rem;
 }
 
-#navbar .tab-link:nth-child(3){
+#navbar .tab-link:last-child {
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
