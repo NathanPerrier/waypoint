@@ -4,6 +4,11 @@
     object-fit: fill;
 }
 
+#navbar {
+    margin: 0rem 2rem 2rem 2rem;
+    border-radius: 2rem;
+    width: calc(100% - 4rem);
+}
 
 #navbar .tab-link:first-child {
     border-radius: 2rem 0rem 0rem 2rem;

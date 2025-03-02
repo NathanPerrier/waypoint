@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as LocAR from 'locar';
+import app from './app.js';
 import ReferPage from '../pages/refer.f7';
 
 document.addEventListener('DOMContentLoaded', () => {
