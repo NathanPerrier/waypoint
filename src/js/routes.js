@@ -11,6 +11,7 @@ var routes = [
   {
     path: '/',
     component: HomePage,
+    component: App, // App main component
   },
   {
     path: '/about/',
@@ -23,6 +24,7 @@ var routes = [
   {
     path: '/settings/',
     component: SettingsPage,
+    component: App, // App main component
   },
   {
     path: '/refer/',
