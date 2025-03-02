@@ -18,7 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
         camera.updateProjectionMatrix();
     });
 
-    const cam = new LocAR.WebcamRenderer(renderer);
+    let cam;
+    try {
+        cam = new LocAR.WebcamRenderer(renderer);
+    } catch(error) {
+        console.error('Webcam Error:', error.name, error.message);
+        const errorPopup = document.createElement('div');
+        errorPopup.id = 'error-popup';
+        errorPopup.className = 'popup';
+        errorPopup.innerHTML = `<h1>Webcam Error</h1><br>${error.message}`;
+    }
 
     let firstLocation = true;
 
