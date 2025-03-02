@@ -4,11 +4,4 @@
             
         </div>
     </div>
-  
- 
-    <style>
-        #navbar {
-            display: none;
-        }
-    </style>
 </template>
