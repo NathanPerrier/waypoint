@@ -1,7 +1,7 @@
 /* Your app custom styles here */
 
 #arjs {
-    object-fit: cover;
+    object-fit:contain;
 }
 
 #navbar {
