@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    document.getElementById("locarjs").appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
 
