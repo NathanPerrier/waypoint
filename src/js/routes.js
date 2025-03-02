@@ -18,7 +18,6 @@ var routes = [
   {
     path: '/route/',
     component: RoutePage,
-    dynamicNavbar: true
   },
   {
     path: '/refer/',
