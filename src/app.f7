@@ -4,7 +4,7 @@
 
 
     <!-- Views/Tabs container -->
-    <div class="views tabs safe-areas">
+    <div id="navbar-view" class="views tabs safe-areas">
       <!-- Tabbar for switching views-tabs -->
       <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
         <div class="toolbar-inner">
