@@ -11,7 +11,7 @@
 <script>
     export default (props, { $f7, $on }) => {
         $on('pageInit', () => {
-            const toolbarEl = document.querySelector('.toolbar');
+            const toolbarEl = document.getElementById('navbar');
             $f7.toolbar.hide(toolbarEl, true); // Set animate to true or false as needed
         });
 
