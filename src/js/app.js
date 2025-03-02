@@ -8,7 +8,7 @@ import 'framework7/css/bundle';
 import '../css/icons.css';
 import '../css/app.css';
 import '../css/theme.css';
-import '../css/rolly.css';
+import '../css/format.css';
 
 
 // Import Routes
