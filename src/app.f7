@@ -15,7 +15,7 @@
           </a>
           <a href="#view-route" class="tab-link">
             <i class="icon f7-icons if-not-md">map_fill</i>
-            <i class="icon material-icons if-md">map_fill</i>
+            <i class="icon material-icons if-md">map</i>
             <span class="tabbar-label">Waypoint</span>
           </a>
           <a href="#view-settings" class="tab-link">
@@ -32,7 +32,7 @@
       </div>
 
       <!-- Catalog View -->
-      <div id="view-catalog" class="view view-init tab" data-name="catalog" data-url="/catalog/">
+      <div id="view-route" class="view view-init tab" data-name="route" data-url="/route/">
         <!-- Catalog page will be loaded here dynamically from /catalog/ route -->
       </div>
 
@@ -41,30 +41,5 @@
         <!-- Settings page will be loaded here dynamically from /settings/ route -->
       </div>
     </div>
-
-
-    <!-- Popup -->
-    <div class="popup" id="my-popup">
-      <div class="view">
-        <div class="page">
-          <div class="navbar">
-            <div class="navbar-bg"></div>
-            <div class="navbar-inner">
-              <div class="title">Popup</div>
-              <div class="right">
-                <a href="#" class="link popup-close">Close</a>
-              </div>
-            </div>
-          </div>
-          <div class="page-content">
-            <div class="block">
-              <p>Popup content goes here.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
   </div>
 </template>
