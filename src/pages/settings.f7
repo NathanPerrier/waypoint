@@ -233,6 +233,45 @@
     </div>
   </div>
 </div>
+<!-- Views/Tabs container -->
+<div class="views tabs safe-areas">
+  <!-- Tabbar for switching views-tabs -->
+  <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
+    <div class="toolbar-inner">
+      <a href="#view-home" class="tab-link tab-link-active">
+        <i class="icon f7-icons if-not-md">house_fill</i>
+        <i class="icon material-icons if-md">home</i>
+        <span class="tabbar-label">Home</span>
+      </a>
+      <a href="#view-route" class="tab-link">
+        <i class="icon f7-icons if-not-md">map_fill</i>
+        <i class="icon material-icons if-md">map</i>
+        <span class="tabbar-label">Waypoint</span>
+      </a>
+      <a href="#view-settings" class="tab-link">
+        <i class="icon f7-icons if-not-md">gear</i>
+        <i class="icon material-icons if-md">settings</i>
+        <span class="tabbar-label">Settings</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
+  <div id="view-home" class="view view-main view-init tab tab-active" data-url="/">
+    <!-- Home page will be loaded here dynamically from / route -->
+  </div>
+
+  <!-- Catalog View -->
+  <div id="view-route" class="view view-init tab" data-name="route" data-url="/route/">
+    <!-- Catalog page will be loaded here dynamically from /catalog/ route -->
+  </div>
+
+  <!-- Settings View -->
+  <div id="view-settings" class="view view-init tab" data-name="settings" data-url="/settings/">
+    <!-- Settings page will be loaded here dynamically from /settings/ route -->
+  </div>
+</div>
+</div>
 </template>
 <script>
 export default () => {
