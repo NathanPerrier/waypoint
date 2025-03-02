@@ -1,7 +1,7 @@
 <template>
   <div class="page" data-name="home">
     <div id="navbar" class="toolbar">
-      <div class="toolbar-inner">
+      <div class="toolbar-bottom">
         <a href="#" class="link">Link 1</a>
         <a href="/route/" class="link">Link 2</a>
         <a href="#" class="link">Link 3</a>
