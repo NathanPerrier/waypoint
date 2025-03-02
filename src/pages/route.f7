@@ -14,5 +14,7 @@
             const toolbarEl = document.querySelector('.toolbar');
             $f7.toolbar.hide(toolbarEl, true); // Set animate to true or false as needed
         });
+
+        return $render;
     };
 </script>
