@@ -4,12 +4,27 @@
             
         </div>
     </div>
-  <style>
+    <div id="route-input" class="toolbar toolbar-bottom tabbar-icons">
+        <div class="toolbar-inner">
+            <li class="item-content item-input">
+                <div class="item-media">
+                  <i class="icon arrow_turn_down_right"></i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title item-label">Where Do You Want To Go?</div>
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="ModWest (Building 11A)">
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+            </li>
+            <button class="button">GO</button>
+            <button class="button"><i class="slider_horizontal_3"></i></button>
+        </div>
+    </div>
+    <style>
         #navbar {
             display: none;
-        }
-        #route-input {
-            display: block;
         }
     </style>
 </template>
