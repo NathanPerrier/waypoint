@@ -1,15 +1,5 @@
 <template>
   <div class="page" data-name="home">
-      <div id="hero" class="w-100 h-100">
-        <div class="row">
-          <div class="col-6">
-            <h1>YOUR CAMPUS COMPANION</h1>
-          </div>
-          <div class="col-6">
-            <img src="../assests/logos/512x512.png" alt="Waypoint Logo">
-          </div>
-        </div>
-      </div>
       <p>Home page content</p>
   </div>
 
