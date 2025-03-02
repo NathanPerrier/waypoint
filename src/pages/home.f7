@@ -1,6 +1,6 @@
 <template>
   <div class="page" data-name="home">
-      <div id="hero" clas="w-100 h-100">
+      <div id="hero" class="w-100 h-100">
         <div class="row">
           <div class="col-6">
             <h1>YOUR CAMPUS COMPANION</h1>
