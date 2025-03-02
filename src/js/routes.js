@@ -1,7 +1,6 @@
 
 import HomePage from '../pages/home.f7';
 import AboutPage from '../pages/about.f7';
-import FormPage from '../pages/form.f7';
 import RoutePage from '../pages/route.f7';
 import SettingsPage from '../pages/settings.f7';
 
