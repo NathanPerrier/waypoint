@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         cam = new LocAR.WebcamRenderer(renderer);
     } catch(error) {
-        console.error('Webcam Error:', error.name, error.message);
+        console.error('Webcam Error:', error);
         app.dialog.alert('Uh Oh! It Looks like your device is incompatible! Please reopen Waypoint with a mobile device.', 'Webcam Error', ReferPage);
     }
 
