@@ -1,1 +1,10 @@
 /* Your app custom styles here */
+
+#arjs {
+    object-fit: cover;
+}
+
+#navbar {
+    margin: 2rem;
+    border-radius: 2rem;
+}
