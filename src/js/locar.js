@@ -19,8 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const locar = new LocAR.LocationBased(scene, camera);
     const cam = new LocAR.WebcamRenderer(renderer);
 
-
-    locar.fakeGps(-0.72, 51.05);
+    locar.startGps();
+    locar.startCamera(onerror => {
+        console.log(onerror);
+    }
+    );
     locar.add(cube, -0.72, 51.0501);
 
     renderer.setAnimationLoop(animate);
