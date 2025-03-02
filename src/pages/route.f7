@@ -1,6 +1,5 @@
 <template>
     <div class="page" data-name="route">
-        <script src="../js/locar.js"></script>
         <div id="locarjs">
             
         </div>
