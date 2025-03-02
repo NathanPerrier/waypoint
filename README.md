@@ -8,7 +8,7 @@
         </a>
     </h1>
     <p>
-        <strong>Framework7</strong> &bull; <strong>Vite</strong> &bull; <strong>Google Maps</strong>
+        <strong>Framework7</strong> &bull; <strong>Vite</strong> &bull; <strong>Google Maps</strong> &bull; <strong>LocarJS/ARJS</strong>
     </p>     
 </div>
 

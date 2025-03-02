@@ -20,10 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cam = new LocAR.WebcamRenderer(renderer);
 
     locar.startGps();
-    locar.startCamera(onerror => {
-        console.log(onerror);
-    }
-    );
     locar.add(cube, -0.72, 51.0501);
 
     renderer.setAnimationLoop(animate);
