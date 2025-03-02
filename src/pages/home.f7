@@ -7,7 +7,7 @@
           <i class="icon material-icons md-only">email</i>
           <span class="tabbar-label">Inbox</span>
         </a>
-        <a class="tab-link">
+        <a class="tab-link" href="/route/">
           <i class="icon f7-icons if-not-md">calendar_fill</i>
           <i class="icon material-icons md-only">today</i>
           <span class="tabbar-label">Calendar</span>
