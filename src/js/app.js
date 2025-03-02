@@ -29,3 +29,6 @@ var app = new Framework7({
   // App routes
   routes: routes,
 });
+
+// Expose app to the global scope
+window.app = app;
