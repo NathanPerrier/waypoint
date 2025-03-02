@@ -25,8 +25,7 @@ var app = new Framework7({
   darkMode: false,
   el: '#app', // App root element
   component: App, // App main component
-  // App store
-  store: store,
+
   // App routes
   routes: routes,
 });
