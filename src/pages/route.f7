@@ -1,34 +1,36 @@
 <template>
-    <div class="page" data-name="route">
-
-            <div id="locarjs">
-                
-            </div>
-            <div id="route-input">
-                <div class="row">
-                    <div class="col-10">
-                        <li class="item-content item-input">
-                            <div class="item-media">
-                                <i class="icon arrow_turn_down_right"></i>
-                            </div>
-                            <div class="item-inner">
-                            <div class="item-title item-label">Where do you want to go?</div>
-                            <div class="item-input-wrap">
-                                <input type="text" placeholder="ModWest (Building 11A)">
-                                <span class="input-clear-button"></span>
-                            </div>
-                            </div>
-                        </li>
-                        <button class="button">Go</button>
-                    </div>
-                    <div class="col-2">
-                        <button class="button"><i class="icon slider_horizontal_3"></i></button>
+    
+    <div id="view-route" class="view view-init tab tab-active" data-name="route" data-url="/route/"></div>
+        <div class="page" data-name="route">
+            <div class="page-content">
+                <div id="locarjs">
+                    
+                </div>
+                <div id="route-input">
+                    <div class="row">
+                        <div class="col-10">
+                            <li class="item-content item-input">
+                                <div class="item-media">
+                                    <i class="icon arrow_turn_down_right"></i>
+                                </div>
+                                <div class="item-inner">
+                                <div class="item-title item-label">Where do you want to go?</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="ModWest (Building 11A)">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                                </div>
+                            </li>
+                            <button class="button">Go</button>
+                        </div>
+                        <div class="col-2">
+                            <button class="button"><i class="icon slider_horizontal_3"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
-    
+        </div>
     </div>
-
     
         <!--  -->
    
