@@ -5,21 +5,25 @@
                 
             </div>
             <div id="route-input">
-                <div class="toolbar-inner">
-                    <li class="item-content item-input">
-                        <div class="item-media">
-                            <i class="icon arrow_turn_down_right"></i>
-                        </div>
-                        <div class="item-inner">
-                        <div class="item-title item-label">Where do you want to go?</div>
-                        <div class="item-input-wrap">
-                            <input type="text" placeholder="ModWest (Building 11A)">
-                            <span class="input-clear-button"></span>
-                        </div>
-                        </div>
-                        <button class="button">Go</button>
-                    </li>
-                    <button class="button"><i class="icon slider_horizontal_3"></i></button>
+                <div class="row">
+                    <div class="col-10">>
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="icon arrow_turn_down_right"></i>
+                            </div>
+                            <div class="item-inner">
+                            <div class="item-title item-label">Where do you want to go?</div>
+                            <div class="item-input-wrap">
+                                <input type="text" placeholder="ModWest (Building 11A)">
+                                <span class="input-clear-button"></span>
+                            </div>
+                            </div>
+                            <button class="button">Go</button>
+                        </li>
+                    </div>
+                    <div class="col-2">
+                        <button class="button"><i class="icon slider_horizontal_3"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
