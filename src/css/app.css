@@ -12,7 +12,7 @@
     border-radius: 2rem 0rem 0rem 2rem;
 }
 
-#navbar .tab-link:nth-child(3) {
+#navbar .tab-link:nth-child(2) {
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
@@ -24,3 +24,10 @@
     
 }
 
+#route-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: var(--background-color);
+}
