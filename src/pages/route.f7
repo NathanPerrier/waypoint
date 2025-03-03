@@ -1,10 +1,10 @@
 <template>
     <div class="page" data-name="route">
-        <div class="page-content">
-            <div id="locarjs">
-                
-            </div>
+    
+        <div id="locarjs">
+            
         </div>
+    
     </div>   
     
 </template>
