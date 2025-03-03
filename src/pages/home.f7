@@ -1,10 +1,17 @@
 <template>
   <div class="page" data-name="home">
-    <div id="navbar" class="toolbar">
-      <div class="toolbar-bottom">
-        <a href="#" class="link">Link 1</a>
-        <a href="/route/" class="link">Link 2</a>
-        <a href="#" class="link">Link 3</a>
+    <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
+      <div class="toolbar-inner">
+        <a href="#view-home" class="tab-link tab-link-active">
+          <i class="icon f7-icons if-not-md">house_fill</i>
+          <i class="icon material-icons if-md">home</i>
+          <span class="tabbar-label">Home</span>
+        </a>
+        <a href="#view-route" class="tab-link">
+          <i class="icon f7-icons if-not-md">map_fill</i>
+          <i class="icon material-icons if-md">map</i>
+          <span class="tabbar-label">Waypoint</span>
+        </a>
       </div>
     </div>
     <div class="page-content">
