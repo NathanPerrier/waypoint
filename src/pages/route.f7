@@ -6,7 +6,7 @@
             </div>
             <div id="route-input">
                 <div class="row">
-                    <div class="col-10">>
+                    <div class="col-10">
                         <li class="item-content item-input">
                             <div class="item-media">
                                 <i class="icon arrow_turn_down_right"></i>
@@ -18,8 +18,8 @@
                                 <span class="input-clear-button"></span>
                             </div>
                             </div>
-                            <button class="button">Go</button>
                         </li>
+                        <button class="button">Go</button>
                     </div>
                     <div class="col-2">
                         <button class="button"><i class="icon slider_horizontal_3"></i></button>
