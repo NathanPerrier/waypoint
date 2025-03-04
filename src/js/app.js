@@ -17,7 +17,6 @@ import routes from './routes.js';
 // Import main app component
 import App from '../app.f7';
 
-
 var app = new Framework7({
   name: 'Waypoint', // App name
   theme: 'auto', // Automatic theme detection

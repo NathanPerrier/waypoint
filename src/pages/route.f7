@@ -1,28 +1,30 @@
 <template>
     <div class="page" data-name="route">
         <div class="page-content">
+            <a href="/">
+                <div id="go-back">           
+                    <i class="fa fa-arrow-left fa-2x"></i>        
+                </div>
+            </a>
             <div id="locarjs">
                 
             </div>
             <div id="route-input">
-                <div class="row">
-                    <div class="col-10">
-                        <li class="item-content item-input">
-                            <div class="item-media">
-                                <i class="icon arrow_turn_down_right"></i>
-                            </div>
-                            <div class="item-inner">
-                            <div class="item-title item-label">Where do you want to go?</div>
-                            <div class="item-input-wrap">
-                                <input type="text" placeholder="ModWest (Building 11A)">
-                                <span class="input-clear-button"></span>
-                            </div>
-                            </div>
-                        </li>
-                        <button class="button">Go</button>
-                    </div>
-                    <div class="col-2">
-                        <button class="button"><i class="icon slider_horizontal_3"></i></button>
+                <div class="nav">
+                    <div class="row w-100">
+                        <div class="col-11">
+                            <div class="row">
+                                <div class="col-9 p-0">        
+                                    <input id="search-input" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                            
+                                </div>
+                                <div class="col-3">
+                                    <button id="search-button" class="button button-fill h-100">Search</button>
+                                </div> 
+                            </div>  
+                        </div>
+                        <div class="col-1 ml-2">
+                            <button id="settings-button" class="button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>

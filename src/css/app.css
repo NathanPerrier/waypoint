@@ -31,3 +31,45 @@
     z-index: 100;
     background-color: var(--background-color);
 }
+
+#route-input .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 2rem;
+    height: 4rem;
+    padding: .5rem;
+    background: var(--background-color);
+}
+
+#route-input .nav #search-input {
+    width: 100%;
+    height: 100%;
+    border: .1rem solid var(--primary-color);
+    padding: 0rem 1rem;
+    border-radius: 2rem 0rem 0rem 2rem;
+    background: #f3eaff;
+}
+
+#search-button {
+    border-radius: 0rem 2rem 2rem 0rem;
+}
+
+#settings-button {
+    border-radius: 2rem;
+    background: #f3eaff;
+    border: .1rem solid var(--primary-color);
+}
+
+#go-back {
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    z-index: 100;
+    background-color: var(--background-color);
+    border-radius: 100%;
+    padding: 2rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
