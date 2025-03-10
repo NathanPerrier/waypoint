@@ -1,11 +1,15 @@
+.tabs-animated-wrap {
+    height: 100%;
+}
+
 #locarjs {
     object-fit: fill;
 }
 
 #navbar, #route-input {
-    margin: 0rem 2rem 2rem 2rem;
+    margin: 0rem 1rem 2rem 1rem;
     border-radius: 2rem;
-    width: calc(100% - 4rem);
+    width: calc(100% - 2rem);
 }
 
 #navbar .tab-link:first-child {
@@ -72,4 +76,24 @@
     justify-content: center;
     align-items: center;
     display: flex;
+}
+
+
+
+#search-results-list {
+    padding: 0;
+    margin: 0;
+}
+
+
+#search-results-list li {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    background: #f3eaff;
+    color: var(--primary-color);
+    border-bottom: .1rem solid var(--primary-color);
+    font-size: large;
+    margin: 1rem;
+    display: flex;
+    cursor: pointer;
 }

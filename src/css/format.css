@@ -9,7 +9,14 @@
 .row {
     display: flex;
     flex-direction: row;
+    width: 100%;
+}
+
+.h-100 {
     height: 100%;
+}
+
+.w-100 {
     width: 100%;
 }
 
@@ -409,3 +416,24 @@
 .justify-between {
     justify-content: space-between;
 }
+
+
+.align-vertical {
+    align-items: center;
+}
+
+.r-0 {
+    border-radius: 0;
+}
+
+.r-1 {
+    border-radius: 1rem;
+}
+
+.r-2 {
+    border-radius: 2rem;
+}
+
+.m-auto {
+    margin: auto;
+}   
