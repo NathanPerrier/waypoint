@@ -25,10 +25,41 @@
                             </div>  
                         </div>
                         <div class="col-1 ml-2">
-                            <button id="settings-button" class="button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                            <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="actions-modal settings-actions" id="settings-actions">
+                <form class="list list-strong-ios list-dividers-ios list-outline-ios" id="settings-form">
+                    <h1 class="text-align-center mb-3">Settings</h1>
+                    <ul>
+                        <!-- add units form input metric/imerial-->
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Navigation Mode</div>
+                                  <div class="item-input-wrap">
+                                    <input type="text" placeholder="Navigation Mode" readonly="readonly" id="settings-picker-input" />
+                                  </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Start Location</div>
+                                    <div class="item-input-wrap">
+                                    <input type="text" name="name" placeholder="Start Location" />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                      
+                    </ul>
+                    <a data-actions=".settings-actions" class="actions-close button button-fill m-5 r-2">Done</a>
+                </form>
             </div>
         </div>
     </div>
@@ -36,5 +67,45 @@
         <!--  -->
    
 </template>
+<script>    
+    // on init add data navigation kode data from store and add user's current location (use save coordinates and do mapbox search to get name)
+
+    // on modal close change submit data to store
 
 
+    export default (props, { $, $on, $f7 }) => {
+        $on('pageInit', () => {
+          $('.convert-form-to-data').on('click', function () {
+            var formData = $f7.form.convertToData('#settings-form');
+            alert(JSON.stringify(formData));
+          });
+    
+          $('.fill-form-from-data').on('click', function () {
+            var formData = {
+              'name': 'John',
+              'email': 'john@doe.com',
+              'gender': 'female',
+              'toggle': ['yes'],
+            }
+            $f7.form.fillFromData('#settings-form', formData);
+          });
+        });
+        let settingsPicker;
+
+        $on('pageInit', () => {
+            var settingsPicker = $f7.picker.create({
+                inputEl: '#settings-picker-input',
+                cols: [
+                {
+                    values: ['walking', 'biking', 'Driving'],
+                    displayValues: ['Walking', 'Biking', 'Driving'],
+                }
+                ],
+                openIn: 'popover',
+            });
+        });
+          
+    
+        return $render;
+    };
+</script>
