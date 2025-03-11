@@ -90,10 +90,11 @@
         $on('pageInit', () => {
 
             var searchInput = document.getElementById('search-input');
+            var startLocation = document.getElementById('startLocation').value;
             var searchResults = document.getElementById('search-results-list');
 
             searchInput.addEventListener('input', async function() {
-                autocompleteSearch(searchInput, searchResults);
+                autocompleteSearch(searchInput, searchResults, startLocation);
             });
 
             var settingsPicker = $f7.picker.create({

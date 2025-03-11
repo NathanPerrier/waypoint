@@ -12,9 +12,9 @@ navigator.geolocation.getCurrentPosition(function(position) {
 const bbox = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]);
 
 const sessionToken = new SessionToken();
-const search = new SearchBoxCore({ accessToken: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ', bbox: bbox, countries: 'au', types: ['poi', 'address'], limit: 3, language: 'en', navigation_profile: "walking", origin: userLocation });
 
-export async function autocompleteSearch(searchInput, searchResults) {
+export async function autocompleteSearch(searchInput, searchResults, startLocation) {
+    const search = new SearchBoxCore({ accessToken: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ', bbox: bbox, countries: 'au', types: ['poi', 'address'], limit: 3, language: 'en', navigation_profile: "walking", proximity: userLocation, origin: startLocation });
 
     if (searchInput.value.length < 3) {
         searchResults.innerHTML = '';
@@ -44,7 +44,7 @@ export async function autocompleteSearch(searchInput, searchResults) {
                     </div>
                     <div class="col-3">
                         <div class="row h-100">
-                            <strong class="align-vertically m-auto">1.4km</strong>
+                            <strong class="align-vertically m-auto">${suggestion.distance/1000}km</strong>
                             <button class="button button-fill h-100 ml-2 r-2"><i class="fa fa-arrow-right"></i></button>
                         </div>
                     </div>

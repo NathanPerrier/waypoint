@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
-        zoom: 6, // starting zoom
+        zoom: 9, // starting zoom
         maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
 
     });
