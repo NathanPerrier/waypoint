@@ -53,3 +53,8 @@ export async function autocompleteSearch(searchInput, searchResults) {
         </a>`;
     }
 };
+
+export async function validSearch(searchInput) {
+    const result = await search.suggest(searchInput, { sessionToken });
+    return [result.suggestions.length > 0, result.suggestions[0]];
+}

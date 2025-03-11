@@ -1,13 +1,10 @@
 import { getUserLocation } from "../../userLocation";
-import { LngLatBounds} from '@mapbox/search-js-core'
 
 document.addEventListener('DOMContentLoaded', () => {
 
     mapboxgl.accessToken = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
 
     const mapContainer = document.getElementById('settings-map');
-
-    const bbox = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]);
 
     let userLocation;
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -16,8 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
-        center: userLocation, // starting position
-        zoom: 5, // starting zoom
+        zoom: 6, // starting zoom
         maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
 
     });
@@ -26,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
         marker: false,
-        zoom: 5,
-        center: userLocation,
+        zoom: 6,
         maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
     });
 
@@ -74,4 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    let currentLocationBtn = document.getElementById('startLocationButton');
+
+    currentLocationBtn.addEventListener('click', () => {
+        mapClickFn({ lng: userLocation[0], lat: userLocation[1] });
+    });
 });
+

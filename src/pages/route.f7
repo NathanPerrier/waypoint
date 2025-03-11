@@ -32,7 +32,7 @@
             </div>
 
             <div class="actions-modal settings-actions bg-white" id="settings-actions">
-                <form class="list list-strong-ios list-dividers-ios list-outline-ios" id="settings-form">
+                <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
                     <h1 class="text-align-center mb-3">Settings</h1>
                     <ul>
                         <!-- add units form input metric/imerial-->
@@ -56,7 +56,7 @@
                                                 <input type="text" id="startLocation" name="startLocation" class="m-auto" placeholder="Start Location" />
                                             </div>
                                             <div class="col-3">
-                                                <button id="startLocationButton" class="button button-fill m-auto">Use Current Location</button>
+                                                <a id="startLocationButton" class="button button-fill m-auto">Use Current Location</a>
                                             </div>  
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@
    
 </template>
 <script>    
-    import {autocompleteSearch} from "../js/plugins/maps/mapboxSearch.js";
+    import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
 
     // on init add data navigation kode data from store and add user's current location (use save coordinates and do mapbox search to get name)
 
@@ -84,29 +84,13 @@
 
 
     export default (props, { $, $on, $f7 }) => {
-        $on('pageInit', () => {
-          $('.convert-form-to-data').on('click', function () {
-            var formData = $f7.form.convertToData('#settings-form');
-            alert(JSON.stringify(formData));
-          });
-    
-          $('.fill-form-from-data').on('click', function () {
-            var formData = {
-              'name': 'John',
-              'email': 'john@doe.com',
-              'gender': 'female',
-              'toggle': ['yes'],
-            }
-            $f7.form.fillFromData('#settings-form', formData);
-          });
-        });
+
         let settingsPicker;
 
         $on('pageInit', () => {
 
             var searchInput = document.getElementById('search-input');
             var searchResults = document.getElementById('search-results-list');
-
 
             searchInput.addEventListener('input', async function() {
                 autocompleteSearch(searchInput, searchResults);
@@ -115,15 +99,72 @@
             var settingsPicker = $f7.picker.create({
                 inputEl: '#settings-picker-input',
                 cols: [
-                {
-                    values: ['walking', 'biking', 'Driving'],
-                    displayValues: ['Walking', 'Biking', 'Driving'],
-                }
+                    {
+                        values: ['walking', 'biking', 'driving'],
+                        displayValues: ['Walking', 'Biking', 'Driving'],
+                    }
                 ],
                 openIn: 'popover',
             });
+
+            var searchButton = document.getElementById('search-button');
+
+            searchButton.addEventListener('click', async function() {
+                var searchValue = document.getElementById('search-input').value;
+                var navigationMode = document.getElementById('settings-picker-input').value;
+                var startLocation = document.getElementById('startLocation').value;
+                
+                if (searchValue === '') {
+                    $f7.dialog.alert('Please enter a search value');
+                    return;
+                }
+
+                if (navigationMode === '' || navigationMode === null) {
+                    $f7.dialog.alert('Please select a navigation mode');
+                    return;
+                }
+
+                if (startLocation === '') {
+                    $f7.dialog.alert('Please enter a start location');
+                    return;
+                }
+
+                var searchResults = await validSearch(searchValue);
+
+                if (searchResults === null) {
+                    $f7.dialog.alert('No results found');
+                    return;
+                }
+
+                if (!searchResults[0]) {
+                    $f7.dialog.alert('No results found');
+                    return;
+                }
+
+                var searchResult = searchResults[1];
+                console.log(searchResult);
+                var searchResultName = searchResult.name;
+                var searchResultAddress = searchResult.full_address;
+                var searchResultPlaceFormatted = searchResult.place_formatted;
+                var searchResultType = searchResult.feature_type;
+                var searchResultMapboxId = searchResult.mapbox_id;
+
+                var searchResultData = {
+                    name: searchResultName,
+                    address: searchResultAddress,
+                    type: searchResultType,
+                    placeFormatted: searchResultPlaceFormatted,
+                    mapboxId: searchResultMapboxId,
+                    navigationMode: navigationMode,
+                    startLocation: startLocation
+                };
+
+                $f7.dialog.confirm(`Navigate to ${searchResultName}?`, 'Waypoint', () => {
+                    $f7.dialog.alert('Navigating to ' + searchResultName);
+                });
+
+            });
         });
-          
     
         return $render;
     };
