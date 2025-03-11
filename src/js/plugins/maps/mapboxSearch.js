@@ -17,11 +17,8 @@ const bbox = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]
 
 const sessionToken = new SessionToken();
 const search = new SearchBoxCore({ accessToken: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ', bbox: bbox, countries: 'au', types: ['poi', 'address'], limit: 3, language: 'en', navigation_profile: "walking", origin: userLocation });
-var searchInput = document.getElementById('search-input');
-var searchResults = document.getElementById('search-results-list');
 
-
-searchInput.addEventListener('input', async function() {
+export async function autocompleteSearch(searchInput, searchResults) {
 
     if (searchInput.value.length < 3) {
         searchResults.innerHTML = '';
@@ -59,5 +56,4 @@ searchInput.addEventListener('input', async function() {
             </li>
         </a>`;
     }
-});
-
+};
