@@ -3,7 +3,9 @@
 }
 
 #locarjs {
-    object-fit: fill;
+    object-fit: cover;
+    overflow-y: visible;
+    height: 100vh !important;
 }
 
 #navbar, #route-input {

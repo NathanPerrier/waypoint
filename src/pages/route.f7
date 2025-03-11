@@ -41,7 +41,7 @@
                                 <div class="item-inner">
                                     <div class="item-title item-label">Navigation Mode</div>
                                   <div class="item-input-wrap">
-                                    <input type="text" placeholder="Navigation Mode" readonly="readonly" id="settings-picker-input" />
+                                    <input type="text" placeholder="Navigation Mode" name="navigationMode" readonly="readonly" id="settings-picker-input" />
                                   </div>
                                 </div>
                             </div>
@@ -51,7 +51,14 @@
                                 <div class="item-inner">
                                     <div class="item-title item-label">Start Location</div>
                                     <div class="item-input-wrap">
-                                    <input type="text" id="startLocation" name="name" placeholder="Start Location" />
+                                        <div class="row h-100">
+                                            <div class="col-9">
+                                                <input type="text" id="startLocation" name="startLocation" class="m-auto" placeholder="Start Location" />
+                                            </div>
+                                            <div class="col-3">
+                                                <button id="startLocationButton" class="button button-fill m-auto">Use Current Location</button>
+                                            </div>  
+                                        </div>
                                     </div>
                                 </div>
                             </div>
