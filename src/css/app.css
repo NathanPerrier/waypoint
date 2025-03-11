@@ -96,6 +96,25 @@
     cursor: pointer;
 }
 
+#settings-map {
+    height: 20vh !important;
+    margin: 1rem 0rem 0rem 1rem;
+    width: calc(100% - 2rem) !important;
+    top: -1.5rem;
+    border-radius: 0rem 0rem 2rem 2rem;
+}
+
+.mapboxgl-ctrl-top-right {
+    display: none !important;
+}
+
+.mapboxgl-canvas, .mapboxgl-canvas-container {
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: cover;
+
+}
+
 @media screen and (min-width: 769px) {
     #navbar, #route-input {
         margin: 0rem 4rem 2rem 4rem;
@@ -105,5 +124,9 @@
     #settings-actions {
         margin: 4rem 0 0 4rem;
         width: calc(100vw - 8rem);
+    }
+
+    #settings-map {
+        height: 30vh !important;
     }
 }

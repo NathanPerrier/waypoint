@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="settings-map" class="w-100"></div>
+                            <div id="settings-map"></div>
                         </li>
                       
                     </ul>

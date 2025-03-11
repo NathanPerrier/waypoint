@@ -3,10 +3,6 @@ import { SearchBoxCore, SessionToken, LngLatBounds} from '@mapbox/search-js-core
 // get user coordinates
 let userLocation;
 navigator.geolocation.getCurrentPosition(function(position) {
-    console.log("Latitude is :", position.coords.latitude);
-    console.log("Longitude is :", position.coords.longitude);
-    console.log("Accuracy is :", position.coords.accuracy);
-    console.log("Altitude is :", position.coords.altitude);
     userLocation = {
         lat: position.coords.latitude,
         lon: position.coords.longitude

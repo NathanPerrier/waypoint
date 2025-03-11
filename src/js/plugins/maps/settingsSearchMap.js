@@ -1,22 +1,34 @@
+import { getUserLocation } from "../../userLocation";
+import { LngLatBounds} from '@mapbox/search-js-core'
+
 document.addEventListener('DOMContentLoaded', () => {
 
     mapboxgl.accessToken = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
 
     const mapContainer = document.getElementById('settings-map');
 
-    console.log(mapContainer);
+    const bbox = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]);
+
+    let userLocation;
+    navigator.geolocation.getCurrentPosition(function(position) {
+        userLocation = [position.coords.longitude, position.coords.latitude];
+    });
 
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
-        style: 'mapbox://styles/mapbox/light-v11',
-        zoom: 9 // starting zoom
+        center: userLocation, // starting position
+        zoom: 5, // starting zoom
+        maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
+
     });
 
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
         marker: false,
-        zoom: 20
+        zoom: 5,
+        center: userLocation,
+        maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
     });
 
 
@@ -29,9 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mapClickFn(e.lngLat);
 
         if (marker == null) {
-            marker = new mapboxgl.Marker()
-                .setLngLat(e.lngLat)
-                .addTo(map);
+            marker = new mapboxgl.Marker(
+                {
+                    color: "#762CEF",
+                    draggable: true
+                }
+            )
+            .setLngLat(e.lngLat)
+            .addTo(map);
         } else {
             marker.setLngLat(e.lngLat)
         }
