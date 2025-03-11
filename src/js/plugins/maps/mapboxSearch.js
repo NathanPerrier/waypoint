@@ -33,7 +33,7 @@ export async function autocompleteSearch(searchInput, searchResults) {
     console.log(result);
 
     for (const suggestion of result.suggestions) {
-        console.log(suggestion);
+        //console.log(suggestion);
         searchResults.innerHTML += `
         <a onclick="searchPlace('${suggestion.name}, ${suggestion.place_formatted}', document.getElementById('search-input'), document.getElementById('search-results-list'))">
             <li class="mx-2">
