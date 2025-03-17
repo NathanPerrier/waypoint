@@ -9,26 +9,48 @@
                 
             </div>
             <div id="route-input">
-                <div id="search-results-list">
+                
+                <!-- Tabs animated wrapper, required to switch tabs with transition -->
+                <div class="tabs-animated-wrap">
 
-                </div>
-                <div class="nav">
-                    <div class="row h-100">
-                        <div class="col-11">
-                            <div class="row h-100">
-                                <div class="col-9 p-0">    
-                                    <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
-                                </div>
-                                <div class="col-3">
-                                    <button id="search-button" class="button button-fill h-100">Search</button>
-                                </div> 
-                            </div>  
+                    <!-- Tabs, tabs wrapper -->
+                    <div class="tabs">
+                    <!-- Tab 1, active by default -->
+                    <div id="tab1" class="tab tab-active">
+                        <div id="search-results-list">
+
                         </div>
-                        <div class="col-1 ml-2">
-                            <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                        <div class="nav">
+                            <div class="row h-100">
+                                <div class="col-11">
+                                    <div class="row h-100">
+                                        <div class="col-9 p-0">    
+                                            <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
+                                        </div>
+                                        <div class="col-3">
+                                            <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active">Search</a>
+                                        </div> 
+                                    </div>  
+                                </div>
+                                <div class="col-1 ml-2">
+                                    <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                
+                    <!-- Tab 2 -->
+                    <div id="tab2" class="tab">
+                        ... Tab 2 content ...
+                    </div>
+                
+                    <!-- Tab 3 -->
+                    <div id="tab3" class="tab">
+                        ... Tab 3 content ...
+                    </div>
+                    </div>
                 </div>
+                
             </div>
 
             <div class="actions-modal settings-actions bg-white" id="settings-actions">

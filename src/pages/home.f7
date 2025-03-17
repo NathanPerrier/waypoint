@@ -15,26 +15,22 @@
       </div>
     </div>-->
     
-    <a href="#view-route" id="go-back" class="tab-link tab-link-active">         
-      <i class="fa fa-map fa-2x"></i>        
+    <a href="#view-route" id="go-back" class="tab-link tab-link-active bg-primary">         
+      <img src="../assets/logos/650x650logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
     <div class="page-content">
-        <div class="row">
-          <div class="col-6">
-            <div class="card">
+        <div class="row p-5 m-5" style="height:100vh">
+          <div class="col-4">
               <div class="card-header">Welcome to Waypoint</div>
               <div class="card-content card-content-padding">
                 <p>Waypoint is a simple app that allows you to create a list of waypoints and navigate to them in order. You can also share your list with others by generating a QR code.</p>
               </div>
-            </div>
           </div>
-          <div class="col-6">
-            <div class="card">
-              <div class="card-header">Get Started</div>
-              <div class="card-content card-content-padding">
-                <p>Click on the "Waypoint" tab to create a list of waypoints. Click on the "Settings" tab to configure your app settings.</p>
-              </div>
-            </div>
+          <div class="col-8">
+            <video width="100%" height="100%" autoplay loop muted>
+              <source src="../assets/videos/waypoint.mp4" type="video/mp4"/>
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </div>
