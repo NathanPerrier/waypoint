@@ -22,7 +22,7 @@ var routes = [
       const router = this;
       var app = router.app
 
-      if (!(new Device().isDesktop())) {
+      if ((app.device.desktop)) {
         if ((new Device().detectWebcam())) {
           resolve();
         } else {
