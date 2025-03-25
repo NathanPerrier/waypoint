@@ -1,7 +1,7 @@
 <template>
   <div class="page" data-name="home">
     <a href="#view-route" id="go-back" class="tab-link tab-link-active bg-primary overflow-hidden">         
-      <img id="waypoint-logo" src="../assets/logos/650x650logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
+      <img id="waypoint-logo" src="/logos/650x650Logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
     <div class="page-content overflow-hidden">
         <div class="row p-5 m-5 w-100" style="height:100vh">
@@ -14,7 +14,7 @@
           </div>
           <div class="col-7">
             <video width="100%" height="100%" autoplay loop muted>
-              <source src="../assets/videos/waypoint.mp4" type="video/mp4"/>
+              <source src="/videos/waypoint.mp4" type="video/mp4"/>
               Your browser does not support the video tag.
             </video>
           </div>
@@ -25,12 +25,12 @@
   
 </template>
 <script>
-  import imgUrl from '../assets/logos/650x650logo.png'
+
 
 export default (props, { $, $on, $f7 }) => {
-  onload = () => {
-    document.getElementById('waypoint-logo').src = imgUrl
-  }
+  //onload = () => {
+  //  document.getElementById('waypoint-logo').src = imgUrl
+  //}
   return $render;
 }
 </script>
