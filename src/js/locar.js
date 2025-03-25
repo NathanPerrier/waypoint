@@ -1,15 +1,20 @@
 import * as THREE from 'three';
 import * as LocAR from 'locar';
 
-import ReferPage from '../pages/refer.f7';
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById("locarjs").appendChild(renderer.domElement);
+    
+    try {
+        document.getElementById("locarjs").appendChild(renderer.domElement);
+    } catch(error) {
+
+        //create a popup to display the error
+        console.error('Renderer Error:', error);
+    }
 
     const scene = new THREE.Scene();
 
@@ -25,7 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         cam = new LocAR.WebcamRenderer(renderer);
     } catch(error) {
-        console.error('Webcam Error:', error);
+        if (!new Device().isDesktop()) {
+            // create a popup to display the error
+            console.error('Webcam Error:', error);
+        }
     }
 
     let firstLocation = true;

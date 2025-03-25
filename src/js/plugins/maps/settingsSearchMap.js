@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
-        zoom: 9, // starting zoom
+        zoom: 16, // starting zoom
+        center: [153.013306, -27.497503], // Great Court, UQ
+        pitch: 60,
         maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
 
     });
@@ -74,6 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     currentLocationBtn.addEventListener('click', () => {
         mapClickFn({ lng: userLocation[0], lat: userLocation[1] });
+    });
+
+    //if viewport width changes, resize map
+    window.addEventListener('resize', function () {
+        map.resize();
     });
 });
 

@@ -1,0 +1,17 @@
+<template>
+    <div class="page" data-name="routeDesktopPage">
+        <div class="page-content">
+            <div class="block">
+                <p>Route Desktop</p>
+                <!-- link to home-->
+                <a href="#view-home" class="tab-link tab-link-active button">Home</a>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>    
+export default () => {
+    return $render;
+}
+</script>

@@ -104,7 +104,6 @@
 
     // on modal close change submit data to store
 
-
     export default (props, { $, $on, $f7 }) => {
 
         let settingsPicker;

@@ -422,6 +422,14 @@
     align-items: center;
 }
 
+.position-absolute {
+    position: absolute;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+} 
+
 .r-0 {
     border-radius: 0;
 }

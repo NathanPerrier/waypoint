@@ -3,9 +3,10 @@
 }
 
 #locarjs {
-    object-fit: cover;
+    object-fit: cover !important;
     overflow-y: visible;
     height: 100vh !important;
+    width: 100vw !important;
 }
 
 #navbar, #route-input {
@@ -100,6 +101,7 @@
 
 #settings-map {
     height: 20vh !important;
+    width: 100%;
     margin: 1rem 0rem 0rem 1rem;
     width: calc(100% - 2rem) !important;
     top: -1.5rem;
@@ -130,5 +132,6 @@
 
     #settings-map {
         height: 30vh !important;
+        
     }
 }

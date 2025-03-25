@@ -1,10 +1,13 @@
 
 import HomePage from '../pages/home.f7';
-import AboutPage from '../pages/about.f7';
 import RoutePage from '../pages/route.f7';
-import ReferPage from '../pages/refer.f7';
+import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
+
+import Device from './device';
+import PopupComponent from 'framework7/components/popup';
+import { append } from 'three/src/nodes/TSL.js';
 
 var routes = [
   {
@@ -12,16 +15,48 @@ var routes = [
     component: HomePage,
   },
   {
-    path: '/about/',
-    component: AboutPage,
-  },
-  {
     path: '/route/',
     component: RoutePage,
+    keepAlive: true,
+    beforeEnter: function ({ resolve, reject }) {
+      const router = this;
+      var app = router.app
+
+      if (!(new Device().isDesktop())) {
+        if ((new Device().detectWebcam())) {
+          resolve();
+        } else {
+          app.dialog.create({
+            title: "AR Features Disabled", 
+            text: 'Webcam not detected. It is required for AR Features. Please check your webcam settings and try again.',
+            buttons: [
+              {
+                text: 'OK',
+                onClick: function() {
+                  router.navigate('/routeDesktop/');
+                }
+              }
+            ]
+          }).open();
+          reject();
+          router.navigate('/routeDesktop/');
+          return;
+        }
+      } else {
+        try {
+          reject();
+          router.navigate('/routeDesktop/');
+          return;
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    },
   },
   {
-    path: '/refer/',
-    component: ReferPage,
+    path: '/routeDesktop/',
+    component: RouteDesktopPage,
+    keepAlive: true,
   },
   {
     path: '(.*)',
