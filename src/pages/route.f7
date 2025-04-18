@@ -59,14 +59,11 @@
                     <ul>
                         <!-- add units form input metric/imerial-->
                         <li>
-                            <div class="item-content item-input">
-                                <div class="item-inner">
-                                    <div class="item-title item-label">Navigation Mode</div>
-                                  <div class="item-input-wrap">
-                                    <input type="text" placeholder="Navigation Mode" name="navigationMode" readonly="readonly" id="settings-picker-input" />
-                                  </div>
-                                </div>
-                            </div>
+                            <p class="segmented segmented-raised segmented-round mx-5">
+                                <a class="button button-round" data-value="walking">Walking</a>
+                                <a class="button button-round" data-value="biking">Biking</button>
+                                <a class="button button-round" data-value="driving">Driving</a>
+                            </p>
                         </li>
                         <li>
                             <div class="item-content item-input">
@@ -99,14 +96,15 @@
 </template>
 <script>    
     import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
+    import Config from "../js/config.js";
 
     // on init add data navigation kode data from store and add user's current location (use save coordinates and do mapbox search to get name)
 
     // on modal close change submit data to store
 
-    export default (props, { $, $on, $f7 }) => {
+    export default async (props, { $, $on, $f7 }) => {
 
-        let settingsPicker;
+        const config = await Config();
 
         $on('pageInit', () => {
 
@@ -118,15 +116,30 @@
                 autocompleteSearch(searchInput, searchResults, startLocation);
             });
 
-            var settingsPicker = $f7.picker.create({
-                inputEl: '#settings-picker-input',
-                cols: [
-                    {
-                        values: ['walking', 'biking', 'driving'],
-                        displayValues: ['Walking', 'Biking', 'Driving'],
-                    }
-                ],
-                openIn: 'popover',
+            // make avtive mode buttons the button that has data-value of TRANSPORTATION_MODE
+            var modeButtons = document.querySelectorAll('.segmented .button');
+            modeButtons.forEach(function(button) {
+                if (button.getAttribute('data-value') === config.TRANSPORTATION_MODE) {
+                    button.classList.add('button-active');
+                } else {
+                    button.classList.remove('button-active');
+                }
+            });
+    
+
+
+            // add event listener to each mode button to change the TRANSPORTATION_MODE variable
+            modeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    modeButtons.forEach(function(btn) {
+                        btn.classList.remove('button-active');
+                    });
+                    button.classList.add('button-active');
+                    var mode = button.getAttribute('data-value');
+                    config.TRANSPORTATION_MODE = mode;
+                    console.log('Mode changed to: ' + mode);
+                    console.log('Config TRANSPORTATION_MODE changed to: ' + config.TRANSPORTATION_MODE);
+                });            
             });
 
             var searchButton = document.getElementById('search-button');

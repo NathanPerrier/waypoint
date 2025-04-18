@@ -1,23 +1,41 @@
-import { getUserLocation } from "../../userLocation";
+import Config from '../../config.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const config = await Config();
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
+    mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN;
 
-    const mapContainer = document.getElementById('settings-map');
+     // Wait for the settings-map element to be added to the DOM
+     const waitForElement = (id) => {
+        return new Promise((resolve) => {
+            const element = document.getElementById(id);
+            if (element) {
+                resolve(element);
+                return;
+            }
 
-    let userLocation;
-    navigator.geolocation.getCurrentPosition(function(position) {
-        userLocation = [position.coords.longitude, position.coords.latitude];
-    });
+            const observer = new MutationObserver(() => {
+                const element = document.getElementById(id);
+                if (element) {
+                    resolve(element);
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    };
+
+    const mapContainer = await waitForElement('settings-map');
+    console.log('settings-map element found:', mapContainer);
+
 
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
         zoom: 16, // starting zoom
-        center: [153.013306, -27.497503], // Great Court, UQ
+        center: config.MAP_LOCATION_CENTER, // starting position [lng, lat]
         pitch: 60,
-        maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
-
+        maxBounds: config.MAP_LOCATION_BOUNDS_LNGLATLIKE, //[[west, south], [east, north]]
     });
 
     var geocoder = new MapboxGeocoder({
@@ -25,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mapboxgl: mapboxgl,
         marker: false,
         zoom: 6,
-        maxBounds: [[152.998221, -27.505890], [153.019359, -27.490149]]
+        maxBounds: config.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
 
@@ -75,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLocationBtn = document.getElementById('startLocationButton');
 
     currentLocationBtn.addEventListener('click', () => {
-        mapClickFn({ lng: userLocation[0], lat: userLocation[1] });
+        mapClickFn({ lng: config.USER_LOCATION[0], lat: config.USER_LOCATION[1] });
     });
 
     //if viewport width changes, resize map

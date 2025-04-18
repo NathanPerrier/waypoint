@@ -21,10 +21,8 @@ var routes = [
     beforeEnter: function ({ resolve, reject }) {
       const router = this;
       var app = router.app
-      console.log(app.device.desktop);
-      console.log(app.device)
-      console.log(new Device().isDesktop());
-      if (!(new Device().isDesktop())) {   //! 
+
+      if ((new Device().isDesktop())) {   //! not detecting mobile
         if ((new Device().detectWebcam())) {
           resolve();
         } else {

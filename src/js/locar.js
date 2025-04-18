@@ -1,65 +1,26 @@
+import Config from './config.js';
 import * as THREE from 'three';
-import * as LocAR from 'locar';
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
-
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    
-    try {
-        document.getElementById("locarjs").appendChild(renderer.domElement);
-    } catch(error) {
-
-        //create a popup to display the error
-        console.error('Renderer Error:', error);
-    }
-
-    const scene = new THREE.Scene();
-
-    const locar = new LocAR.LocationBased(scene, camera);
+document.addEventListener('DOMContentLoaded', async () => {
+    const config = await Config();
 
     window.addEventListener("resize", e => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        config.RENDERER.setSize(window.innerWidth, window.innerHeight);
+        config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        config.LOCAR_CAMERA.updateProjectionMatrix();
     });
-
-    let cam;
-    try {
-        cam = new LocAR.WebcamRenderer(renderer);
-    } catch(error) {
-        if (!new Device().isDesktop()) {
-            // create a popup to display the error
-            console.error('Webcam Error:', error);
-        }
-    }
 
     let firstLocation = true;
 
-    const deviceOrientationControls = new LocAR.DeviceOrientationControls(camera);
-
-    locar.on("gpsupdate", (pos, distMoved) => {
+    config.LOCAR.on("gpsupdate", (pos, distMoved) => {
         if(firstLocation) {
 
-            const boxProps = [{
-                latDis: 0.001,
-                lonDis: 0,
-                colour: 0xff0000
-            }, {
-                latDis: -0.001,
-                lonDis: 0,
-                colour: 0xffff00
-            }, {
-                latDis: 0,
-                lonDis: -0.001,
-                colour: 0x00ffff
-            }, {
-                latDis: 0,
-                lonDis: 0.001,
-                colour: 0x00ff00
-            }];
+            const boxProps = [
+                { latDis: 0.001, lonDis: 0, colour: 0xff0000 },
+                { latDis: -0.001, lonDis: 0, colour: 0xffff00 },
+                { latDis: 0, lonDis: -0.001, colour: 0x00ffff },
+                { latDis: 0, lonDis: 0.001, colour: 0x00ff00 },
+            ];
 
             const geom = new THREE.BoxGeometry(20,20,20);
 
@@ -69,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     new THREE.MeshBasicMaterial({color: boxProp.colour})
                 );
             
-                locar.add(
+                config.LOCAR.add(
                     mesh, 
                     pos.coords.longitude + boxProp.lonDis, 
                     pos.coords.latitude + boxProp.latDis
@@ -80,13 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    locar.startGps();
+    config.LOCAR.startGps();
 
-    renderer.setAnimationLoop(animate);
+    config.RENDERER.setAnimationLoop(animate);
 
     function animate() {
-        cam.update();
-        deviceOrientationControls.update();
-        renderer.render(scene, camera);
+        config.CAM.update();
+        config.DEVICE_ORIENTATION_CONTROLS.update();
+        config.RENDERER.render(config.LOCAR_SCENE, config.LOCAR_CAMERA);
     }
 });

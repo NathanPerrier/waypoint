@@ -1,31 +1,29 @@
-import { SearchBoxCore, SessionToken, LngLatBounds} from '@mapbox/search-js-core'
+import { SearchBoxCore } from '@mapbox/search-js-core'
+import Config from  '../../config.js';
 
-// get user coordinates
-let userLocation;
-navigator.geolocation.getCurrentPosition(function(position) {
-    userLocation = {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude
-    };
-});
 
-const bbox = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]);
 
-const sessionToken = new SessionToken();
+
 
 export async function autocompleteSearch(searchInput, searchResults, startLocation) {
+    const config = await Config();
+    console.log(config);
+
     if (!startLocation) {
-        startLocation = userLocation;
+        startLocation = config.USER_LOCATION;
     }
 
-    if (searchInput.value.length < 3) {
+    if (searchInput.value.length < config.MIN_SEARCH_LENGTH) {
         searchResults.innerHTML = '';
         return;
     }
 
-    const search = new SearchBoxCore({ accessToken: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ', bbox: bbox, countries: 'au', types: ['poi', 'address'], limit: 3, language: 'en', navigation_profile: "walking", proximity: userLocation, origin: startLocation }); 
+    const search = new SearchBoxCore({ accessToken: config.MAPBOX_ACCESS_TOKEN, bbox: config.MAP_LOCATION_BOUNDS, countries: config.SEARCH_COUNTRY_RESTRICTIONS, types: config.SEARCH_TYPES, limit: config.SEARCH_RESULT_LIMIT, language: config.LANGUAGE, navigation_profile: config.TRANSPORTATION_MODE, proximity: config.USER_LOCATION, origin: startLocation }); 
 
-    const result = await search.suggest(searchInput.value, { sessionToken });
+    let mapSessionToken = config.MAP_SESSION_TOKEN;
+    console.log(mapSessionToken);
+
+    const result = await search.suggest(searchInput.value, { sessionToken : mapSessionToken });
     if (result.suggestions.length === 0) return;
 
     searchResults.innerHTML = '';
