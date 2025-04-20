@@ -5,7 +5,7 @@ import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
 
-import Device from './device';
+import Device from './plugins/device';
 import PopupComponent from 'framework7/components/popup';
 import { append } from 'three/src/nodes/TSL.js';
 
@@ -22,7 +22,7 @@ var routes = [
       const router = this;
       var app = router.app
 
-      if ((new Device().isDesktop())) {   //! not detecting mobile
+      if (!(new Device().isDesktop())) {   //! not detecting mobile
         if ((new Device().detectWebcam())) {
           resolve();
         } else {

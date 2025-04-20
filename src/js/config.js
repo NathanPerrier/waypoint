@@ -1,7 +1,5 @@
-import Device from './device.js';
+import Device from './plugins/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
-import * as THREE from 'three';
-import * as LocAR from 'locar';
 
 const config = {
     COUNTRY: 'au',
@@ -18,11 +16,6 @@ const config = {
     MAP_SESSION_TOKEN: new SessionToken(),
     MAPBOX_ACCESS_TOKEN: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ',
 
-    // Search config
-    MIN_SEARCH_LENGTH: 3,
-    SEARCH_TYPES: ['poi', 'address'],
-    SEARCH_RESULT_LIMIT: 3,
-
     // Device and THREE.js placeholders
     DEVICE: null,
     WEBCAM_ENABLED: false,
@@ -36,66 +29,101 @@ const config = {
     CAM: null,
 };
 
-// Initialize the configuration only once
 let initialized = false;
+
 const initializeConfig = async () => {
     if (initialized) return config;
 
+    // Show loading screen
+
+    //! swap with f7 loading screen
+    const loadingScreen = document.createElement('div');
+    loadingScreen.id = 'loading-screen';
+    loadingScreen.style.position = 'fixed';
+    loadingScreen.style.top = '0';
+    loadingScreen.style.left = '0';
+    loadingScreen.style.width = '100vw';
+    loadingScreen.style.height = '100vh';
+    loadingScreen.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    loadingScreen.style.color = 'white';
+    loadingScreen.style.display = 'flex';
+    loadingScreen.style.justifyContent = 'center';
+    loadingScreen.style.alignItems = 'center';
+    loadingScreen.style.zIndex = '1000';
+    loadingScreen.innerHTML = '<h1>Loading...</h1>';
+    document.body.appendChild(loadingScreen);
+
     try {
-        config.USER_LOCATION = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    resolve([position.coords.longitude, position.coords.latitude]);
-                },
-                (error) => {
-                    console.error("Failed to get user location:", error);
-                    reject(error);
+        // Parallelize geolocation and device detection
+        const [userLocation, device] = await Promise.all([
+            new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => resolve([position.coords.longitude, position.coords.latitude]),
+                    (error) => {
+                        console.error("Failed to get user location:", error);
+                        resolve(config.MAP_LOCATION_CENTER); // Default to center
+                    }
+                );
+            }),
+            (async () => {
+                try {
+                    const deviceInstance = new Device();
+                    const webcamEnabled = await deviceInstance.detectWebcam();
+                    return { deviceInstance, webcamEnabled };
+                } catch (error) {
+                    console.error("Device initialization failed:", error);
+                    return {
+                        deviceInstance: {
+                            detectWebcam: () => false,
+                            isDesktop: () => true,
+                        },
+                        webcamEnabled: false,
+                    };
                 }
-            );
-        });
-        console.log("USER_LOCATION set to:", config.USER_LOCATION);
+            })(),
+        ]);
+
+        config.USER_LOCATION = userLocation;
+        config.DEVICE = device.deviceInstance;
+        config.WEBCAM_ENABLED = device.webcamEnabled;
+        config.DESKTOP_DEVICE = config.DEVICE.isDesktop();
+
+        // Conditionally load libraries for mobile
+        if (!config.DESKTOP_DEVICE) {
+            const [THREE, LocAR] = await Promise.all([
+                import('three'),
+                import('locar'),
+            ]);
+
+            // Initialize THREE.js components
+            config.RENDERER = new THREE.WebGLRenderer();
+            config.LOCAR_SCENE = new THREE.Scene();
+            config.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
+
+            config.RENDERER.setSize(window.innerWidth, window.innerHeight);
+
+            // Attach RENDERER to DOM
+            const locarElement = document.getElementById("locarjs");
+            if (locarElement) {
+                config.LOCAR_CONTAINER = locarElement.appendChild(config.RENDERER.domElement);
+            } else {
+                console.error('Element with ID "locarjs" not found.');
+            }
+
+            // Initialize LOCAR
+            config.LOCAR = new LocAR.LocationBased(config.LOCAR_SCENE, config.LOCAR_CAMERA);
+            config.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(config.LOCAR_CAMERA);
+            config.CAM = new LocAR.WebcamRenderer(config.RENDERER);
+        }
+
+        initialized = true;
     } catch (error) {
-        console.error("Error setting USER_LOCATION. Defaulting to [0, 0].");
-        config.USER_LOCATION = [0, 0]; // Default to a neutral location
+        console.error("Error initializing config:", error);
+    } finally {
+        // Remove loading screen
+        document.body.removeChild(loadingScreen);
     }
 
-    // Initialize DEVICE
-    try {
-        config.DEVICE = new Device();
-    } catch (error) {
-        console.error("Device initialization failed:", error);
-        config.DEVICE = {
-            detectWebcam: () => false,
-            isDesktop: () => true,
-        };
-    }
-
-    // Set DEVICE properties
-    config.WEBCAM_ENABLED = await config.DEVICE.detectWebcam();
-    config.DESKTOP_DEVICE = config.DEVICE.isDesktop();
-
-    // Initialize THREE.js components
-    config.RENDERER = new THREE.WebGLRenderer();
-    config.LOCAR_SCENE = new THREE.Scene();
-
-    config.RENDERER.setSize(window.innerWidth, window.innerHeight);
-
-    config.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
-
-    // Attach RENDERER to DOM
-    const locarElement = document.getElementById("locarjs");
-    if (locarElement) {
-        config.LOCAR_CONTAINER = locarElement.appendChild(config.RENDERER.domElement);
-    } else {
-        console.error('Element with ID "locarjs" not found.');
-    }
-
-    // Initialize LOCAR
-    config.LOCAR = new LocAR.LocationBased(config.LOCAR_SCENE, config.LOCAR_CAMERA);
-    config.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(config.LOCAR_CAMERA);
-    config.CAM = new LocAR.WebcamRenderer(config.RENDERER);
-
-    initialized = true;
     return config;
 };
 

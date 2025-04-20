@@ -1,4 +1,4 @@
-import Config from './config.js';
+import Config from '../../config.js';
 import * as THREE from 'three';
 
 document.addEventListener('DOMContentLoaded', async () => {

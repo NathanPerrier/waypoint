@@ -106,6 +106,9 @@
 
         const config = await Config();
 
+        // loading
+        // $f7.preloader.show();
+
         $on('pageInit', () => {
 
             var searchInput = document.getElementById('search-input');
