@@ -1,9 +1,15 @@
 class Device {
     constructor() {
         if (!window.app || !window.app.device) {
-            throw new Error("window.app.device is not available");
+            console.warn("window.app.device is not available. Using fallback device.");
+            this.device = {
+                getInfo: () => ({ platform: 'unknown', version: 'unknown' }),
+                isMobile: () => false,
+                isTablet: () => false,
+            };
+        } else {
+            this.device = window.app.device;
         }
-        this.device = window.app.device;
     }
 
     getDeviceInfo() {
@@ -34,4 +40,3 @@ class Device {
 }
 
 export default Device;
-

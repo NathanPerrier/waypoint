@@ -127,4 +127,8 @@ const initializeConfig = async () => {
     return config;
 };
 
+initializeConfig().then(() => {
+    window.config = config;
+});
+
 export default initializeConfig;

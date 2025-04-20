@@ -1,8 +1,15 @@
-import Config from '../../config.js';
 import * as THREE from 'three';
 
+
 document.addEventListener('DOMContentLoaded', async () => {
-    const config = await Config();
+    const config = window.config || await import('../../config.js').then(m => m.default);
+
+    if (!config.DESKTOP_DEVICE) {
+        console.error("LocAR is not supported on desktop devices.");
+        return;
+    } else {
+        await runLocar(config);
+    }
 
     window.addEventListener("resize", e => {
         config.RENDERER.setSize(window.innerWidth, window.innerHeight);
@@ -10,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         config.LOCAR_CAMERA.updateProjectionMatrix();
     });
 
+    window.addEventListener("orientationchange", e => {
+        config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        config.LOCAR_CAMERA.updateProjectionMatrix();
+    });
+});
+
+async function runLocar(config) {
     let firstLocation = true;
 
     config.LOCAR.on("gpsupdate", (pos, distMoved) => {
@@ -50,4 +64,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         config.DEVICE_ORIENTATION_CONTROLS.update();
         config.RENDERER.render(config.LOCAR_SCENE, config.LOCAR_CAMERA);
     }
-});
+}
