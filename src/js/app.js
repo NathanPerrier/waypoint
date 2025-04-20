@@ -16,6 +16,10 @@ import routes from './routes.js';
 
 // Import main app component
 import App from '../app.f7';
+import initializeConfig from './config.js';
+
+(async () => {
+  const config = await initializeConfig();
 
 var app = new Framework7({
   name: 'Waypoint', // App name
@@ -33,3 +37,4 @@ var app = new Framework7({
 
 // Expose app to the global scope
 window.app = app;
+})();

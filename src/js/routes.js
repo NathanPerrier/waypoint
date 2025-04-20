@@ -5,11 +5,16 @@ import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
 
-import Config from './config.js';
+import initializeConfig from './config.js';
 import PopupComponent from 'framework7/components/popup';
 import { append } from 'three/src/nodes/TSL.js';
 
-const config = await Config();
+let config;
+
+// Initialize the configuration before defining routes
+(async () => {
+    config = await initializeConfig();
+})();
 
 var routes = [
   {
