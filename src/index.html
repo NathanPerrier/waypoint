@@ -47,7 +47,11 @@
   <!--<script defer type="module" src="./js/plugins/maps/mapboxSearch.js"></script> -->
   <script type="module" src="./js/plugins/maps/settingsSearchMap.js"></script>
   
-  <script>
+  <script type="module">
+    import Config from "./js/config.js";
+
+    const config = await Config();
+
     function searchPlace(q, searchInput, searchResults) {
       searchInput.value = q;
       searchResults.innerHTML = '';

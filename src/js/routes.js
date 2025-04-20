@@ -5,9 +5,11 @@ import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
 
-import Device from './plugins/device';
+import Config from './config.js';
 import PopupComponent from 'framework7/components/popup';
 import { append } from 'three/src/nodes/TSL.js';
+
+const config = await Config();
 
 var routes = [
   {
@@ -22,8 +24,8 @@ var routes = [
       const router = this;
       var app = router.app
 
-      if (!(new Device().isDesktop())) {   //! not detecting mobile
-        if ((new Device().detectWebcam())) {
+      if (!config.DESKTOP_DEVICE) {
+        if (config.WEBCAM_ENABLED) {
           resolve();
         } else {
           app.dialog.create({
