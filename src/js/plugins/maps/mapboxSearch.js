@@ -1,8 +1,9 @@
-import { SearchBoxCore } from '@mapbox/search-js-core'
+import { SearchBoxCore } from '@mapbox/search-js-core';
+import Config from '../../config.js';
 
 
 export async function autocompleteSearch(searchInput, searchResults, startLocation) {
-    const config = window.config || await import('../../config.js').then(m => m.default);
+    const config = Config.config;
 
     if (!startLocation) {
         startLocation = config.USER_LOCATION;

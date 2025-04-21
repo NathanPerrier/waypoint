@@ -17,34 +17,27 @@ import routes from './routes.js';
 import App from '../app.f7';
 
 // Import Config
-import initializeConfig from './config.js';
-
-// Initialize a placeholder for window.app.device
-window.app = window.app || {};
-window.app.device = {
-  getInfo: () => ({ platform: 'unknown', version: 'unknown' }),
-  isMobile: () => false,
-  isTablet: () => false,
-};
+import config from './config.js';
 
 (async () => {
-  const config = await initializeConfig();
+    // Initialize Framework7 app
+    var app = new Framework7({
+        name: 'Waypoint', // App name
+        theme: 'md', // auto
+        colors: {
+            primary: '#782cf6',
+        },
+        darkMode: false,
+        el: '#app', // App root element
+        component: App, // App main component
 
-  var app = new Framework7({
-    name: 'Waypoint', // App name
-    theme: 'md', // auto
-    colors: {
-      primary: '#782cf6',
-    },
-    darkMode: false,
-    el: '#app', // App root element
-    component: App, // App main component
+        // App routes
+        routes: routes,
+    });
 
-    // App routes
-    routes: routes,
-  });
+    // Expose app globally
+    window.app = app;
 
-  // Expose app and config to the global scope
-  window.app = app;
-  window.config = config;
+    // Initialize config
+    await config.initializeConfig();
 })();

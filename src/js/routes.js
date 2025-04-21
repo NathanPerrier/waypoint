@@ -4,8 +4,11 @@ import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
 
+import config from './config.js';
+
 import PopupComponent from 'framework7/components/popup';
 
+const Config = config.initializeConfig();
 
 var routes = [
   {
@@ -19,10 +22,9 @@ var routes = [
     beforeEnter: async function ({ resolve, reject }) {
       const router = this;
       var app = router.app;
-      const config = window.config 
 
-      if (!config.DESKTOP_DEVICE) {
-        if (config.WEBCAM_ENABLED) {
+      if (!Config.DESKTOP_DEVICE) {
+        if (Config.WEBCAM_ENABLED) {
           resolve();
         } else {
           app.dialog.create({

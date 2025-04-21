@@ -1,5 +1,8 @@
 import Device from './plugins/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
+import PopupComponent from 'framework7/components/popup';
+
+// if essential vars like user_location, map_session_token, device, renderer, locar, cam --> throw alert
 
 const config = {
     COUNTRY: 'au',
@@ -34,24 +37,10 @@ let initialized = false;
 const initializeConfig = async () => {
     if (initialized) return config;
 
-    // Show loading screen
-
-    //! swap with f7 loading screen
-    const loadingScreen = document.createElement('div');
-    loadingScreen.id = 'loading-screen';
-    loadingScreen.style.position = 'fixed';
-    loadingScreen.style.top = '0';
-    loadingScreen.style.left = '0';
-    loadingScreen.style.width = '100vw';
-    loadingScreen.style.height = '100vh';
-    loadingScreen.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    loadingScreen.style.color = 'white';
-    loadingScreen.style.display = 'flex';
-    loadingScreen.style.justifyContent = 'center';
-    loadingScreen.style.alignItems = 'center';
-    loadingScreen.style.zIndex = '1000';
-    loadingScreen.innerHTML = '<h1>Loading...</h1>';
-    document.body.appendChild(loadingScreen);
+    // Show Framework7 preloader
+    if (window.app && window.app.preloader) {
+        window.app.preloader.show();
+    }
 
     try {
         // Parallelize geolocation and device detection
@@ -86,7 +75,13 @@ const initializeConfig = async () => {
         config.USER_LOCATION = userLocation;
         config.DEVICE = device.deviceInstance;
         config.WEBCAM_ENABLED = device.webcamEnabled;
-        config.DESKTOP_DEVICE = config.DEVICE.isDesktop();
+        config.DESKTOP_DEVICE = device.deviceInstance.isDesktop() || device.deviceInstance.isTablet();
+
+        console.log("User Location:", config.USER_LOCATION);
+        console.log("Device Info:", config.DEVICE);
+        console.log("Webcam Enabled:", config.WEBCAM_ENABLED);
+        console.log("Is Desktop Device:", config.DESKTOP_DEVICE);
+        console.log("Is Mobile Device:", !config.DESKTOP_DEVICE);
 
         // Conditionally load libraries for mobile
         if (!config.DESKTOP_DEVICE) {
@@ -120,15 +115,27 @@ const initializeConfig = async () => {
     } catch (error) {
         console.error("Error initializing config:", error);
     } finally {
-        // Remove loading screen
-        document.body.removeChild(loadingScreen);
+        // Hide Framework7 preloader
+        if (window.app && window.app.preloader) {
+            window.app.preloader.hide();
+        }
     }
 
     return config;
 };
 
+function configErrors(config) {
+    for (configVar in config) {
+        if (configVar == null) {
+            //throw error
+            console.error(configVar)
+        }
+    }
+}
+
+// Initialize config and expose globally
 initializeConfig().then(() => {
-    window.config = config;
+    configErrors(config);
 });
 
-export default initializeConfig;
+export default {initializeConfig, config};

@@ -1,7 +1,7 @@
-
+import Config from '../../config.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const config = window.config || await import('../../config.js').then(m => m.default);
+    const config = Config.config;
 
     mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN;
 

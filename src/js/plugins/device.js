@@ -1,12 +1,10 @@
+import { getDevice } from 'framework7';
+
 class Device {
     constructor() {
         if (!window.app || !window.app.device) {
             console.warn("window.app.device is not available. Using fallback device.");
-            this.device = {
-                getInfo: () => ({ platform: 'unknown', version: 'unknown' }),
-                isMobile: () => false,
-                isTablet: () => false,
-            };
+            this.device = getDevice();
         } else {
             this.device = window.app.device;
         }

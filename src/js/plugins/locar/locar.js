@@ -1,27 +1,31 @@
 import * as THREE from 'three';
-
+import Config from '../../config.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const config = window.config || await import('../../config.js').then(m => m.default);
+    const config = Config.config;
+
+    console.log("config", config);
 
     if (!config.DESKTOP_DEVICE) {
         console.error("LocAR is not supported on desktop devices.");
         return;
-    } else {
-        await runLocar(config);
     }
 
-    window.addEventListener("resize", e => {
-        config.RENDERER.setSize(window.innerWidth, window.innerHeight);
-        config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-        config.LOCAR_CAMERA.updateProjectionMatrix();
-    });
-
-    window.addEventListener("orientationchange", e => {
-        config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-        config.LOCAR_CAMERA.updateProjectionMatrix();
-    });
+    await runLocar(config);
 });
+
+// window.addEventListener("resize", e => {
+//     config.RENDERER.setSize(window.innerWidth, window.innerHeight);
+//     config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+//     config.LOCAR_CAMERA.updateProjectionMatrix();
+// });
+
+// window.addEventListener("orientationchange", e => {
+//     config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+//     config.LOCAR_CAMERA.updateProjectionMatrix();
+// });
+
+
 
 async function runLocar(config) {
     let firstLocation = true;
