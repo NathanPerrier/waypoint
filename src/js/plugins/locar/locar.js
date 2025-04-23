@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("app instance for locar:", app);
 
     // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
-    if (!app.DESKTOP_DEVICE) {
+    if (app.DESKTOP_DEVICE || app.DESKTOP_DEVICE === undefined) {
         console.log("LocAR is not supported on desktop devices.");
         return;
     }
