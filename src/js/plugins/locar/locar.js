@@ -15,13 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("app instance for locar:", app);
 
     // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
-    if (app.DESKTOP_DEVICE) { // Note: Logic seems inverted, LocAR is usually for mobile. Check if this condition is correct.
-        console.error("LocAR is intended for mobile devices, not desktop.");
+    if (!app.DESKTOP_DEVICE) {
+        console.log("LocAR is not supported on desktop devices.");
         return;
-        // If LocAR should *only* run on mobile, the condition should be: if (app.DESKTOP_DEVICE) return;
-        // If it *can* run on desktop (e.g., for testing), this check might need adjustment or removal.
-        // For now, keeping the original logic but using the app variable.
-        // Consider changing to: if (app.DESKTOP_DEVICE) { console.log("LocAR skipped on desktop."); return; }
     }
 
     // Ensure LocAR related properties are initialized on the app instance (they are initialized conditionally in config.js)

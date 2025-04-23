@@ -24,7 +24,7 @@ var routes = [
       var app = router.app; // Access the app instance
 
       // Access variables directly from the app instance
-      if (app.DESKTOP_DEVICE == false) {
+      if (app.MOBILE_DEVICE) {  
         if (app.WEBCAM_ENABLED) {
           resolve();
         } else {

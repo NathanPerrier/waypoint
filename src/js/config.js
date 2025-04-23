@@ -74,12 +74,7 @@ const initializeConfig = async (app) => {
         app.DEVICE = device.deviceInstance;
         app.WEBCAM_ENABLED = device.webcamEnabled;
         app.DESKTOP_DEVICE = app.DEVICE.isDesktop() || app.DEVICE.isTablet();
-
-        console.log("User Location:", app.USER_LOCATION);
-        console.log("Device Info:", app.DEVICE);
-        console.log("Webcam Enabled:", app.WEBCAM_ENABLED);
-        console.log("Is Desktop Device:", app.DESKTOP_DEVICE);
-        console.log("Is Mobile Device:", !app.DESKTOP_DEVICE);
+        app.MOBILE_DEVICE = !app.DESKTOP_DEVICE; 
 
         // Conditionally load libraries for mobile
         if (!app.DESKTOP_DEVICE) {
