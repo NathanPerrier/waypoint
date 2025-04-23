@@ -15,17 +15,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("app instance for locar:", app);
 
     // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
-    if (app.DESKTOP_DEVICE || app.DESKTOP_DEVICE === undefined) {
-        console.log("LocAR is not supported on desktop devices.");
-        return;
-    }
-
-    // Ensure LocAR related properties are initialized on the app instance (they are initialized conditionally in config.js)
     if (!app.LOCAR || !app.RENDERER || !app.LOCAR_SCENE || !app.LOCAR_CAMERA || !app.CAM || !app.DEVICE_ORIENTATION_CONTROLS) {
         console.error("LocAR components not initialized on the app instance. Ensure the device is mobile and initialization succeeded.");
         return;
     }
-
 
     await runLocar(app); // Pass the app instance
 });
