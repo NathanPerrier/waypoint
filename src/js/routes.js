@@ -14,7 +14,7 @@ const createRouteGuard = (checks, redirectPath) => {
   return async function ({ resolve, reject }) {
     const router = this;
     const app = router.app;
-    await initializeConfig(app);
+    
     console.log(app.USER_LOCATION, app.LOCAR, app.DESKTOP_DEVICE);
 
     // Wait for the config initialization promise to resolve

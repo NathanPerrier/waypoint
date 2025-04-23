@@ -33,6 +33,7 @@ const initializeConfig = (app) => {
         app.LOCAR = null;
         app.DEVICE_ORIENTATION_CONTROLS = null;
         app.CAM = null;
+        app.AR = true; 
 
         // Show Framework7 preloader if available
         if (app.preloader) {
@@ -79,7 +80,7 @@ const initializeConfig = (app) => {
             app.MOBILE_DEVICE = !app.DESKTOP_DEVICE; 
 
             // Conditionally load libraries for mobile
-            if (!app.DESKTOP_DEVICE) {
+            if (app.MOBILE_DEVICE) {
                 const [THREE, LocAR] = await Promise.all([
                     import('three'),
                     import('locar'),
@@ -104,6 +105,8 @@ const initializeConfig = (app) => {
                 app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);
                 app.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(app.LOCAR_CAMERA);
                 app.CAM = new LocAR.WebcamRenderer(app.RENDERER);
+            } else {
+                app.AR = false; // Disable AR mode for desktop
             }
 
             // Resolve the promise when initialization is successful

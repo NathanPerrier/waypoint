@@ -17,27 +17,27 @@ import routes from './routes.js';
 import App from '../app.f7';
 
 // Import Config Initializer
-
+import { initializeConfig } from './config.js'; // Import only the initializer function
 
 (async () => {
-    // Initialize Framework7 app
-    var app = new Framework7({
-        name: 'Waypoint', // App name
-        theme: 'md', // auto
-        colors: {
-            primary: '#782cf6',
-        },
-        darkMode: false,
-        el: '#app', // App root element
-        component: App, // App main component
+  // Initialize Framework7 app
+  var app = new Framework7({
+      name: 'Waypoint', // App name
+      theme: 'md', // auto
+      colors: {
+          primary: '#782cf6',
+      },
+      darkMode: false,
+      el: '#app', // App root element
+      component: App, // App main component
 
-        // App routes
-        routes: routes,
-    });
+      // App routes
+      routes: routes,
+  });
 
-    // Expose app globally
-    window.app = app;
+  // Expose app globally
+  window.app = app;
 
-    // Initialize config by passing the app instance
-    
+  // Initialize config by passing the app instance
+  await initializeConfig(app);
 })();

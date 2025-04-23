@@ -94,6 +94,7 @@
         <!--  -->
    
 </template>
+<script type="module" src="./js/plugins/locar/locar.js"></script>
 <script>    
     import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
 
