@@ -15,7 +15,7 @@ const createRouteGuard = (checks, redirectPath) => {
     const router = this;
     const app = router.app;
     
-    console.log(app.USER_LOCATION, app.LOCAR, app.DESKTOP_DEVICE);
+    
 
     // Wait for the config initialization promise to resolve
     try {
@@ -26,6 +26,7 @@ const createRouteGuard = (checks, redirectPath) => {
       // For now, rejecting to the specified redirect path.
       return reject(redirectPath);
     }
+    console.log(app.USER_LOCATION, app.LOCAR, app.DESKTOP_DEVICE);
 
     for (const check of checks) {
       if (!check(app)) {
