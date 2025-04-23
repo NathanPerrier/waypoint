@@ -94,7 +94,6 @@
         <!--  -->
    
 </template>
-<script type="module" src="./js/plugins/locar/locar.js"></script>
 <script>    
     import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
 
@@ -104,12 +103,14 @@
 
     export default async (props, { $, $on, $f7 }) => {
 
-        const app = props.app;
+        const app = window.app;
 
         // loading
         // $f7.preloader.show();
 
         $on('pageInit', () => {
+            const locarElement = document.getElementById("locarjs");
+            app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
 
             var searchInput = document.getElementById('search-input');
             var startLocation = document.getElementById('startLocation').value;

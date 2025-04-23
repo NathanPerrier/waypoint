@@ -76,8 +76,8 @@ const initializeConfig = (app) => {
             app.USER_LOCATION = userLocation;
             app.DEVICE = device.deviceInstance;
             app.WEBCAM_ENABLED = device.webcamEnabled;
-            app.DESKTOP_DEVICE = app.DEVICE.isDesktop() || app.DEVICE.isTablet();
-            app.MOBILE_DEVICE = !app.DESKTOP_DEVICE; 
+            app.DESKTOP_DEVICE = app.DEVICE.device.desktop;
+            app.MOBILE_DEVICE = app.DEVICE.device.ios || app.DEVICE.device.android || app.DEVICE.device.iphone || app.DEVICE.device.androidChrome || app.DEVICE.device.cordova || app.DEVICE.device.ipad; 
 
             // Conditionally load libraries for mobile
             if (app.MOBILE_DEVICE) {
@@ -87,19 +87,11 @@ const initializeConfig = (app) => {
                 ]);
 
                 // Initialize THREE.js components and assign to app instance
-                app.RENDERER = new THREE.WebGLRenderer();
+                app.RENDERER = new THREE.WebGLRenderer({ alpha: true }); // Ensure background can be transparent if needed
                 app.LOCAR_SCENE = new THREE.Scene();
                 app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
 
                 app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-
-                // Attach RENDERER to DOM
-                const locarElement = document.getElementById("locarjs");
-                if (locarElement) {
-                    app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
-                } else {
-                    console.error('Element with ID "locarjs" not found.');
-                }
 
                 // Initialize LOCAR and assign to app instance
                 app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);

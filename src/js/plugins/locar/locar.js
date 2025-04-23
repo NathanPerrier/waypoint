@@ -1,44 +1,56 @@
 import * as THREE from 'three';
-// Remove unused Config import
-// import Config from '../../config.js';
+
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Access the global Framework7 app instance
+
+    // First, get the app instance
     const app = window.app;
 
-    // Check if app is initialized
+    // Check if app exists before trying to access its properties
     if (!app) {
         console.error("Framework7 app instance not found. LocAR cannot initialize.");
         return;
     }
 
-    console.log("app instance for locar:", app);
+    try {
+        // Now wait for the app's initialization promise
+        await app.initializationPromise;
+      } catch (error) {
+        console.error("Config initialization failed, cannot proceed:", error);
+        return; // Stop execution if config fails
+    }
+    
+
+    console.log("app instance for locar:", app, app.LOCAR_CONTAINER);
 
     // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
-    if (!app.LOCAR || !app.RENDERER || !app.LOCAR_SCENE || !app.LOCAR_CAMERA || !app.CAM || !app.DEVICE_ORIENTATION_CONTROLS) {
-        console.error("LocAR components not initialized on the app instance. Ensure the device is mobile and initialization succeeded.");
-        return;
+    // Uncomment this check to help debug initialization issues
+    if (!app.AR || !app.LOCAR || !app.RENDERER || !app.LOCAR_SCENE || !app.LOCAR_CAMERA || !app.CAM || !app.DEVICE_ORIENTATION_CONTROLS) {
+        console.error("LocAR components not initialized correctly on the app instance. AR:", app.AR, "Ensure the device is mobile and initialization succeeded.");
+        return; // Stop if components are missing
     }
 
-    await runLocar(app); // Pass the app instance
+    window.addEventListener("resize", e => {
+        // Use app variables if uncommented
+        app.RENDERER.setSize(window.innerWidth, window.innerHeight);
+        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        app.LOCAR_CAMERA.updateProjectionMatrix();
+    });
+    
+    window.addEventListener("orientationchange", e => {
+        // Use app variables if uncommented
+        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        app.LOCAR_CAMERA.updateProjectionMatrix();
+    });
+
+    runLocar(app); // Pass the app instance
 });
 
-// window.addEventListener("resize", e => {
-//     // Use app variables if uncommented
-//     app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-//     app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-//     app.LOCAR_CAMERA.updateProjectionMatrix();
-// });
-
-// window.addEventListener("orientationchange", e => {
-//     // Use app variables if uncommented
-//     app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-//     app.LOCAR_CAMERA.updateProjectionMatrix();
-// });
 
 
 
-async function runLocar(app) { // Accept app instance
+
+function runLocar(app) { // Accept app instance
     let firstLocation = true;
 
     // Use app.LOCAR
@@ -84,4 +96,5 @@ async function runLocar(app) { // Accept app instance
         app.DEVICE_ORIENTATION_CONTROLS.update();
         app.RENDERER.render(app.LOCAR_SCENE, app.LOCAR_CAMERA);
     }
+    animate();
 }

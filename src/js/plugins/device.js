@@ -2,12 +2,11 @@ import { getDevice } from 'framework7';
 
 class Device {
     constructor() {
-        if (!window.app || !window.app.device) {
-            console.warn("window.app.device is not available. Using fallback device.");
-            this.device = getDevice();
-        } else {
+        this.device = getDevice();
+        if (this.device == null) {
             this.device = window.app.device;
         }
+        console.log('Device:', this.device);
     }
 
     getDeviceInfo() {

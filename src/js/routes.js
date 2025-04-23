@@ -4,52 +4,53 @@ import RouteDesktopPage from '../pages/routeDesktop.f7';
 
 import NotFoundPage from '../pages/404.f7';
 
-// Removed config import as variables are now on the app instance
-
-import { initializeConfig } from './config.js'; // Import only the initializer function
-
-
 // Helper function to create route guards
-const createRouteGuard = (checks, redirectPath) => {
+const createRouteGuard = (checks) => {
   return async function ({ resolve, reject }) {
     const router = this;
     const app = router.app;
-    
-    
 
     // Wait for the config initialization promise to resolve
     try {
       await app.initializationPromise;
     } catch (error) {
       console.error("Config initialization failed, cannot proceed with route guard:", error);
-      // Decide how to handle initialization failure - maybe redirect to an error page?
-      // For now, rejecting to the specified redirect path.
-      return reject(redirectPath);
+      return reject('/error'); // Redirect to a generic error page if initialization fails
     }
+
     console.log(app.USER_LOCATION, app.LOCAR, app.DESKTOP_DEVICE);
 
     for (const check of checks) {
-      if (!check(app)) {
-        // Correctly create and open the dialog
+      const { condition, redirectPath, title, description, deviceCheck } = check;
+
+      // Check the primary condition
+      let conditionMet = condition(app);
+
+      // If deviceCheck is specified and true, also check app.DEVICE
+      if (deviceCheck && app.DESKTOP_DEVICE) {
+        conditionMet = true // If device check is required and app.DEVICE is false, the overall condition fails
+      }
+
+      if (!conditionMet) {
+        // Display a dialog with custom error details
         app.dialog.create({
-          title: "Feature(s) Unavailable", // Use a generic title or pass check name
-          text: app.MOBILE_DEVICE+' '+app.DESKTOP_DEVICE+' Required configuration (e.g., location, camera or device) not available. Features may be limited, changed or unavailable.',
+          title: title,
+          text: description,
           buttons: [
             {
               text: 'OK',
               onClick: function () {
-                // Redirect after dialog is closed
                 router.navigate(redirectPath);
               },
             },
           ],
         }).open();
 
-        console.warn('Route guard check failed, redirecting to:', redirectPath);
-        // Reject immediately, the dialog handles the user interaction and subsequent navigation
-        return reject(); // Reject without a path, as navigation is handled by dialog
+        console.warn(`Route guard check failed: ${title}`);
+        return reject(); // Reject immediately, navigation is handled by the dialog
       }
     }
+
     // All checks passed
     resolve();
   };
@@ -64,17 +65,28 @@ var routes = [
     path: '/route/',
     component: RoutePage,
     keepAlive: true,
-    beforeEnter: createRouteGuard(
-      [
-
-        //! add all required config variables here for /route/ 
-
-        (app) => !!app.USER_LOCATION,
-        (app) => !!app.LOCAR,
-      
-      ],
-      '/routeDesktop/' // Redirect here if any check fails
-    ),
+    beforeEnter: createRouteGuard([
+      {
+        condition: (app) => !!app.USER_LOCATION,
+        redirectPath: '/',
+        title: 'User Location Missing',
+        description: 'The application could not determine your location. Please enable location services and try again.',
+      },
+      {
+        condition: (app) => !!app.AR,
+        redirectPath: '/routeDesktop/',
+        title: 'AR Library Not Loaded',
+        description: 'The AR library failed to load. Some features may not be available.',
+        deviceCheck: true, // Add missing comma here
+      },
+      {
+        condition: (app) => app.WEBCAM_ENABLED,
+        redirectPath: '/routeDesktop/',
+        title: 'Webcam Not Enabled',
+        description: 'The application requires webcam access. Please enable your webcam and try again.',
+        deviceCheck: true, // Example: This check now also requires app.DEVICE to be true
+      },
+    ]),
   },
   {
     path: '/routeDesktop/',
