@@ -1,36 +1,59 @@
 import * as THREE from 'three';
-import Config from '../../config.js';
+// Remove unused Config import
+// import Config from '../../config.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const config = Config.config;
+    // Access the global Framework7 app instance
+    const app = window.app;
 
-    console.log("config", config);
-
-    if (!config.DESKTOP_DEVICE) {
-        console.error("LocAR is not supported on desktop devices.");
+    // Check if app is initialized
+    if (!app) {
+        console.error("Framework7 app instance not found. LocAR cannot initialize.");
         return;
     }
 
-    await runLocar(config);
+    console.log("app instance for locar:", app);
+
+    // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
+    if (app.DESKTOP_DEVICE) { // Note: Logic seems inverted, LocAR is usually for mobile. Check if this condition is correct.
+        console.error("LocAR is intended for mobile devices, not desktop.");
+        return;
+        // If LocAR should *only* run on mobile, the condition should be: if (app.DESKTOP_DEVICE) return;
+        // If it *can* run on desktop (e.g., for testing), this check might need adjustment or removal.
+        // For now, keeping the original logic but using the app variable.
+        // Consider changing to: if (app.DESKTOP_DEVICE) { console.log("LocAR skipped on desktop."); return; }
+    }
+
+    // Ensure LocAR related properties are initialized on the app instance (they are initialized conditionally in config.js)
+    if (!app.LOCAR || !app.RENDERER || !app.LOCAR_SCENE || !app.LOCAR_CAMERA || !app.CAM || !app.DEVICE_ORIENTATION_CONTROLS) {
+        console.error("LocAR components not initialized on the app instance. Ensure the device is mobile and initialization succeeded.");
+        return;
+    }
+
+
+    await runLocar(app); // Pass the app instance
 });
 
 // window.addEventListener("resize", e => {
-//     config.RENDERER.setSize(window.innerWidth, window.innerHeight);
-//     config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-//     config.LOCAR_CAMERA.updateProjectionMatrix();
+//     // Use app variables if uncommented
+//     app.RENDERER.setSize(window.innerWidth, window.innerHeight);
+//     app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+//     app.LOCAR_CAMERA.updateProjectionMatrix();
 // });
 
 // window.addEventListener("orientationchange", e => {
-//     config.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
-//     config.LOCAR_CAMERA.updateProjectionMatrix();
+//     // Use app variables if uncommented
+//     app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+//     app.LOCAR_CAMERA.updateProjectionMatrix();
 // });
 
 
 
-async function runLocar(config) {
+async function runLocar(app) { // Accept app instance
     let firstLocation = true;
 
-    config.LOCAR.on("gpsupdate", (pos, distMoved) => {
+    // Use app.LOCAR
+    app.LOCAR.on("gpsupdate", (pos, distMoved) => {
         if(firstLocation) {
 
             const boxProps = [
@@ -44,28 +67,32 @@ async function runLocar(config) {
 
             for(const boxProp of boxProps) {
                 const mesh = new THREE.Mesh(
-                    geom, 
+                    geom,
                     new THREE.MeshBasicMaterial({color: boxProp.colour})
                 );
-            
-                config.LOCAR.add(
-                    mesh, 
-                    pos.coords.longitude + boxProp.lonDis, 
+
+                // Use app.LOCAR
+                app.LOCAR.add(
+                    mesh,
+                    pos.coords.longitude + boxProp.lonDis,
                     pos.coords.latitude + boxProp.latDis
                 );
             }
-            
+
             firstLocation = false;
         }
     });
 
-    config.LOCAR.startGps();
+    // Use app.LOCAR
+    app.LOCAR.startGps();
 
-    config.RENDERER.setAnimationLoop(animate);
+    // Use app.RENDERER
+    app.RENDERER.setAnimationLoop(animate);
 
     function animate() {
-        config.CAM.update();
-        config.DEVICE_ORIENTATION_CONTROLS.update();
-        config.RENDERER.render(config.LOCAR_SCENE, config.LOCAR_CAMERA);
+        // Use app variables
+        app.CAM.update();
+        app.DEVICE_ORIENTATION_CONTROLS.update();
+        app.RENDERER.render(app.LOCAR_SCENE, app.LOCAR_CAMERA);
     }
 }

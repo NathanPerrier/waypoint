@@ -2,55 +2,50 @@ import Device from './plugins/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
 import PopupComponent from 'framework7/components/popup';
 
-// if essential vars like user_location, map_session_token, device, renderer, locar, cam --> throw alert
 
-const config = {
-    COUNTRY: 'au',
-    LANGUAGE: 'en',
-    TRANSPORTATION_MODE: "walking",
-    USER_LOCATION: null,
+//! Config initialization logic moved to use f7 app instance
 
-    // Mapbox config
-    MAP_LOCATION_BOUNDS: new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]), // st lucia campus
-    MAP_LOCATION_CENTER: [153.013306, -27.497503], // great court
-    MAP_COUNTRY_RESTRICTIONS: 'au',
-    MAP_STYLE: '',
-    MAP_STYLE_3D: '',
-    MAP_SESSION_TOKEN: new SessionToken(),
-    MAPBOX_ACCESS_TOKEN: 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ',
+// Default values (can be overridden during initialization)
+const defaultUserLocation = [153.013306, -27.497503]; // great court
 
-    // Device and THREE.js placeholders
-    DEVICE: null,
-    WEBCAM_ENABLED: false,
-    DESKTOP_DEVICE: false,
-    LOCAR_CAMERA: null,
-    RENDERER: null,
-    LOCAR_CONTAINER: null,
-    LOCAR_SCENE: null,
-    LOCAR: null,
-    DEVICE_ORIENTATION_CONTROLS: null,
-    CAM: null,
-};
+const initializeConfig = async (app) => {
+    // Set default values on the app instance first
+    app.COUNTRY = 'au';
+    app.LANGUAGE = 'en';
+    app.TRANSPORTATION_MODE = "walking";
+    app.USER_LOCATION = null; // Will be determined or defaulted
+    app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
+    app.MAP_LOCATION_CENTER = defaultUserLocation;
+    app.MAP_COUNTRY_RESTRICTIONS = 'au';
+    app.MAP_STYLE = '';
+    app.MAP_STYLE_3D = '';
+    app.MAP_SESSION_TOKEN = new SessionToken();
+    app.MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
+    app.DEVICE = null;
+    app.WEBCAM_ENABLED = false;
+    app.DESKTOP_DEVICE = false;
+    app.LOCAR_CAMERA = null;
+    app.RENDERER = null;
+    app.LOCAR_CONTAINER = null;
+    app.LOCAR_SCENE = null;
+    app.LOCAR = null;
+    app.DEVICE_ORIENTATION_CONTROLS = null;
+    app.CAM = null;
 
-let initialized = false;
-
-const initializeConfig = async () => {
-    if (initialized) return config;
-
-    // Show Framework7 preloader
-    if (window.app && window.app.preloader) {
-        window.app.preloader.show();
+    // Show Framework7 preloader if available
+    if (app.preloader) {
+        app.preloader.show();
     }
 
     try {
         // Parallelize geolocation and device detection
         const [userLocation, device] = await Promise.all([
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => { // Removed reject as we always resolve with a location
                 navigator.geolocation.getCurrentPosition(
                     (position) => resolve([position.coords.longitude, position.coords.latitude]),
                     (error) => {
                         console.error("Failed to get user location:", error);
-                        resolve(config.MAP_LOCATION_CENTER); // Default to center
+                        resolve(app.MAP_LOCATION_CENTER); // Default to center defined on app
                     }
                 );
             }),
@@ -61,10 +56,12 @@ const initializeConfig = async () => {
                     return { deviceInstance, webcamEnabled };
                 } catch (error) {
                     console.error("Device initialization failed:", error);
+                    // Provide a default mock device object if detection fails
                     return {
                         deviceInstance: {
                             detectWebcam: () => false,
-                            isDesktop: () => true,
+                            isDesktop: () => true, // Assume desktop if detection fails
+                            isTablet: () => false,
                         },
                         webcamEnabled: false,
                     };
@@ -72,70 +69,60 @@ const initializeConfig = async () => {
             })(),
         ]);
 
-        config.USER_LOCATION = userLocation;
-        config.DEVICE = device.deviceInstance;
-        config.WEBCAM_ENABLED = device.webcamEnabled;
-        config.DESKTOP_DEVICE = device.deviceInstance.isDesktop() || device.deviceInstance.isTablet();
+        // Set values on the app instance
+        app.USER_LOCATION = userLocation;
+        app.DEVICE = device.deviceInstance;
+        app.WEBCAM_ENABLED = device.webcamEnabled;
+        app.DESKTOP_DEVICE = app.DEVICE.isDesktop() || app.DEVICE.isTablet();
 
-        console.log("User Location:", config.USER_LOCATION);
-        console.log("Device Info:", config.DEVICE);
-        console.log("Webcam Enabled:", config.WEBCAM_ENABLED);
-        console.log("Is Desktop Device:", config.DESKTOP_DEVICE);
-        console.log("Is Mobile Device:", !config.DESKTOP_DEVICE);
+        console.log("User Location:", app.USER_LOCATION);
+        console.log("Device Info:", app.DEVICE);
+        console.log("Webcam Enabled:", app.WEBCAM_ENABLED);
+        console.log("Is Desktop Device:", app.DESKTOP_DEVICE);
+        console.log("Is Mobile Device:", !app.DESKTOP_DEVICE);
 
         // Conditionally load libraries for mobile
-        if (!config.DESKTOP_DEVICE) {
+        if (!app.DESKTOP_DEVICE) {
             const [THREE, LocAR] = await Promise.all([
                 import('three'),
                 import('locar'),
             ]);
 
-            // Initialize THREE.js components
-            config.RENDERER = new THREE.WebGLRenderer();
-            config.LOCAR_SCENE = new THREE.Scene();
-            config.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
+            // Initialize THREE.js components and assign to app instance
+            app.RENDERER = new THREE.WebGLRenderer();
+            app.LOCAR_SCENE = new THREE.Scene();
+            app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
 
-            config.RENDERER.setSize(window.innerWidth, window.innerHeight);
+            app.RENDERER.setSize(window.innerWidth, window.innerHeight);
 
             // Attach RENDERER to DOM
             const locarElement = document.getElementById("locarjs");
             if (locarElement) {
-                config.LOCAR_CONTAINER = locarElement.appendChild(config.RENDERER.domElement);
+                app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
             } else {
                 console.error('Element with ID "locarjs" not found.');
             }
 
-            // Initialize LOCAR
-            config.LOCAR = new LocAR.LocationBased(config.LOCAR_SCENE, config.LOCAR_CAMERA);
-            config.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(config.LOCAR_CAMERA);
-            config.CAM = new LocAR.WebcamRenderer(config.RENDERER);
+            // Initialize LOCAR and assign to app instance
+            app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);
+            app.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(app.LOCAR_CAMERA);
+            app.CAM = new LocAR.WebcamRenderer(app.RENDERER);
         }
 
-        initialized = true;
     } catch (error) {
-        console.error("Error initializing config:", error);
+        console.error("Error initializing app config:", error);
+        // Optionally set flags or default states on app if initialization fails critically
+        app.initializationError = true;
     } finally {
-        // Hide Framework7 preloader
-        if (window.app && window.app.preloader) {
-            window.app.preloader.hide();
+        // Hide Framework7 preloader if available
+        if (app.preloader) {
+            app.preloader.hide();
         }
     }
 
-    return config;
+    // No need to return anything as we modify the app instance directly
 };
 
-function configErrors(config) {
-    for (configVar in config) {
-        if (configVar == null) {
-            //throw error
-            console.error(configVar)
-        }
-    }
-}
 
-// Initialize config and expose globally
-initializeConfig().then(() => {
-    configErrors(config);
-});
-
-export default {initializeConfig, config};
+// Only export the initialization function
+export { initializeConfig };

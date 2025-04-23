@@ -1,9 +1,7 @@
-import Config from '../../config.js';
-
 document.addEventListener('DOMContentLoaded', async () => {
-    const config = Config.config;
+    const app = window.app;
 
-    mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN;
+    mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
      // Wait for the settings-map element to be added to the DOM
      const waitForElement = (id) => {
@@ -33,9 +31,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     var map = new mapboxgl.Map({
         container: mapContainer, //id element html
         zoom: 16, // starting zoom
-        center: config.MAP_LOCATION_CENTER, // starting position [lng, lat]
+        center: app.MAP_LOCATION_CENTER, // starting position [lng, lat]
         pitch: 60,
-        maxBounds: config.MAP_LOCATION_BOUNDS_LNGLATLIKE, //[[west, south], [east, north]]
+        maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE, //[[west, south], [east, north]]
     });
 
     var geocoder = new MapboxGeocoder({
@@ -43,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         mapboxgl: mapboxgl,
         marker: false,
         zoom: 6,
-        maxBounds: config.MAP_LOCATION_BOUNDS_LNGLATLIKE,
+        maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
 
@@ -93,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentLocationBtn = document.getElementById('startLocationButton');
 
     currentLocationBtn.addEventListener('click', () => {
-        mapClickFn({ lng: config.USER_LOCATION[0], lat: config.USER_LOCATION[1] });
+        mapClickFn({ lng: app.USER_LOCATION[0], lat: app.USER_LOCATION[1] });
     });
 
     //if viewport width changes, resize map

@@ -96,7 +96,6 @@
 </template>
 <script>    
     import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
-    import Config from "../js/config.js";
 
     // on init add data navigation kode data from store and add user's current location (use save coordinates and do mapbox search to get name)
 
@@ -104,7 +103,7 @@
 
     export default async (props, { $, $on, $f7 }) => {
 
-        const config = await Config();
+        const app = props.app;
 
         // loading
         // $f7.preloader.show();
@@ -122,7 +121,7 @@
             // make avtive mode buttons the button that has data-value of TRANSPORTATION_MODE
             var modeButtons = document.querySelectorAll('.segmented .button');
             modeButtons.forEach(function(button) {
-                if (button.getAttribute('data-value') === config.TRANSPORTATION_MODE) {
+                if (button.getAttribute('data-value') === app.TRANSPORTATION_MODE) {
                     button.classList.add('button-active');
                 } else {
                     button.classList.remove('button-active');
@@ -139,9 +138,9 @@
                     });
                     button.classList.add('button-active');
                     var mode = button.getAttribute('data-value');
-                    config.TRANSPORTATION_MODE = mode;
+                    app.TRANSPORTATION_MODE = mode;
                     console.log('Mode changed to: ' + mode);
-                    console.log('Config TRANSPORTATION_MODE changed to: ' + config.TRANSPORTATION_MODE);
+                    console.log('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
                 });            
             });
 

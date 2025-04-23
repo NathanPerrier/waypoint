@@ -16,8 +16,8 @@ import routes from './routes.js';
 // Import main app component
 import App from '../app.f7';
 
-// Import Config
-import config from './config.js';
+// Import Config Initializer
+import { initializeConfig } from './config.js'; // Import only the initializer function
 
 (async () => {
     // Initialize Framework7 app
@@ -38,6 +38,6 @@ import config from './config.js';
     // Expose app globally
     window.app = app;
 
-    // Initialize config
-    await config.initializeConfig();
+    // Initialize config by passing the app instance
+    await initializeConfig(app);
 })();

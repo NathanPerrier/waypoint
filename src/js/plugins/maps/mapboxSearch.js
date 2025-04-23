@@ -1,22 +1,21 @@
 import { SearchBoxCore } from '@mapbox/search-js-core';
-import Config from '../../config.js';
 
 
 export async function autocompleteSearch(searchInput, searchResults, startLocation) {
-    const config = Config.config;
+    const app = window.app;
 
     if (!startLocation) {
-        startLocation = config.USER_LOCATION;
+        startLocation = app.USER_LOCATION;
     }
 
-    if (searchInput.value.length < config.MIN_SEARCH_LENGTH) {
+    if (searchInput.value.length < app.MIN_SEARCH_LENGTH) {
         searchResults.innerHTML = '';
         return;
     }
 
-    const search = new SearchBoxCore({ accessToken: config.MAPBOX_ACCESS_TOKEN, bbox: config.MAP_LOCATION_BOUNDS, countries: config.SEARCH_COUNTRY_RESTRICTIONS, types: config.SEARCH_TYPES, limit: config.SEARCH_RESULT_LIMIT, language: config.LANGUAGE, navigation_profile: config.TRANSPORTATION_MODE, proximity: config.USER_LOCATION, origin: startLocation }); 
+    const search = new SearchBoxCore({ accessToken: app.MAPBOX_ACCESS_TOKEN, bbox: app.MAP_LOCATION_BOUNDS, countries: app.SEARCH_COUNTRY_RESTRICTIONS, types: app.SEARCH_TYPES, limit: app.SEARCH_RESULT_LIMIT, language: app.LANGUAGE, navigation_profile: app.TRANSPORTATION_MODE, proximity: app.USER_LOCATION, origin: startLocation }); 
 
-    let mapSessionToken = config.MAP_SESSION_TOKEN;
+    let mapSessionToken = app.MAP_SESSION_TOKEN;
     console.log(mapSessionToken);
 
     const result = await search.suggest(searchInput.value, { sessionToken : mapSessionToken });
