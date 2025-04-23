@@ -32,7 +32,7 @@ const createRouteGuard = (checks, redirectPath) => {
         // Correctly create and open the dialog
         app.dialog.create({
           title: "Feature(s) Unavailable", // Use a generic title or pass check name
-          text: 'Required configuration (e.g., location, camera or device) not available. Features may be limited, changed or unavailable.',
+          text: app.MOBILE_DEVICE+' '+app.DESKTOP_DEVICE+' Required configuration (e.g., location, camera or device) not available. Features may be limited, changed or unavailable.',
           buttons: [
             {
               text: 'OK',
@@ -65,11 +65,12 @@ var routes = [
     keepAlive: true,
     beforeEnter: createRouteGuard(
       [
-        // Check 1: User location must be available
+
+        //! add all required config variables here for /route/ 
+
         (app) => !!app.USER_LOCATION,
-        // Check 2: LocAR must be initialized (implies mobile device and successful init)
         (app) => !!app.LOCAR,
-        // Add more checks here if needed
+      
       ],
       '/routeDesktop/' // Redirect here if any check fails
     ),
