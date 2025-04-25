@@ -15,13 +15,19 @@ const initializeConfig = (app) => {
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.TRANSPORTATION_MODE = "walking";
-        app.USER_LOCATION = null; // Will be determined or defaulted
+        app.START_LOCATION = null; 
+        app.DESTINATION_LOCATION = null;
+        app.DESTINATION_LOCATION_COORDINATES = null;
+        app.DESTINATION_LOCATION_DATA = null;
+        app.USER_LOCATION = null; 
         app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
+        app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
-        app.MAP_STYLE = '';
-        app.MAP_STYLE_3D = '';
+        app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v10';
+        app.MAP_STYLE_3D = 'mapbox://styles/mapbox/standard';
         app.MAP_SESSION_TOKEN = new SessionToken();
+        app.MIN_SEARCH_LENGTH = 3; 
         app.MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
         app.DEVICE = null;
         app.WEBCAM_ENABLED = false;
@@ -74,6 +80,7 @@ const initializeConfig = (app) => {
 
             // Set values on the app instance
             app.USER_LOCATION = userLocation;
+            app.START_LOCATION = { lng: userLocation[0], lat: userLocation[1] };
             app.DEVICE = device.deviceInstance;
             app.WEBCAM_ENABLED = device.webcamEnabled;
             app.DESKTOP_DEVICE = app.DEVICE.device.desktop;
@@ -92,11 +99,13 @@ const initializeConfig = (app) => {
                 app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
 
                 app.RENDERER.setSize(window.innerWidth, window.innerHeight);
+                app.RENDERER.setPixelRatio(window.devicePixelRatio); // Add this line
 
                 // Initialize LOCAR and assign to app instance
                 app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);
                 app.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(app.LOCAR_CAMERA);
                 app.CAM = new LocAR.WebcamRenderer(app.RENDERER);
+                
             } else {
                 app.AR = false; // Disable AR mode for desktop
             }

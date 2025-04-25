@@ -20,8 +20,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return; // Stop execution if config fails
     }
     
+    // console.log("app instance for locar:", app, app.LOCAR_CONTAINER);
 
-    console.log("app instance for locar:", app, app.LOCAR_CONTAINER);
+    if (!app.AR) {
+        console.warn("AR is not enabled. LocAR cannot initialize. Desktop device:", app.DESKTOP_DEVICE);
+        return; // Stop execution if AR is not enabled
+    }
 
     // Use app.DESKTOP_DEVICE instead of config.DESKTOP_DEVICE
     // Uncomment this check to help debug initialization issues

@@ -15,39 +15,29 @@
 
                     <!-- Tabs, tabs wrapper -->
                     <div class="tabs">
-                    <!-- Tab 1, active by default -->
-                    <div id="tab1" class="tab tab-active">
-                        <div id="search-results-list">
+                        <!-- Tab 1, active by default -->
+                        <div id="tab1" class="tab tab-active">
+                            <div id="search-results-list">
 
-                        </div>
-                        <div class="nav">
-                            <div class="row h-100">
-                                <div class="col-11">
-                                    <div class="row h-100">
-                                        <div class="col-9 p-0">    
-                                            <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
-                                        </div>
-                                        <div class="col-3">
-                                            <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active">Search</a>
-                                        </div> 
-                                    </div>  
-                                </div>
-                                <div class="col-1 ml-2">
-                                    <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                            </div>
+                            <div class="nav">
+                                <div class="row h-100">
+                                    <div class="col-10">
+                                        <div class="row h-100">
+                                            <div class="col-9 p-0">    
+                                                <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
+                                            </div>
+                                            <div class="col-3">
+                                                <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active">Search</a>
+                                            </div> 
+                                        </div>  
+                                    </div>
+                                    <div class="col-2 ml-2">
+                                        <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                
-                    <!-- Tab 2 -->
-                    <div id="tab2" class="tab">
-                        ... Tab 2 content ...
-                    </div>
-                
-                    <!-- Tab 3 -->
-                    <div id="tab3" class="tab">
-                        ... Tab 3 content ...
-                    </div>
                     </div>
                 </div>
                 
@@ -55,7 +45,7 @@
 
             <div class="actions-modal settings-actions bg-white" id="settings-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
-                    <h1 class="text-align-center mb-3">Settings</h1>
+                    <h1 class="text-align-center mb-2">Settings</h1>
                     <ul>
                         <!-- add units form input metric/imerial-->
                         <li>
@@ -66,21 +56,6 @@
                             </p>
                         </li>
                         <li>
-                            <div class="item-content item-input">
-                                <div class="item-inner">
-                                    <div class="item-title item-label">Start Location</div>
-                                    <div class="item-input-wrap">
-                                        <div class="row h-100">
-                                            <div class="col-9">
-                                                <input type="text" id="startLocation" name="startLocation" class="m-auto" placeholder="Start Location" />
-                                            </div>
-                                            <div class="col-3">
-                                                <a id="startLocationButton" class="button button-fill m-auto">Use Current Location</a>
-                                            </div>  
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div id="settings-map"></div>
                         </li>
                       
@@ -90,36 +65,94 @@
             </div>
         </div>
     </div>
-
-        <!--  -->
+   
    
 </template>
 <script>    
-    import {autocompleteSearch, validSearch} from "../js/plugins/maps/mapboxSearch.js";
+    import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
 
-    // on init add data navigation kode data from store and add user's current location (use save coordinates and do mapbox search to get name)
 
-    // on modal close change submit data to store
+    function isWithinBounds(location) {
+        const isUserInBbx = app.MAPBOXGL_LOCATION_BOUNDS.contains(location);
+        return isUserInBbx;
+    }
 
+    window.handleRouteSuggestionClick = (name, placeFormatted, coordinatesString, fullAddress, featureType, mapboxId, distance) => {
+        const app = window.app;
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results-list');
+    
+        const coordinates = coordinatesString.split(',').map(coord => coord.trim());
+        const coordinatesLNGLAT = {
+            lng: parseFloat(coordinates[0]), 
+            lat: parseFloat(coordinates[1])  
+        };
+    
+        console.log("Suggestion clicked:", { name, placeFormatted, coordinates, coordinatesLNGLAT, fullAddress, featureType, mapboxId, distance });
+    
+        // Store the selected destination data
+        app.DESTINATION_LOCATION = name;
+        app.DESTINATION_LOCATION_DATA = {
+            name: name,
+            placeFormatted: placeFormatted,
+            coordinates: coordinatesLNGLAT,
+            fullAddress: fullAddress,
+            featureType: featureType,
+            mapboxId: mapboxId,
+            distance: distance 
+        };
+        app.DESTINATION_LOCATION_COORDINATES = coordinatesLNGLAT; 
+    
+        // Update the search input visually
+        searchInput.value = name;
+    
+        // Clear the search results
+        searchResults.innerHTML = '';
+    
+        // Optionally, trigger the search button's logic directly or enable it
+        // For now, let's just store the data. The user will click "Search".
+    };
+    
+   
     export default async (props, { $, $on, $f7 }) => {
 
         const app = window.app;
 
-        // loading
-        // $f7.preloader.show();
 
-        $on('pageInit', () => {
-            const locarElement = document.getElementById("locarjs");
-            app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
+        $on('pageInit', async () => {
+
+            // ... existing pageInit code ...
+            if (app.AR) {
+                const locarElement = document.getElementById("locarjs");
+                // Check if renderer exists before appending
+                 if (app.RENDERER && app.RENDERER.domElement) {
+                    // Ensure locarElement is clean before appending
+                    locarElement.innerHTML = ''; 
+                    app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
+                 } else {
+                    app.dialog.create({
+                        title: 'AR renderer error',
+                        text: 'AR renderer is not available. Please check your settings and try again.',
+                        buttons: [
+                          {
+                            text: 'OK',
+                            onClick: function () {
+                              router.navigate('/');
+                            },
+                          },
+                        ],
+                    }).open();
+                }
+            };
+
 
             var searchInput = document.getElementById('search-input');
-            var startLocation = document.getElementById('startLocation').value;
             var searchResults = document.getElementById('search-results-list');
 
             searchInput.addEventListener('input', async function() {
-                autocompleteSearch(searchInput, searchResults, startLocation);
+                autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
             });
-
+            
             // make avtive mode buttons the button that has data-value of TRANSPORTATION_MODE
             var modeButtons = document.querySelectorAll('.segmented .button');
             modeButtons.forEach(function(button) {
@@ -129,7 +162,6 @@
                     button.classList.remove('button-active');
                 }
             });
-    
 
 
             // add event listener to each mode button to change the TRANSPORTATION_MODE variable
@@ -141,8 +173,7 @@
                     button.classList.add('button-active');
                     var mode = button.getAttribute('data-value');
                     app.TRANSPORTATION_MODE = mode;
-                    console.log('Mode changed to: ' + mode);
-                    console.log('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
+                    console.warn('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
                 });            
             });
 
@@ -150,59 +181,67 @@
 
             searchButton.addEventListener('click', async function() {
                 var searchValue = document.getElementById('search-input').value;
-                var navigationMode = document.getElementById('settings-picker-input').value;
-                var startLocation = document.getElementById('startLocation').value;
+                var navigationMode = app.TRANSPORTATION_MODE;
                 
                 if (searchValue === '') {
                     $f7.dialog.alert('Please enter a search value');
                     return;
-                }
+                }             
 
                 if (navigationMode === '' || navigationMode === null) {
                     $f7.dialog.alert('Please select a navigation mode');
                     return;
                 }
 
-                if (startLocation === '') {
-                    $f7.dialog.alert('Please enter a start location');
+                if (!app.START_LOCATION || typeof app.START_LOCATION.lng !== 'number' || typeof app.START_LOCATION.lat !== 'number') {
+                    $f7.dialog.alert('Valid start location is missing. Please set it in settings.');
                     return;
                 }
 
-                var searchResults = await validSearch(searchValue);
+                // --- Check start location bounds immediately ---
+                 if (!isWithinBounds(app.START_LOCATION)) {
+                    $f7.dialog.alert('Your current start location is outside the allowed map area. Please adjust it in settings.');
+                    console.warn('Start location out of bounds:', app.START_LOCATION, 'Bounds:', app.MAP_LOCATION_BOUNDS);
+                    return;
+                 }
 
-                if (searchResults === null) {
-                    $f7.dialog.alert('No results found');
+                if (searchValue === null || searchValue === undefined) {
+                    $f7.dialog.alert('No valid destination found for the search term.');
                     return;
                 }
 
-                if (!searchResults[0]) {
-                    $f7.dialog.alert('No results found');
+                const destinationInBounds = isWithinBounds(app.DESTINATION_LOCATION_COORDINATES);
+
+                if (!destinationInBounds) {
+                    $f7.dialog.alert('The selected destination is outside the allowed map area.');
+                    console.warn('Destination location out of bounds:', app.DESTINATION_LOCATION_COORDINATES, 'Bounds:', app.MAP_LOCATION_BOUNDS);
                     return;
                 }
+   
+                app.DESTINATION_LOCATION_DATA.startLocation = app.START_LOCATION;
 
-                var searchResult = searchResults[1];
-                console.log(searchResult);
-                var searchResultName = searchResult.name;
-                var searchResultAddress = searchResult.full_address;
-                var searchResultPlaceFormatted = searchResult.place_formatted;
-                var searchResultType = searchResult.feature_type;
-                var searchResultMapboxId = searchResult.mapbox_id;
-
-                var searchResultData = {
-                    name: searchResultName,
-                    address: searchResultAddress,
-                    type: searchResultType,
-                    placeFormatted: searchResultPlaceFormatted,
-                    mapboxId: searchResultMapboxId,
-                    navigationMode: navigationMode,
-                    startLocation: startLocation
-                };
-
-                $f7.dialog.confirm(`Navigate to ${searchResultName}?`, 'Waypoint', () => {
-                    $f7.dialog.alert('Navigating to ' + searchResultName);
+                $f7.dialog.confirm(`Navigate to ${app.DESTINATION_LOCATION}?`, 'Waypoint', () => {
+                    $f7.dialog.alert('Navigating to ' + app.DESTINATION_LOCATION + '...');
+                    // Add actual navigation logic here, potentially using searchResultData
+                    console.log("Navigation confirmed:", app.DESTINATION_LOCATION_DATA);
+                    // Example: $f7.views.main.router.navigate('/navigation-page/', { props: { routeData: searchResultData } });
                 });
 
             });
+        });
+
+        $on('pageBeforeRemove', () => {
+            // Clean up map instance and listeners if the page is removed
+             const settingsModal = $f7.actions.get('.settings-actions');
+             if (settingsModal) {
+                 settingsModal.off('actionsOpened');
+                 settingsModal.off('actionsClose');
+                 settingsModal.off('actionsClosed');
+             }
+             const mapContainer = document.getElementById('settings-map');
+             if (minimapInstance && mapContainer) {
+                 mapContainer.innerHTML = ''; 
+             }
         });
     
         return $render;

@@ -13,6 +13,7 @@
     margin: 0rem 1rem 2rem 1rem;
     border-radius: 2rem;
     width: calc(100% - 2rem);
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
 }
 
 #navbar .tab-link:first-child {
@@ -61,8 +62,7 @@
 }
 
 #settings-actions {
-    margin: 1rem 0 0 1rem;
-    width: calc(100vw - 2rem);
+    width: 100vw;
     left: 0;
     bottom: 0;
 }
@@ -78,6 +78,7 @@
     justify-content: center;
     align-items: center;
     display: flex;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
 }
 
 
@@ -102,10 +103,10 @@
 #settings-map {
     height: 20vh !important;
     width: 100%;
-    margin: 1rem 0rem 0rem 1rem;
+    margin: 1rem;
     width: calc(100% - 2rem) !important;
-    top: -1.5rem;
-    border-radius: 0rem 0rem 2rem 2rem;
+    border-radius: 2rem;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
 }
 
 .mapboxgl-ctrl-top-right {
@@ -126,8 +127,8 @@
     }
 
     #settings-actions {
-        margin: 4rem 0 0 4rem;
-        width: calc(100vw - 8rem);
+        margin: 0rem;
+        width: 100vw;
     }
 
     #settings-map {

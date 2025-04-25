@@ -25,7 +25,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const mapContainer = await waitForElement('settings-map');
-    console.log('settings-map element found:', mapContainer);
+    if (!mapContainer) {
+        console.error("Map container not found. Cannot initialize map.");
+        return;
+    }
 
 
     var map = new mapboxgl.Map({
@@ -50,8 +53,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     let marker = null
+
+    // Set initial marker to user's location
+    marker = new mapboxgl.Marker({
+        color: "#762CEF",
+        draggable: true
+    })
+    .setLngLat(app.START_LOCATION)
+    .addTo(map);
+
+
     map.on('click', function (e) {
-        mapClickFn(e.lngLat);
+        app.START_LOCATION = {lng: e.lngLat.lng, lat: e.lngLat.lat};
+        console.log('Updated startLocation input value:', app.START_LOCATION);
 
         if (marker == null) {
             marker = new mapboxgl.Marker(
@@ -65,36 +79,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             marker.setLngLat(e.lngLat)
         }
+
+    //     // Optional: If you still want to display the address somewhere,
+    //     // you could call mapClickFn here, but update a *different* element,
+    //     // not the hidden startLocation input.
+    //     // mapClickFn(coords); 
     });
 
-
-
-    function mapClickFn(coordinates) {
-        const url =
-            "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-            coordinates.lng +
-            "," +
-            coordinates.lat +
-            ".json?access_token=" +
-            mapboxgl.accessToken
-
-        fetch(url).then(res => res.json()).then((data) => {
-            if (data.features.length > 0) {
-                const address = data.features[0].place_name;
-                document.getElementById("startLocation").value = address;
-            } else {
-                document.getElementById("startLocation").value = "No address found";
-            }
-        });
-    }
-
-    let currentLocationBtn = document.getElementById('startLocationButton');
-
-    currentLocationBtn.addEventListener('click', () => {
-        mapClickFn({ lng: app.USER_LOCATION[0], lat: app.USER_LOCATION[1] });
-    });
-
-    //if viewport width changes, resize map
     window.addEventListener('resize', function () {
         map.resize();
     });

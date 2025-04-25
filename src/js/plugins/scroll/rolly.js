@@ -1,8 +1,13 @@
 import rolly from 'rolly.js';
 
-const r = rolly({
-  view: document.querySelector('.app'),
-  native: true,
-  // other options
-});
-r.init();
+const appElement = document.querySelector('.app');
+if (appElement) {
+  const r = rolly({
+    view: appElement,
+    native: true,
+    // other options
+  });
+  r.init();
+} else {
+  console.error("Element with class '.app' not found. Rolly initialization skipped.");
+}

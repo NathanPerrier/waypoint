@@ -6,7 +6,7 @@ class Device {
         if (this.device == null) {
             this.device = window.app.device;
         }
-        console.log('Device:', this.device);
+        console.table(this.device);
     }
 
     getDeviceInfo() {
