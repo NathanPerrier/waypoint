@@ -5,17 +5,12 @@
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
-            <div id="locarjs no-safe-areas">
+            <div id="locarjs">
                 
             </div>
             <div id="route-input">
-                
-                <!-- Tabs animated wrapper, required to switch tabs with transition -->
                 <div class="tabs-animated-wrap">
-
-                    <!-- Tabs, tabs wrapper -->
                     <div class="tabs">
-                        <!-- Tab 1, active by default -->
                         <div id="tab1" class="tab tab-active">
                             <div id="search-results-list">
 
@@ -28,7 +23,7 @@
                                                 <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
                                             </div>
                                             <div class="col-3">
-                                                <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active">Search</a>
+                                                <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
                                             </div> 
                                         </div>  
                                     </div>
@@ -47,7 +42,6 @@
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
                     <h1 class="text-align-center mb-2">Settings</h1>
                     <ul>
-                        <!-- add units form input metric/imerial-->
                         <li>
                             <p class="segmented segmented-raised segmented-round mx-5">
                                 <a class="button button-round" data-value="walking">Walking</a>
@@ -138,12 +132,11 @@
                     return;
                 }
 
-                // --- Check start location bounds immediately ---
-                 if (!isWithinBounds(app.START_LOCATION)) {
+                if (!isWithinBounds(app.START_LOCATION)) {
                     $f7.dialog.alert('Your current start location is outside the the UQ campus. Please adjust it in settings.');
                     console.warn('Start location out of bounds:', app.START_LOCATION, 'Bounds:', app.MAP_LOCATION_BOUNDS);
                     return;
-                 }
+                }
 
                 if (searchValue === null || searchValue === undefined) {
                     $f7.dialog.alert('No valid destination found for the search term.');

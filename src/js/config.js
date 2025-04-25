@@ -19,6 +19,7 @@ const initializeConfig = (app) => {
         app.DESTINATION_LOCATION = null;
         app.DESTINATION_LOCATION_COORDINATES = null;
         app.DESTINATION_LOCATION_DATA = null;
+        app.NAVIGATION_ROUTE = null;
         app.USER_LOCATION = null; 
         app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus

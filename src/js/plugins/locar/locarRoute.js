@@ -3,7 +3,6 @@ import * as THREE from 'three';
 export function runLocarRoute(app) { // Accept app instance
     let firstLocation = true;
 
-    // Use app.LOCAR
     app.LOCAR.on("gpsupdate", (pos, distMoved) => {
         if(firstLocation) {
 
@@ -22,7 +21,6 @@ export function runLocarRoute(app) { // Accept app instance
                     new THREE.MeshBasicMaterial({color: boxProp.colour})
                 );
 
-                // Use app.LOCAR
                 app.LOCAR.add(
                     mesh,
                     pos.coords.longitude + boxProp.lonDis,
@@ -34,14 +32,11 @@ export function runLocarRoute(app) { // Accept app instance
         }
     });
 
-    // Use app.LOCAR
     app.LOCAR.startGps();
 
-    // Use app.RENDERER
     app.RENDERER.setAnimationLoop(animate);
 
     function animate() {
-        // Use app variables
         app.CAM.update();
         app.DEVICE_ORIENTATION_CONTROLS.update();
         app.RENDERER.render(app.LOCAR_SCENE, app.LOCAR_CAMERA);

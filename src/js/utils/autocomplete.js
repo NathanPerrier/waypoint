@@ -11,7 +11,6 @@ window.handleRouteSuggestionClick = (name, placeFormatted, coordinatesString, fu
 
     console.log("Suggestion clicked:", { name, placeFormatted, coordinates, coordinatesLNGLAT, fullAddress, featureType, mapboxId, distance });
 
-    // Store the selected destination data
     app.DESTINATION_LOCATION = name;
     app.DESTINATION_LOCATION_DATA = {
         name: name,
@@ -24,10 +23,8 @@ window.handleRouteSuggestionClick = (name, placeFormatted, coordinatesString, fu
     };
     app.DESTINATION_LOCATION_COORDINATES = coordinatesLNGLAT; 
 
-    // Update the search input visually
     searchInput.value = name;
 
-    // Clear the search results
     searchResults.innerHTML = '';
 
 };

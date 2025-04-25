@@ -18,7 +18,6 @@
     "last 5 Firefox versions"
   ],
   "dependencies": {
-    "@googlemaps/three": "^4.0.13",
     "@mapbox/search-js-core": "^1.0.0",
     "@mapbox/search-js-web": "^1.0.0",
     "dom7": "^4.0.6",
