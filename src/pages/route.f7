@@ -70,50 +70,14 @@
 </template>
 <script>    
     import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
+    import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
 
 
     function isWithinBounds(location) {
         const isUserInBbx = app.MAPBOXGL_LOCATION_BOUNDS.contains(location);
         return isUserInBbx;
     }
-
-    window.handleRouteSuggestionClick = (name, placeFormatted, coordinatesString, fullAddress, featureType, mapboxId, distance) => {
-        const app = window.app;
-        const searchInput = document.getElementById('search-input');
-        const searchResults = document.getElementById('search-results-list');
-    
-        const coordinates = coordinatesString.split(',').map(coord => coord.trim());
-        const coordinatesLNGLAT = {
-            lng: parseFloat(coordinates[0]), 
-            lat: parseFloat(coordinates[1])  
-        };
-    
-        console.log("Suggestion clicked:", { name, placeFormatted, coordinates, coordinatesLNGLAT, fullAddress, featureType, mapboxId, distance });
-    
-        // Store the selected destination data
-        app.DESTINATION_LOCATION = name;
-        app.DESTINATION_LOCATION_DATA = {
-            name: name,
-            placeFormatted: placeFormatted,
-            coordinates: coordinatesLNGLAT,
-            fullAddress: fullAddress,
-            featureType: featureType,
-            mapboxId: mapboxId,
-            distance: distance 
-        };
-        app.DESTINATION_LOCATION_COORDINATES = coordinatesLNGLAT; 
-    
-        // Update the search input visually
-        searchInput.value = name;
-    
-        // Clear the search results
-        searchResults.innerHTML = '';
-    
-        // Optionally, trigger the search button's logic directly or enable it
-        // For now, let's just store the data. The user will click "Search".
-    };
-    
-   
+      
     export default async (props, { $, $on, $f7 }) => {
 
         const app = window.app;
@@ -121,31 +85,7 @@
 
         $on('pageInit', async () => {
 
-            // ... existing pageInit code ...
-            if (app.AR) {
-                const locarElement = document.getElementById("locarjs");
-                
-                // Check if renderer exists before appending
-                 if (app.RENDERER && app.RENDERER.domElement) {
-                    // Ensure locarElement is clean before appending
-                    locarElement.innerHTML = ''; 
-                    app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
-                 } else {
-                    app.dialog.create({
-                        title: 'AR renderer error',
-                        text: 'AR renderer is not available. Please check your settings and try again.',
-                        buttons: [
-                          {
-                            text: 'OK',
-                            onClick: function () {
-                              router.navigate('/');
-                            },
-                          },
-                        ],
-                    }).open();
-                }
-            };
-
+            runLocarRoute(app)
 
             var searchInput = document.getElementById('search-input');
             var searchResults = document.getElementById('search-results-list');
@@ -154,7 +94,6 @@
                 autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
             });
             
-            // make avtive mode buttons the button that has data-value of TRANSPORTATION_MODE
             var modeButtons = document.querySelectorAll('.segmented .button');
             modeButtons.forEach(function(button) {
                 if (button.getAttribute('data-value') === app.TRANSPORTATION_MODE) {

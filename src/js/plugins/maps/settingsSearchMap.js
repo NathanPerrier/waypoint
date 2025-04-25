@@ -1,28 +1,9 @@
+import { waitForElement } from "../../utils/dom";
+
 document.addEventListener('DOMContentLoaded', async () => {
     const app = window.app;
 
     mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
-
-     // Wait for the settings-map element to be added to the DOM
-     const waitForElement = (id) => {
-        return new Promise((resolve) => {
-            const element = document.getElementById(id);
-            if (element) {
-                resolve(element);
-                return;
-            }
-
-            const observer = new MutationObserver(() => {
-                const element = document.getElementById(id);
-                if (element) {
-                    resolve(element);
-                    observer.disconnect();
-                }
-            });
-
-            observer.observe(document.body, { childList: true, subtree: true });
-        });
-    };
 
     const mapContainer = await waitForElement('settings-map');
     if (!mapContainer) {
