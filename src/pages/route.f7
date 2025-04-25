@@ -126,20 +126,13 @@
 
             const width = locarElement.clientWidth;
             const height = locarElement.clientHeight;
-            const aspect = width / height;
-            const canvas = app.RENDERER.domElement;
+
 
             if (width > 0 && height > 0) {
-                if (height > width) {
-                    app.RENDERER.setSize(width*(height/width), height);
-                    // canvas.style.left = `-${(width*(height/width))/2*aspect}px`;
-                } else {
-                    app.RENDERER.setSize(width, height);
-                }
+                app.RENDERER.setSize(width, height);
                 app.LOCAR_CAMERA.aspect = width / height;
                 app.LOCAR_CAMERA.updateProjectionMatrix();
                 app.RENDERER.setPixelRatio(window.devicePixelRatio); // Use window.devicePixelRatio
-                console.log(`Canvas resized to: ${width}x${height}, Aspect: ${app.LOCAR_CAMERA.aspect}`);
             } else {
                  console.warn("Locar container has zero dimensions, skipping resize.");
             }

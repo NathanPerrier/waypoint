@@ -11,8 +11,6 @@
 }
 
 
-
-
 #navbar, #route-input {
     margin: 0rem 1rem 2rem 1rem;
     border-radius: 2rem;
@@ -143,10 +141,3 @@
     }
 }
 
-@media screen and (max-width: 768px) {
-    #locarjs canvas {
-        position: absolute !important; 
-        left: -50%;
-    }
-    
-}
