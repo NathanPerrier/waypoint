@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     window.addEventListener("resize", e => {
         app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight  //app.DEVICE.device.pixelRatio;
+        app.LOCAR_CAMERA.aspect = app.DEVICE.device.pixelRatio;
         app.RENDERER.setPixelRatio(app.DEVICE.device.pixelRatio)
         app.LOCAR_CAMERA.updateProjectionMatrix();
     });
     
     window.addEventListener("orientationchange", e => {
         // Use app variables if uncommented
-        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        app.LOCAR_CAMERA.aspect = app.DEVICE.device.pixelRatio;
         app.LOCAR_CAMERA.updateProjectionMatrix();
     });
 
@@ -75,9 +75,6 @@ function runLocar(app) { // Accept app instance
                     geom,
                     new THREE.MeshBasicMaterial({color: boxProp.colour})
                 );
-                console.log("mesh", mesh);
-                console.log("boxProp", boxProp);
-                console.log("locaer", app.LOCAR);
 
                 // Use app.LOCAR
                 app.LOCAR.add(

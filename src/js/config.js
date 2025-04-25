@@ -96,7 +96,7 @@ const initializeConfig = (app) => {
                 // Initialize THREE.js components and assign to app instance
                 app.RENDERER = new THREE.WebGLRenderer({ alpha: true }); // Ensure background can be transparent if needed
                 app.LOCAR_SCENE = new THREE.Scene();
-                app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000); // app.DEVICE.device.pixelRatio
+                app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, app.DEVICE.device.pixelRatio, 0.001, 1000); // app.DEVICE.device.pixelRatio
 
                 app.RENDERER.setSize(window.innerWidth, window.innerHeight);
                 app.RENDERER.setPixelRatio(app.DEVICE.device.pixelRatio); 
