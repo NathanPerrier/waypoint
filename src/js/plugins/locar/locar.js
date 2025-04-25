@@ -75,6 +75,9 @@ function runLocar(app) { // Accept app instance
                     geom,
                     new THREE.MeshBasicMaterial({color: boxProp.colour})
                 );
+                console.log("mesh", mesh);
+                console.log("boxProp", boxProp);
+                console.log("locaer", app.LOCAR);
 
                 // Use app.LOCAR
                 app.LOCAR.add(
