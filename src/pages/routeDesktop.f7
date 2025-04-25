@@ -5,9 +5,7 @@
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
-            <div id="map">
-               
-            </div>
+            <div id="map" class="h-100 w-100"></div>
         </div>
     </div>
 
@@ -16,29 +14,36 @@
 export default async (props, { $, $on, $f7 }) => {
 
     $on('pageInit', async () => {
+        const app = window.app;
+
+        mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
+
         const map = new mapboxgl.Map({
-            container: 'map',
+            container: 'map', //! TODO: change to du=ocument and rename id
             zoom: 11.53,
             center: [6.5615, 46.0598],
             pitch: 65,
             bearing: -180,
             // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-            style: 'mapbox://styles/mapbox/outdoors-v12',
+            style: app.MAP_3D_STYLE, // style URL
             interactive: false
         });
-    
+
         // `routes` comes from https://docs.mapbox.com/mapbox-gl-js/assets/routes.js,
         // which has properties that are in the shape of an array of arrays that correspond
         //  to the `coordinates` property of a GeoJSON linestring, for example:
-        // [
-        //   [6.56158, 46.05989],
-        //   [6.56913, 46.05679],
-        //   ...
-        // ]
+
+        // const routes = {
+        //    target: [
+        //        [6.56158447265625, 46.059891147620725],
+        //        [6.5691375732421875, 46.05679376154153],
+        //    ]
+        // };
+
         // this is the path the camera will look at
         const targetRoute = routes.target;
         // this is the path the camera will move along
-        const cameraRoute = routes.camera;
+        const cameraRoute = routes.target;
     
         // add terrain, sky, and line layers once the style has loaded
         map.on('style.load', () => {
@@ -48,7 +53,7 @@ export default async (props, { $, $on, $f7 }) => {
                 'tileSize': 512,
                 'maxzoom': 14
             });
-            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });  // exaggeration: 1.5
             map.addSource('trace', {
                 type: 'geojson',
                 data: {
@@ -56,7 +61,7 @@ export default async (props, { $, $on, $f7 }) => {
                     'properties': {},
                     'geometry': {
                         'type': 'LineString',
-                        'coordinates': targetRoute
+                        'coordinates': targetRoute // smooth the target route
                     }
                 }
             });
@@ -65,8 +70,8 @@ export default async (props, { $, $on, $f7 }) => {
                 source: 'trace',
                 id: 'line',
                 paint: {
-                    'line-color': 'black',
-                    'line-width': 5
+                    'line-color': app.PRIMARY_COLOR,
+                    'line-width': 16
                 },
                 layout: {
                     'line-cap': 'round',
@@ -77,65 +82,81 @@ export default async (props, { $, $on, $f7 }) => {
     
         // wait for the terrain and sky to load before starting animation
         map.on('load', () => {
-            const animationDuration = 80000;
-            const cameraAltitude = 4000;
-            // get the overall distance of each route so we can interpolate along them
+            const animationDuration = 1000000;
+
+            const relativeCameraAltitude = 200; 
+            
             const routeDistance = turf.lineDistance(turf.lineString(targetRoute));
             const cameraRouteDistance = turf.lineDistance(
                 turf.lineString(cameraRoute)
             );
-    
+
+            // Pre-calculate cumulative distances for segment identification
+            const cumulativeDistances = [0];
+            for (let i = 0; i < cameraRoute.length - 1; i++) {
+                const dist = turf.distance(turf.point(cameraRoute[i]), turf.point(cameraRoute[i+1]));
+                cumulativeDistances.push(cumulativeDistances[i] + dist);
+            }
+
+            // Define how far ahead the camera should look
+            const lookAheadFactor = 0.005; // Adjust this value to control how far ahead the camera looks (as a fraction of total route distance)
+            const lookAheadDistance = routeDistance * lookAheadFactor;
+
             let start;
-    
+
+            // Updated the camera animation logic to ensure smooth transitions between nodes.
             function frame(time) {
                 if (!start) start = time;
-                // phase determines how far through the animation we are
                 const phase = (time - start) / animationDuration;
-    
-                // phase is normalized between 0 and 1
-                // when the animation is finished, reset start to loop the animation
-                if (phase > 1) {
-                    // wait 1.5 seconds before looping
+
+                if (phase >= 1) {
+                    // Reset animation or stop
                     setTimeout(() => {
-                        start = 0.0;
+                        start = 0.0; // Loop the animation
                     }, 1500);
+                    window.requestAnimationFrame(frame);
+                    return;
                 }
-    
-                // use the phase to get a point that is the appropriate distance along the route
-                // this approach syncs the camera and route positions ensuring they move
-                // at roughly equal rates even if they don't contain the same number of points
-                const alongRoute = turf.along(
-                    turf.lineString(targetRoute),
-                    routeDistance * phase
-                ).geometry.coordinates;
-    
-                const alongCamera = turf.along(
+
+                // Calculate current position along the camera path
+                const currentDistance = cameraRouteDistance * phase;
+                const cameraPosition = turf.along(
                     turf.lineString(cameraRoute),
-                    cameraRouteDistance * phase
-                ).geometry.coordinates;
-    
+                    currentDistance
+                );
+                const cameraPositionCoords = cameraPosition.geometry.coordinates;
+
+                // Calculate the look-at position slightly ahead on the target path
+                const lookAtTargetDistance = Math.min(routeDistance, currentDistance + lookAheadDistance); // Ensure look-at doesn't go beyond the route end
+                const lookAtPosition = turf.along(
+                    turf.lineString(targetRoute),
+                    lookAtTargetDistance
+                );
+                const lookAtCoords = lookAtPosition.geometry.coordinates;
+
+                // Calculate terrain elevation at the camera's current position
+                const terrainElevation = map.queryTerrainElevation(cameraPositionCoords) || 0;
+                const finalAltitude = terrainElevation + relativeCameraAltitude;
+
+                // Set camera options
                 const camera = map.getFreeCameraOptions();
-    
-                // set the position and altitude of the camera
                 camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
                     {
-                        lng: alongCamera[0],
-                        lat: alongCamera[1]
+                        lng: cameraPositionCoords[0],
+                        lat: cameraPositionCoords[1]
                     },
-                    cameraAltitude
+                    finalAltitude
                 );
-    
-                // tell the camera to look at a point along the route
                 camera.lookAtPoint({
-                    lng: alongRoute[0],
-                    lat: alongRoute[1]
+                    lng: lookAtCoords[0],
+                    lat: lookAtCoords[1],
                 });
-    
-                map.setFreeCameraOptions(camera);
-    
+
+                map.setFreeCameraOptions(camera); // Removed curve:'linear' as it's not a valid option here
+
                 window.requestAnimationFrame(frame);
             }
-    
+
             window.requestAnimationFrame(frame);
         });
     });

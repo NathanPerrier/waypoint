@@ -12,6 +12,8 @@ const initializeConfig = (app) => {
     // Create a promise that resolves when initialization is done
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
+
+        app.PRIMARY_COLOR = "#782cf6";
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.TRANSPORTATION_MODE = "walking";
