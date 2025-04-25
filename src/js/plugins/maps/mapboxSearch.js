@@ -93,9 +93,8 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
                         </div>
                     </div>
                     <div class="col-3">
-                        <div class="row h-100">
-                            <strong class="align-vertically m-auto">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>
-                            <button class="button button-fill h-100 ml-2 r-2"><i class="fa fa-arrow-right"></i></button>
+                        <div class="row h-100 justify-end align-vertical">
+                            <strong class="bg-primary r-2 p-2 d-flex text-on-primary">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>
                         </div>
                     </div>
                     

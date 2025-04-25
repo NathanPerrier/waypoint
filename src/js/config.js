@@ -24,8 +24,8 @@ const initializeConfig = (app) => {
         app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
-        app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v10';
-        app.MAP_STYLE_3D = 'mapbox://styles/mapbox/standard';
+        app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v11';
+        app.MAP_3D_STYLE = 'mapbox://styles/mapbox/standard';
         app.MAP_SESSION_TOKEN = new SessionToken();
         app.MIN_SEARCH_LENGTH = 3; 
         app.MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
@@ -96,10 +96,8 @@ const initializeConfig = (app) => {
                 // Initialize THREE.js components and assign to app instance
                 app.RENDERER = new THREE.WebGLRenderer({ alpha: true }); // Ensure background can be transparent if needed
                 app.LOCAR_SCENE = new THREE.Scene();
-                app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000);
-
-                app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-                app.RENDERER.setPixelRatio(window.devicePixelRatio); // Add this line
+                // Set initial aspect ratio based on window, it will be corrected later when attached to DOM
+                app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000); 
 
                 // Initialize LOCAR and assign to app instance
                 app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);

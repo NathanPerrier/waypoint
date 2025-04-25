@@ -34,10 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return; // Stop if components are missing
     }
 
+    /* Remove window resize/orientation listeners - handled by ResizeObserver in route.f7 */
+    /*
     window.addEventListener("resize", e => {
-        // Use app variables if uncommented
         app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
+        app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;  //app.DEVICE.device.pixelRatio;
+        app.RENDERER.setPixelRatio(app.DEVICE.device.pixelRatio)
         app.LOCAR_CAMERA.updateProjectionMatrix();
     });
     
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         app.LOCAR_CAMERA.aspect = window.innerWidth / window.innerHeight;
         app.LOCAR_CAMERA.updateProjectionMatrix();
     });
+    */
 
     runLocar(app); // Pass the app instance
 });
@@ -66,7 +69,7 @@ function runLocar(app) { // Accept app instance
                 { latDis: -0.001, lonDis: 0, colour: 0xffff00 },
                 { latDis: 0, lonDis: -0.001, colour: 0x00ffff },
                 { latDis: 0, lonDis: 0.001, colour: 0x00ff00 },
-            ];
+            ]; 
 
             const geom = new THREE.BoxGeometry(20,20,20);
 

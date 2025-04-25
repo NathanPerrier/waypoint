@@ -114,22 +114,68 @@
     };
     
    
-    export default async (props, { $, $on, $f7 }) => {
+    export default async (props, { $, $on, $f7, $el, $f7router }) => { // Added $el and $f7router
 
         const app = window.app;
+        let resizeObserver = null; // Variable to hold the ResizeObserver
+
+        // Function to update canvas size based on container
+        const updateCanvasSize = () => {
+            const locarElement = $el.value.find('#locarjs')[0]; // Get the container element using $el
+            if (!locarElement || !app.RENDERER || !app.LOCAR_CAMERA) return; // Guard clause
+
+            const width = locarElement.clientWidth;
+            const height = locarElement.clientHeight;
+            const aspect = width / height;
+            const canvas = app.RENDERER.domElement;
+
+            if (width > 0 && height > 0) {
+                if (height > width) {
+                    app.RENDERER.setSize(width*(height/width), height);
+                    // canvas.style.left = `-${(width*(height/width))/2*aspect}px`;
+                } else {
+                    app.RENDERER.setSize(width, height);
+                }
+                app.LOCAR_CAMERA.aspect = width / height;
+                app.LOCAR_CAMERA.updateProjectionMatrix();
+                app.RENDERER.setPixelRatio(window.devicePixelRatio); // Use window.devicePixelRatio
+                console.log(`Canvas resized to: ${width}x${height}, Aspect: ${app.LOCAR_CAMERA.aspect}`);
+            } else {
+                 console.warn("Locar container has zero dimensions, skipping resize.");
+            }
+        };
 
 
         $on('pageInit', async () => {
 
             // ... existing pageInit code ...
             if (app.AR) {
-                const locarElement = document.getElementById("locarjs");
+                const locarElement = $el.value.find('#locarjs')[0]; // Use $el to find the element reliably
+
                 // Check if renderer exists before appending
                  if (app.RENDERER && app.RENDERER.domElement) {
                     // Ensure locarElement is clean before appending
-                    locarElement.innerHTML = ''; 
-                    app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
+                    locarElement.innerHTML = '';
+                    locarElement.appendChild(app.RENDERER.domElement); // Append the canvas
+                    app.LOCAR_CONTAINER = locarElement; // Store the container reference
+
+                    // --- Initial Size Update ---
+                    updateCanvasSize(); // Set initial size based on container
+
+                    // --- Observe Container Resizing ---
+                    // Use ResizeObserver for more reliable container dimension changes
+                    resizeObserver = new ResizeObserver(entries => {
+                        // We only observe one element, so entries[0] is fine
+                        if (entries[0].contentRect.width > 0 && entries[0].contentRect.height > 0) {
+                             console.log("ResizeObserver triggered");
+                             updateCanvasSize();
+                        }
+                    });
+                    resizeObserver.observe(locarElement);
+
+
                  } else {
+                    // ... existing error handling ...
                     app.dialog.create({
                         title: 'AR renderer error',
                         text: 'AR renderer is not available. Please check your settings and try again.',
@@ -137,7 +183,7 @@
                           {
                             text: 'OK',
                             onClick: function () {
-                              router.navigate('/');
+                              $f7router.navigate('/'); // Use $f7router
                             },
                           },
                         ],
@@ -200,7 +246,7 @@
 
                 // --- Check start location bounds immediately ---
                  if (!isWithinBounds(app.START_LOCATION)) {
-                    $f7.dialog.alert('Your current start location is outside the allowed map area. Please adjust it in settings.');
+                    $f7.dialog.alert('Your current start location is outside the the UQ campus. Please adjust it in settings.');
                     console.warn('Start location out of bounds:', app.START_LOCATION, 'Bounds:', app.MAP_LOCATION_BOUNDS);
                     return;
                  }
@@ -210,9 +256,7 @@
                     return;
                 }
 
-                const destinationInBounds = isWithinBounds(app.DESTINATION_LOCATION_COORDINATES);
-
-                if (!destinationInBounds) {
+                if (!isWithinBounds(app.DESTINATION_LOCATION_COORDINATES)) {
                     $f7.dialog.alert('The selected destination is outside the allowed map area.');
                     console.warn('Destination location out of bounds:', app.DESTINATION_LOCATION_COORDINATES, 'Bounds:', app.MAP_LOCATION_BOUNDS);
                     return;
@@ -231,7 +275,22 @@
         });
 
         $on('pageBeforeRemove', () => {
-            // Clean up map instance and listeners if the page is removed
+            // --- Cleanup ---
+            if (resizeObserver) {
+                resizeObserver.disconnect(); // Stop observing
+                resizeObserver = null;
+                 console.log("ResizeObserver disconnected");
+            }
+            // Optionally remove the canvas from the DOM if needed elsewhere
+            if (app.LOCAR_CONTAINER && app.RENDERER && app.RENDERER.domElement && app.LOCAR_CONTAINER.contains(app.RENDERER.domElement)) {
+                 // app.LOCAR_CONTAINER.removeChild(app.RENDERER.domElement); // Consider if needed
+                 app.LOCAR_CONTAINER.innerHTML = ''; // Clear container
+                 console.log("LocAR canvas removed from DOM");
+            }
+            app.LOCAR_CONTAINER = null; // Clear reference
+
+
+            // ... existing pageBeforeRemove code ...
              const settingsModal = $f7.actions.get('.settings-actions');
              if (settingsModal) {
                  settingsModal.off('actionsOpened');

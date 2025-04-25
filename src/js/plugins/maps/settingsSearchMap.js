@@ -32,18 +32,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     var map = new mapboxgl.Map({
-        container: mapContainer, //id element html
-        zoom: 16, // starting zoom
-        center: app.MAP_LOCATION_CENTER, // starting position [lng, lat]
-        pitch: 60,
-        maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE, //[[west, south], [east, north]]
+        container: mapContainer, 
+        zoom: 16, 
+        maxZoom: 20,
+        center: app.START_LOCATION,  
+        pitch: 0,
+        maxPitch: 0,
+        minPitch: 0,
+        refreshExpiredTiles: false,
+        style: app.MAP_LIGHT_STYLE,
     });
 
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
         marker: false,
-        zoom: 6,
         maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
@@ -54,7 +57,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let marker = null
 
-    // Set initial marker to user's location
     marker = new mapboxgl.Marker({
         color: "#762CEF",
         draggable: true
@@ -79,11 +81,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             marker.setLngLat(e.lngLat)
         }
-
-    //     // Optional: If you still want to display the address somewhere,
-    //     // you could call mapClickFn here, but update a *different* element,
-    //     // not the hidden startLocation input.
-    //     // mapClickFn(coords); 
     });
 
     window.addEventListener('resize', function () {

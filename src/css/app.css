@@ -4,10 +4,14 @@
 
 #locarjs {
     object-fit: cover !important;
-    overflow-y: visible;
-    height: 100vh !important;
-    width: 100vw !important;
+    flex-grow: 1; /* If the parent is a flex container */
+    height: 100%; /* Or adjust as needed based on parent layout */
+    width: 100%;
+    overflow: hidden !important; /* Ensure canvas doesn't overflow */
 }
+
+
+
 
 #navbar, #route-input {
     margin: 0rem 1rem 2rem 1rem;
@@ -30,6 +34,8 @@
     left: 0;
     z-index: 100;
     background-color: var(--background-color);
+    /* Ensure it doesn't shrink */
+    flex-shrink: 0; 
 }
 
 #route-input .nav {
@@ -135,4 +141,12 @@
         height: 30vh !important;
         
     }
+}
+
+@media screen and (max-width: 768px) {
+    #locarjs canvas {
+        position: absolute !important; 
+        left: -50%;
+    }
+    
 }
