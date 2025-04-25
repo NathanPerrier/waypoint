@@ -5,7 +5,7 @@
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
-            <div id="locarjs">
+            <div id="locarjs no-safe-areas">
                 
             </div>
             <div id="route-input">

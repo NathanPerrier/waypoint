@@ -1,6 +1,6 @@
 import { waitForElement } from '../../utils/dom.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+export const initializeLocAR = async (locarElement) => {
 
     // First, get the app instance
     const app = window.app;
@@ -46,9 +46,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         app.LOCAR_CAMERA.updateProjectionMatrix();
     });
 
-    const locarElement = await waitForElement("locarjs");
-
     app.LOCAR_CONTAINER = locarElement.appendChild(app.RENDERER.domElement);
-});
+};
 
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize LocAR when the DOM is fully loaded
+    await initializeLocAR(await waitForElement("locarjs"));
+});
 
