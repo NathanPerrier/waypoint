@@ -45,7 +45,7 @@
                         <li>
                             <p class="segmented segmented-raised segmented-round mx-5">
                                 <a class="button button-round" data-value="walking">Walking</a>
-                                <a class="button button-round" data-value="biking">Biking</button>
+                                <a class="button button-round" data-value="cycling">Biking</button>
                                 <a class="button button-round" data-value="driving">Driving</a>
                             </p>
                         </li>
@@ -54,7 +54,44 @@
                         </li>
                       
                     </ul>
-                    <a data-actions=".settings-actions" class="actions-close button button-fill m-5 r-2">Done</a>
+                    <a data-actions=".settings-actions" class="actions-close button button-fill mx-2 r-2 button-raised">Done</a>
+                </form>
+            </div>
+
+            <div class="actions-modal confirm-route-actions bg-white" id="confirm-route-actions">
+                <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data mx-4" id="confirm-route-form">
+                    <h1 class="text-align-center mb-2">Confirm Your Route</h1>
+                    <ul>
+                        <li>
+                            <div id="confirm-route-map"></div>
+                            <div id="route-info-overview">
+                                <div class="row">
+                                    <h3 class="text-left text-black">Navigating To Modwest (11A)</h3>
+                                </div>
+                                <div class="row">
+                                    
+                                    <div class="col-3">
+                                        <p class="text-center" id="distance">2km</p>
+                                    </div>
+                                    <div class="col-3 mx-2">
+                                        <p class="text-center" id="time">5mins</p>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="text-center" id="mode"><i class="fa-solid fa-person-walking fa-2x"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="row h-100">
+                        <div class="col-9">
+                            <a id="confirm-route-button" class="button button-fill r-2 button-raised">Confirm</a>
+
+                        </div>
+                        <div class="col-3 ml-2">
+                            <a id="close-button" class="actions-close button button-outline r-2 button-raised"><i class="fa fa-arrow-left"></i></a>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -65,6 +102,8 @@
 <script>    
     import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
+    import { getRoute } from "../js/plugins/maps/mapboxRoute.js";
+    import { createStaticRouteMap } from "../js/plugins/maps/routeOverviewMap.js";
 
 
     function isWithinBounds(location) {
@@ -143,6 +182,11 @@
                     return;
                 }
 
+                if (!app.DESTINATION_LOCATION_DATA || !app.DESTINATION_LOCATION_COORDINATES) {
+                    $f7.dialog.alert('No valid destination found for the search term. Please reenter the search destination.');
+                    return;
+                }
+
                 if (!isWithinBounds(app.DESTINATION_LOCATION_COORDINATES)) {
                     $f7.dialog.alert('The selected destination is outside the allowed map area.');
                     console.warn('Destination location out of bounds:', app.DESTINATION_LOCATION_COORDINATES, 'Bounds:', app.MAP_LOCATION_BOUNDS);
@@ -151,13 +195,20 @@
    
                 app.DESTINATION_LOCATION_DATA.startLocation = app.START_LOCATION;
 
-                $f7.dialog.confirm(`Navigate to ${app.DESTINATION_LOCATION}?`, 'Waypoint', () => {
-                    $f7.dialog.alert('Navigating to ' + app.DESTINATION_LOCATION + '...');
-                    // Add actual navigation logic here, potentially using searchResultData
-                    console.log("Navigation confirmed:", app.DESTINATION_LOCATION_DATA);
-                    // Example: $f7.views.main.router.navigate('/navigation-page/', { props: { routeData: searchResultData } });
-                });
+                $f7.actions.close('.settings-actions');
 
+                getRoute(app, $f7.router);
+
+                const mapContainerConfirm = document.getElementById('confirm-route-map');
+                createStaticRouteMap(app, mapContainerConfirm);
+
+                $f7.actions.open('.confirm-route-actions');
+
+                var confirmRouteButton = document.getElementById('confirm-route-button');
+                confirmRouteButton.addEventListener('click', function() {
+                    $f7.actions.close('.confirm-route-actions');
+                    $f7.views.main.router.navigate('/navigation/', { reloadCurrent: true, force: true });
+                });
             });
         });
 

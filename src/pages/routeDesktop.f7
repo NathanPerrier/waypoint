@@ -13,6 +13,29 @@
 <script>    
 export default async (props, { $, $on, $f7 }) => {
 
+    function bezierCurve(route, t) {
+        // smooth route corners using a cubic bezier curve with format [[float, float], [float, float], [float, float], [float, float], ...] with n items and return route
+        const n = route.length - 1;
+        
+        const points = route.map(coord => turf.point(coord));
+        const bezierPoints = [];
+        for (let i = 0; i < n; i++) {
+            const p0 = points[i];
+            const p1 = points[i + 1];
+            const cp0 = turf.midpoint(p0, p1);
+            const cp1 = turf.midpoint(p0, p1);
+            bezierPoints.push([p0.geometry.coordinates, cp0.geometry.coordinates, cp1.geometry.coordinates, p1.geometry.coordinates]);
+        }
+        const bezierRoute = bezierPoints.map((bezier, i) => {
+            const [p0, cp0, cp1, p1] = bezier;
+            const x = (1 - t) * (1 - t) * p0[0] + 2 * (1 - t) * t * cp0[0] + t * t * p1[0];
+            const y = (1 - t) * (1 - t) * p0[1] + 2 * (1 - t) * t * cp0[1] + t * t * p1[1];
+            return [x, y];
+        });
+        return bezierRoute;
+    }
+
+
     $on('pageInit', async () => {
         const app = window.app;
 
@@ -61,7 +84,7 @@ export default async (props, { $, $on, $f7 }) => {
                     'properties': {},
                     'geometry': {
                         'type': 'LineString',
-                        'coordinates': targetRoute // smooth the target route
+                        'coordinates': targetRoute // smooth the target route issue is that the map joins the points with a straight line
                     }
                 }
             });
@@ -71,20 +94,20 @@ export default async (props, { $, $on, $f7 }) => {
                 id: 'line',
                 paint: {
                     'line-color': app.PRIMARY_COLOR,
-                    'line-width': 16
+                    'line-width': 25
                 },
                 layout: {
                     'line-cap': 'round',
-                    'line-join': 'round'
+                    'line-join': 'round',
                 }
             });
         });
     
         // wait for the terrain and sky to load before starting animation
         map.on('load', () => {
-            const animationDuration = 1000000;
+            const animationDuration = 1000000;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
 
-            const relativeCameraAltitude = 200; 
+            const relativeCameraAltitude = 50; 
             
             const routeDistance = turf.lineDistance(turf.lineString(targetRoute));
             const cameraRouteDistance = turf.lineDistance(

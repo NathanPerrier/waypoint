@@ -19,6 +19,12 @@ import App from '../app.f7';
 // Import Config Initializer
 import { initializeConfig } from './config.js'; // Import only the initializer function
 
+import jQuery from 'jquery';
+
+
+window.jQuery = jQuery;
+window.$ = jQuery;
+
 (async () => {
   // Initialize Framework7 app
   var app = new Framework7({
@@ -41,3 +47,4 @@ import { initializeConfig } from './config.js'; // Import only the initializer f
   // Initialize config by passing the app instance
   await initializeConfig(app);
 })();
+

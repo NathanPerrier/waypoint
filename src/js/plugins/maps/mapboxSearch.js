@@ -1,43 +1,5 @@
 import { SearchBoxCore } from '@mapbox/search-js-core';
-
-
-async function retrieveCoordinates(name) {
-    const app = window.app;
-
-    try {
-        // MapboxGeocoder doesn't have a direct method like forwardGeocode exposed easily
-        // for programmatic use without a map or input element in its default setup.
-        // A better approach is to use the Mapbox Geocoding API directly.
-
-        const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(name)}.json`;
-        const params = new URLSearchParams({
-            access_token: app.MAPBOX_ACCESS_TOKEN,
-            limit: 1, // Get only the best match
-            // You might want to add proximity, bbox, country restrictions like in SearchBoxCore
-            countries: app.SEARCH_COUNTRY_RESTRICTIONS || 'au',
-            types: app.SEARCH_TYPES || 'address',
-            language: app.LANGUAGE || 'en',
-        });
-
-        const response = await fetch(`${endpoint}?${params.toString()}`);
-        const data = await response.json();
-
-        if (data.features && data.features.length > 0) {
-            const coordinates = data.features[0].geometry.coordinates;
-            console.log(`Geocoded coordinates for ${name}:`, coordinates);
-            return coordinates; // Returns [longitude, latitude]
-        } else {
-            console.warn(`No coordinates found for ${name}`);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error during geocoding:', error);
-        return null;
-    }
-}
-
-
-
+import { getCoordinatesFromMapboxId } from '../../utils/coordinates';
 
 export async function autocompleteSearch(searchInput, searchResults, startLocation) {
     const app = window.app;
@@ -61,30 +23,31 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
     searchResults.innerHTML = '';
 
     for (const suggestion of result.suggestions) {
-        //console.log(suggestion);
-        // Prepare data to pass - stringify coordinates
+        
+        const suggestionFeatures = await getCoordinatesFromMapboxId(suggestion.mapbox_id, mapSessionToken) || [];
+        console.log("Suggestion features:", suggestionFeatures);
+
         const suggestionData = {
             name: suggestion.name,
             place_formatted: suggestion.place_formatted,
-            coordinates: suggestion.geometry?.coordinates, // Use optional chaining
+            coordinates: suggestionFeatures.features[0]?.geometry.coordinates || [],
             full_address: suggestion.full_address,
             feature_type: suggestion.feature_type,
             mapbox_id: suggestion.mapbox_id,
-            distance: suggestion.distance // Keep distance if needed
+            distance: suggestion.distance,
+            wheelchair_accessible: suggestionFeatures.features[0]?.properties.metadata.wheelchair_accessible,
         };
 
-        // Escape single quotes in string data for the onclick attribute
         const escapedName = suggestionData.name.replace(/'/g, "\\'");
         const escapedPlaceFormatted = suggestionData.place_formatted?.replace(/'/g, "\\'") || '';
         const escapedFullAddress = suggestionData.full_address?.replace(/'/g, "\\'") || '';
-
-        const coordinatesString = await retrieveCoordinates(suggestion.name +((", "+suggestion.full_address))) || '[]'; // Default to empty array if no coordinates
-
+        const coordinatesString = suggestionFeatures.features[0]?.geometry.coordinates ? suggestionFeatures.features[0]?.geometry.coordinates.join(',') : []
+        
         searchResults.innerHTML += `
         <a href="#" onclick="window.handleRouteSuggestionClick('${escapedName}', '${escapedPlaceFormatted}', '${coordinatesString}', '${escapedFullAddress}', '${suggestionData.feature_type || ''}', '${suggestionData.mapbox_id || ''}', ${suggestionData.distance || null}); return false;">
             <li class="mx-2">
-                <div class="row h-100 mx-2">
-                    <div class="col-9">
+                <div class="row w-100 h-100 mx-2">
+                    <div class="col-7">
                         <div class="row">
                             <strong>${suggestion.name}</strong>
                         </div>
@@ -92,9 +55,13 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
                             <small style="font-size:small">${suggestion.place_formatted}</small>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-4">
                         <div class="row h-100 justify-end align-vertical">
-                            <strong class="bg-primary r-2 p-2 d-flex text-on-primary">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>
+                            <div class="row d-flex justify-end align-vertical">
+
+                                ${suggestionData.wheelchair_accessible ? '<i class="mr-2 fas fa-wheelchair" title="Wheelchair Accessible"></i>' : ''}
+                                <strong class="bg-primary r-2 p-2 d-flex text-on-primary">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>
+                            </div>
                         </div>
                     </div>
                     

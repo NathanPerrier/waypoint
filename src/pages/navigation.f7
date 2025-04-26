@@ -1,0 +1,60 @@
+<template>
+    <div class="page" data-name="NavPage">
+        <div class="page-content">
+            <div id="NavLocarjs">
+                
+            </div>
+            <div id="route-input">
+                <div class="tabs-animated-wrap">
+                    <div class="tabs">
+                        <div id="tab1" class="tab tab-active">
+                            <div id="search-results-list">
+
+                            </div>
+                            <div class="nav">
+                                <div class="row h-100">
+                                    <div class="col-10">
+                                        <div class="row h-100">
+                                            <div class="col-9 p-0">    
+                                                <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
+                                            </div>
+                                            <div class="col-3">
+                                                <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
+                                            </div> 
+                                        </div>  
+                                    </div>
+                                    <div class="col-2 ml-2">
+                                        <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>         
+            </div>
+        </div>
+    </div>
+   
+   
+</template>
+<script>    
+    import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
+    import { waitForElement } from "../js/utils/dom.js";
+    import { initializeLocAR } from "../js/plugins/locar/locar.js";
+    import { runLocarNav } from "../js/plugins/locar/locarNav.js";
+
+
+      
+    export default async (props, { $, $on, $f7 }) => {
+
+        const app = window.app;
+
+
+        $on('pageInit', async () => {
+
+            await initializeLocAR(await waitForElement("NavLocarjs"));
+            runLocarNav(app)
+            
+        });
+    };
+</script>

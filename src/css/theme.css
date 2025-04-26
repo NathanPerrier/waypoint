@@ -81,3 +81,7 @@ h4 {
 .text-on-primary {
     color: var(--background-color) !important;
 }
+
+.text-black {
+    color: var(--text-color) !important;
+}
