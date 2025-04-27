@@ -43,6 +43,7 @@
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
     import { displayDialog } from "../js/utils/dialog.js";
+    import { checkForURLParams } from "../js/utils/routes.js";
 
     export default async (props, { $, $on, $f7 }) => {
         const app = window.app;
@@ -50,6 +51,11 @@
         let locarContainerId = null; // Store the ID
 
         $on('pageInit', async () => {
+
+            await checkForURLParams(app, this);
+
+            //! check for destination and nav data
+
             const locarConatiner = await waitForElement("NavLocarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found."); 
