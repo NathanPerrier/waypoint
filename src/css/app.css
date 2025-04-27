@@ -2,12 +2,19 @@
     height: 100%;
 }
 
-#locarjs {
+#locarjs, #NavLocarjs { /* Apply styles to both possible IDs */
     object-fit: cover !important;
     flex-grow: 1; /* If the parent is a flex container */
-    height: 100%; /* Or adjust as needed based on parent layout */
-    width: 100%;
+    height: 100vh; /* Or adjust as needed based on parent layout */
+    width: 100vw;
     overflow: hidden !important; /* Ensure canvas doesn't overflow */
+}
+
+/* Ensure the parent container allows the LocAR view to grow */
+.page-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Make sure page-content has height */
 }
 
 #navbar, #route-input {
@@ -51,7 +58,7 @@
     border: .1rem solid var(--primary-color);
     padding: 0rem 1rem;
     border-radius: 2rem 0rem 0rem 2rem;
-    background: #f3eaff;
+    background: var(--background-color);
 }
 
 #search-button {
@@ -95,7 +102,7 @@
 #search-results-list li {
     padding: 0.5rem;
     border-radius: 2rem;
-    background: #f3eaff;
+    background: var(--background-color);
     color: var(--primary-color);
     border-bottom: .1rem solid var(--primary-color);
     font-size: large;
@@ -104,17 +111,19 @@
     cursor: pointer;
 }
 
-#settings-map {
+.confirm-route-map-div, .settings-map-div {
     height: 20vh !important;
+}
+
+#settings-map {
+    height: 100%;
     width: 100%;
-    margin: 1rem;
-    width: calc(100% - 2rem) !important;
     border-radius: 2rem;
     filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
 }
 
 #confirm-route-map {
-    height: 20vh !important;
+    height: 100%;
     width: 100%;
     border-radius: 2rem 2rem 0rem 0rem;
 }
@@ -129,12 +138,16 @@
 }
 
 #route-info-overview .col-3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 1rem;
     background-color: var(--secondary-color);
     color: var(--background-color);
     border-radius: 2rem;
     font-weight: bold;
-    font-size: large;
+    font-size: 2em;
+    line-height: 1; /* Adjusted for better text alignment */
 }
 
 .mapboxgl-ctrl-top-right {
@@ -148,6 +161,43 @@
 
 }
 
+#app-preloader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--f7-page-bg-color, #fff); /* Use Framework7 page background color or fallback */
+}
+
+/* Optional: Style the Framework7 preloader itself if needed */
+#app-preloader .preloader {
+    width: 5rem;
+    height: 5rem; 
+    background-image: url('/icons/256x256.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: spin-pause-360 6s linear infinite; 
+}
+
+
+@keyframes spin-pause-360 {
+    0%      { transform: rotate(0deg); }
+    8.33%   { transform: rotate(90deg); }  /* 0.5s spin */
+    25%     { transform: rotate(90deg); }  /* 1.0s pause */
+    33.33%  { transform: rotate(180deg); } /* 0.5s spin */
+    50%     { transform: rotate(180deg); } /* 1.0s pause */
+    58.33%  { transform: rotate(270deg); } /* 0.5s spin */
+    75%     { transform: rotate(270deg); } /* 1.0s pause */
+    83.33%  { transform: rotate(360deg); } /* 0.5s spin */
+    100%    { transform: rotate(360deg); } /* 1.0s pause */
+}
+
 @media screen and (min-width: 769px) {
     #navbar, #route-input {
         margin: 0rem 4rem 2rem 4rem;
@@ -159,7 +209,7 @@
         width: 100vw;
     }
 
-    #settings-map, #confirm-route-map {
+    .settings-map-div, .confirm-route-map-div {
         height: 30vh !important;
         
     }

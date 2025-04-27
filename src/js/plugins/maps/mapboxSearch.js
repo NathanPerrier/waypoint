@@ -21,11 +21,11 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
     if (result.suggestions.length === 0) return;
 
     searchResults.innerHTML = '';
+    result.suggestions = result.suggestions.slice(0, 3);
 
     for (const suggestion of result.suggestions) {
         
         const suggestionFeatures = await getCoordinatesFromMapboxId(suggestion.mapbox_id, mapSessionToken) || [];
-        console.log("Suggestion features:", suggestionFeatures);
 
         const suggestionData = {
             name: suggestion.name,
@@ -60,7 +60,7 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
                             <div class="row d-flex justify-end align-vertical">
 
                                 ${suggestionData.wheelchair_accessible ? '<i class="mr-2 fas fa-wheelchair" title="Wheelchair Accessible"></i>' : ''}
-                                <strong class="bg-primary r-2 p-2 d-flex text-on-primary">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>
+                                ${suggestionData.wheelchair_accessible ? `<strong class="bg-primary r-2 p-2 d-flex text-on-primary">${suggestion.distance ? (suggestion.distance/1000).toFixed(1) + 'km' : ''}</strong>` : ''}
                             </div>
                         </div>
                     </div>

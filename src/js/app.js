@@ -4,6 +4,8 @@ import Framework7 from 'framework7/bundle';
 // Import F7 Styles
 import 'framework7/css/bundle';
 
+import 'mapbox-gl/dist/mapbox-gl.css';
+
 // Import Icons and App Custom Styles
 import '../css/icons.css';
 import '../css/app.css';

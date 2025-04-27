@@ -1,6 +1,6 @@
 import { displayDialog } from './dialog.js';
 
-export function checkForURLParams(app, router) {
+export async function checkForURLParams(app, router) {
     const urlParams = new URLSearchParams(window.location.search);
     console.log("URL Parameters:", urlParams.toString());
     const startLocation = urlParams.get('startLocation');

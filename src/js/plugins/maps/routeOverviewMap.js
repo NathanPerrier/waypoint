@@ -1,54 +1,72 @@
 import mapboxgl from 'mapbox-gl';
 
-export function createStaticRouteMap(app, containerId) {
+export async function createStaticRouteMap(app, containerId) {
   const map = new mapboxgl.Map({
     container: containerId,
     style: app.MAP_LIGHT_STYLE,
     center: app.START_LOCATION,
     zoom: 14,
+    minZoom: 14,
+    maxZoom: 18,
+    pitch: 0,
+    maxPitch: 0,
+    minPitch: 0,
     accessToken: app.MAPBOX_ACCESS_TOKEN,
+    bounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
+    refreshExpiredTiles: false,
   });
 
   // Add start position marker
-  new mapboxgl.Marker({ color: 'green' })
-    .setLngLat([app.START_LOCATION.lng, app.START_LOCATION.lat])
-    .addTo(map);
+  if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 0) {
+    new mapboxgl.Marker({ color: app.PRIMARY_COLOR, offset: [0, 0] })
+      .setLngLat(app.NAVIGATION_ROUTE[0]) // Use exact coordinates from NAVIGATION_ROUTE
+      .addTo(map);
+  }
 
   // Add destination marker
-  new mapboxgl.Marker({ color: 'red' })
-    .setLngLat([app.DESTINATION_LOCATION_COORDINATES.lng, app.DESTINATION_LOCATION_COORDINATES.lat])
-    .addTo(map);
+  if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 1) {
+    new mapboxgl.Marker({ color: app.SECONDARY_COLOR, offset: [0, 0] })
+      .setLngLat(app.NAVIGATION_ROUTE[app.NAVIGATION_ROUTE.length - 1]) // Use exact coordinates from NAVIGATION_ROUTE
+      .addTo(map);
+  }
+
+  console.log('Navigation route:', app.NAVIGATION_ROUTE);
 
   // Add route line
-  if (app.NAVIGATION_ROUTE) {
+  if (app.NAVIGATION_ROUTE && Array.isArray(app.NAVIGATION_ROUTE)) {
     map.on('load', () => {
-      map.addSource('route', {
+        // Ensure the source is added correctly
+        map.addSource('route', {
         type: 'geojson',
         data: {
-          type: 'Feature',
-          geometry: {
+            type: 'Feature',
+            geometry: {
             type: 'LineString',
-            coordinates: app.NAVIGATION_ROUTE_COORDINATES.map(coord => [coord.lng, coord.lat]),
-          },
+            coordinates: app.NAVIGATION_ROUTE,
+            },
         },
-      });
+        });
 
-      map.addLayer({
+        // Add the dashed route layer
+        map.addLayer({
         id: 'route',
         type: 'line',
         source: 'route',
         layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
+            'line-join': 'round',
+            'line-cap': 'round',
         },
         paint: {
-          'line-color': '#782cf6',
-          'line-width': 4,
+            'line-color': app.PRIMARY_COLOR,
+            'line-width': 8,
+            // 'line-dasharray': [2, 4], // Dashed line pattern
         },
-      });
+        });
     });
-  }
-}
+    } else {
+    console.error('NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.');
+    }
+};
 
 export function createLiveRouteMap(app, containerId) {
   const map = new mapboxgl.Map({
@@ -56,18 +74,29 @@ export function createLiveRouteMap(app, containerId) {
     style: app.MAP_LIGHT_STYLE,
     center: app.START_LOCATION,
     zoom: 14,
+    minZoom: 14,
+    maxZoom: 18,
+    pitch: 0,
+    maxPitch: 0,
+    minPitch: 0,
     accessToken: app.MAPBOX_ACCESS_TOKEN,
+    bounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
+    refreshExpiredTiles: false,
   });
 
   // Add start position marker
-  new mapboxgl.Marker({ color: 'green' })
-    .setLngLat([app.START_LOCATION.lng, app.START_LOCATION.lat])
-    .addTo(map);
+  if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 0) {
+    new mapboxgl.Marker({ color: app.PRIMARY_COLOR, anchor: 'bottom' })
+      .setLngLat(app.NAVIGATION_ROUTE[0]) // Use exact coordinates from NAVIGATION_ROUTE
+      .addTo(map);
+  }
 
   // Add destination marker
-  new mapboxgl.Marker({ color: 'red' })
-    .setLngLat([app.DESTINATION_LOCATION_COORDINATES.lng, app.DESTINATION_LOCATION_COORDINATES.lat])
-    .addTo(map);
+  if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 1) {
+    new mapboxgl.Marker({ color: app.SECONDARY_COLOR, anchor: 'bottom' })
+      .setLngLat(app.NAVIGATION_ROUTE[app.NAVIGATION_ROUTE.length - 1]) // Use exact coordinates from NAVIGATION_ROUTE
+      .addTo(map);
+  }
 
   // Add route line
   if (app.NAVIGATION_ROUTE) {
@@ -78,7 +107,7 @@ export function createLiveRouteMap(app, containerId) {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: app.NAVIGATION_ROUTE_COORDINATES.map(coord => [coord.lng, coord.lat]),
+            coordinates: app.NAVIGATION_ROUTE,
           },
         },
       });
@@ -92,7 +121,7 @@ export function createLiveRouteMap(app, containerId) {
           'line-cap': 'round',
         },
         paint: {
-          'line-color': '#782cf6',
+          'line-color': app.PRIMARY_COLOR,
           'line-width': 4,
         },
       });

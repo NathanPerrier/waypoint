@@ -1,5 +1,6 @@
 import { waitForElement } from "../../utils/dom";
 
+
 document.addEventListener('DOMContentLoaded', async () => {
     const app = window.app;
 
@@ -15,7 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     var map = new mapboxgl.Map({
         container: mapContainer, 
         zoom: 16, 
-        maxZoom: 20,
+        minZoom: 14,
+        maxZoom: 18,
         center: app.START_LOCATION,  
         pitch: 0,
         maxPitch: 0,
@@ -40,7 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     marker = new mapboxgl.Marker({
         color: "#762CEF",
-        draggable: true
+        draggable: true,
+        anchor: 'bottom',
+        
     })
     .setLngLat(app.START_LOCATION)
     .addTo(map);

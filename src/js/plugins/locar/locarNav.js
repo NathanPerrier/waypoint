@@ -1,20 +1,23 @@
 import * as THREE from 'three';
 
-export function runLocarNav(app) { // Accept app instance
+export function runLocarNav(app, locarInstance) { // Accept app instance
     let firstLocation = true;
 
-    app.LOCAR.on("gpsupdate", (pos, distMoved) => {
+    console.log("LocarNav: ", locarInstance);
+
+    locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
         // locar navigation
     });
 
-    app.LOCAR.startGps();
+    locarInstance.locar.startGps();
 
-    app.RENDERER.setAnimationLoop(animate);
+    locarInstance.renderer.setAnimationLoop(animate);
 
     function animate() {
-        app.CAM.update();
-        app.DEVICE_ORIENTATION_CONTROLS.update();
-        app.RENDERER.render(app.LOCAR_SCENE, app.LOCAR_CAMERA);
+        locarInstance.cam.update();
+        locarInstance.controls.update();
+        // Use the scene and camera from the specific locarInstance
+        locarInstance.renderer.render(locarInstance.scene, locarInstance.camera);
     }
     animate();
 }

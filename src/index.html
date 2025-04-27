@@ -30,12 +30,12 @@
   <!-- built styles file will be auto injected -->
 </head>
 <body>
+  <div id="app-preloader">
+    <div class="preloader"></div>
+  </div>
   <div id="app"></div>
   
   <div id="error-popup"></div>
-
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
 
   <script src="https://docs.mapbox.com/mapbox-gl-js/assets/routes.js"></script> <!-- test file -->
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
@@ -48,6 +48,9 @@
   <script type="module" src="./js/plugins/locar/locarRoute.js"></script>
   <script type="module" src="./js/utils/autocomplete.js"></script>
   <script type="module" src="./js/plugins/maps/settingsSearchMap.js"></script>
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
   
   <script src="https://kit.fontawesome.com/02870e7611.js" crossorigin="anonymous"></script>
 </body>

@@ -1,5 +1,5 @@
 <template>
-    <div class="page" data-name="NavPage">
+    <div class="page" data-name="navigation">
         <div class="page-content">
             <div id="NavLocarjs">
                 
@@ -24,7 +24,7 @@
                                         </div>  
                                     </div>
                                     <div class="col-2 ml-2">
-                                        <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                                        <button id="stop-button" class="button button-fill r-2 h-100">Stop</button> 
                                     </div>
                                 </div>
                             </div>
@@ -40,21 +40,38 @@
 <script>    
     import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
     import { waitForElement } from "../js/utils/dom.js";
-    import { initializeLocAR } from "../js/plugins/locar/locar.js";
+    import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
+    import { displayDialog } from "../js/utils/dialog.js";
 
-
-      
     export default async (props, { $, $on, $f7 }) => {
-
         const app = window.app;
-
+        let locarInstance = null; // Define outside to be accessible by both handlers
+        let locarContainerId = null; // Store the ID
 
         $on('pageInit', async () => {
-
-            await initializeLocAR(await waitForElement("NavLocarjs"));
-            runLocarNav(app)
-            
+            const locarConatiner = await waitForElement("NavLocarjs");
+            if (!locarConatiner) {
+                console.error("LocAR container 'NavLocarjs' not found."); 
+                displayDialog(app, app.router, "Error", "LocAR container not found. Please try again later.");
+                return;
+            }
+            locarContainerId = locarConatiner.id;
+            locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
+            if (locarInstance) { // Check if initialization was successful
+                runLocarNav(app, locarInstance);
+            }
         });
+
+        $on('pageBeforeRemove', () => {
+            // Destroy LocAR instance using its ID when the page is removed
+            if (locarContainerId) { // Use the stored ID
+                destroyLocARInstance(app, locarContainerId);
+                locarInstance = null; // Clear the instance variable
+                locarContainerId = null; // Clear the ID
+            }
+        });
+
+        return $render;
     };
 </script>

@@ -50,7 +50,9 @@
                             </p>
                         </li>
                         <li>
-                            <div id="settings-map"></div>
+                            <div class="settings-map-div m-4">
+                                <div id="settings-map"></div>
+                            </div>
                         </li>
                       
                     </ul>
@@ -63,21 +65,23 @@
                     <h1 class="text-align-center mb-2">Confirm Your Route</h1>
                     <ul>
                         <li>
-                            <div id="confirm-route-map"></div>
+                            <div class="confirm-route-map-div">
+                                <div id="confirm-route-map"></div>
+                            </div>
                             <div id="route-info-overview">
                                 <div class="row">
-                                    <h3 class="text-left text-black">Navigating To Modwest (11A)</h3>
+                                    <h3 class="text-left text-black">Navigate To <span id="destination_name"></span>?</h3>
                                 </div>
                                 <div class="row">
                                     
                                     <div class="col-3">
-                                        <p class="text-center" id="distance">2km</p>
+                                        <p class="text-center m-0" id="distance">2km</p>
                                     </div>
                                     <div class="col-3 mx-2">
-                                        <p class="text-center" id="time">5mins</p>
+                                        <p class="text-center m-0" id="time">5mins</p>
                                     </div>
                                     <div class="col-3">
-                                        <p class="text-center" id="mode"><i class="fa-solid fa-person-walking fa-2x"></i></p>
+                                        <p class="text-center m-0" id="mode"><i class="fa-solid fa-person-walking"></i></p>
                                     </div>
                                 </div>
                             </div>
@@ -104,6 +108,9 @@
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
     import { getRoute } from "../js/plugins/maps/mapboxRoute.js";
     import { createStaticRouteMap } from "../js/plugins/maps/routeOverviewMap.js";
+    import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
+    import { waitForElement } from "../js/utils/dom.js";
+    import { displayDialog } from "../js/utils/dialog.js";
 
 
     function isWithinBounds(location) {
@@ -114,14 +121,36 @@
     export default async (props, { $, $on, $f7 }) => {
 
         const app = window.app;
+        let locarInstance = null; // Define outside to be accessible by both handlers
+        let locarContainerId = null; // Store the ID
+
+        // Define the handler function for the confirm route button
+        const handleConfirmRouteClick = () => {
+            $f7.actions.close('.confirm-route-actions');
+            console.log('navigating to navigation page');
+            $f7.views.navigation.router.navigate('/navigation/')
+            app.tab.show('#view-navigation');
+
+        };
 
 
         $on('pageInit', async () => {
-
-            runLocarRoute(app)
+            const locarConatiner = await waitForElement("locarjs");
+            if (!locarConatiner) {
+                console.error("LocAR container 'NavLocarjs' not found.");
+                displayDialog(app, app.router, "Error", "LocAR container not found. Please try again later.");
+                return;
+            }
+            locarContainerId = locarConatiner.id; // Store the ID
+            console.log("locarConatiner", locarConatiner);
+            locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
+            if (locarInstance) { // Check if initialization was successful
+                runLocarRoute(app, locarInstance);
+            }
 
             var searchInput = document.getElementById('search-input');
             var searchResults = document.getElementById('search-results-list');
+            var confirmRouteButton = document.getElementById('confirm-route-button'); // Get button reference
 
             searchInput.addEventListener('input', async function() {
                 autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
@@ -146,9 +175,15 @@
                     button.classList.add('button-active');
                     var mode = button.getAttribute('data-value');
                     app.TRANSPORTATION_MODE = mode;
-                    console.warn('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
+                    app.TRANSPORTATION_MODE_ICON = mode === 'driving' ? app.DRIVING_ICON : mode === 'cycling' ? app.BIKING_ICON : app.WALKING_ICON;
+                    console.log('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
                 });            
             });
+
+            // Remove potential existing listener and add the new one
+            confirmRouteButton.removeEventListener('click', handleConfirmRouteClick);
+            confirmRouteButton.addEventListener('click', handleConfirmRouteClick);
+
 
             var searchButton = document.getElementById('search-button');
 
@@ -197,23 +232,37 @@
 
                 $f7.actions.close('.settings-actions');
 
-                getRoute(app, $f7.router);
+                await getRoute(app, $f7.router);
+
+                // Check if route data is valid before proceeding
+                if (!app.NAVIGATION_ROUTE_DATA || !app.NAVIGATION_ROUTE_DATA.duration || !app.NAVIGATION_ROUTE_DATA.distance) {
+                    console.error("Failed to get valid route data.");
+                    $f7.dialog.alert('Could not calculate the route. Please try again later.');
+                    return;
+                }
 
                 const mapContainerConfirm = document.getElementById('confirm-route-map');
-                createStaticRouteMap(app, mapContainerConfirm);
+                await createStaticRouteMap(app, mapContainerConfirm);
+
+                document.getElementById('time').innerHTML = (app.NAVIGATION_ROUTE_DATA.duration / 60).toFixed(0) + 'mins';
+                document.getElementById('distance').innerHTML = (app.NAVIGATION_ROUTE_DATA.distance/1000).toFixed(1) + 'km';
+                document.getElementById('mode').innerHTML = `<i class="${app.TRANSPORTATION_MODE_ICON}"></i>`;
+                document.getElementById('destination_name').innerHTML = app.DESTINATION_LOCATION_DATA.name;
 
                 $f7.actions.open('.confirm-route-actions');
 
-                var confirmRouteButton = document.getElementById('confirm-route-button');
-                confirmRouteButton.addEventListener('click', function() {
-                    $f7.actions.close('.confirm-route-actions');
-                    $f7.views.main.router.navigate('/navigation/', { reloadCurrent: true, force: true });
-                });
             });
         });
 
+
         $on('pageBeforeRemove', () => {
-            // Clean up map instance and listeners if the page is removed
+            
+            if (locarContainerId) { // Use the stored ID
+                destroyLocARInstance(app, locarContainerId);
+                locarInstance = null; // Clear the instance variable
+                locarContainerId = null; // Clear the ID
+            }
+
              const settingsModal = $f7.actions.get('.settings-actions');
              if (settingsModal) {
                  settingsModal.off('actionsOpened');
@@ -223,6 +272,12 @@
              const mapContainer = document.getElementById('settings-map');
              if (minimapInstance && mapContainer) {
                  mapContainer.innerHTML = ''; 
+             }
+
+             // Remove listener when page is removed
+             var confirmRouteButton = document.getElementById('confirm-route-button');
+             if (confirmRouteButton) {
+                 confirmRouteButton.removeEventListener('click', handleConfirmRouteClick);
              }
         });
     

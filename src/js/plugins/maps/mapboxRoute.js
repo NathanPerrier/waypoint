@@ -30,7 +30,8 @@ export async function getRoute(app, router) {
         app.NAVIGATION_ROUTE_DATA = {
             duration: route.duration, // in seconds
             distance: route.distance, // in meters
-            waypoints: route.waypoints
+            waypoints: data.waypoints,
+            uuid: data.uuid,
         };
 
         app.NAVIGATION_ROUTE_STEPS = route.legs[0].steps.map(step => ({

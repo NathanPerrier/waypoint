@@ -14,9 +14,14 @@ const initializeConfig = (app) => {
         // Set default values on the app instance first
 
         app.PRIMARY_COLOR = "#782cf6";
+        app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.TRANSPORTATION_MODE = "walking";
+        app.DRIVING_ICON = "fa-solid fa-car";
+        app.BIKING_ICON = "fa-solid fa-bicycle";
+        app.WALKING_ICON = "fa-solid fa-person-walking";
+        app.TRANSPORTATION_MODE_ICON = app.WALKING_ICON;
         app.START_LOCATION = null; 
         app.DESTINATION_LOCATION = null;
         app.DESTINATION_LOCATION_COORDINATES = null;
@@ -45,11 +50,6 @@ const initializeConfig = (app) => {
         app.DEVICE_ORIENTATION_CONTROLS = null;
         app.CAM = null;
         app.AR = true; 
-
-        // Show Framework7 preloader if available
-        if (app.preloader) {
-            app.preloader.show();
-        }
 
         try {
             // Parallelize geolocation and device detection
@@ -92,26 +92,7 @@ const initializeConfig = (app) => {
             app.MOBILE_DEVICE = app.DEVICE.device.ios || app.DEVICE.device.android || app.DEVICE.device.iphone || app.DEVICE.device.androidChrome || app.DEVICE.device.cordova || app.DEVICE.device.ipad; 
 
             // Conditionally load libraries for mobile
-            if (app.MOBILE_DEVICE) {
-                const [THREE, LocAR] = await Promise.all([
-                    import('three'),
-                    import('locar'),
-                ]);
-
-                // Initialize THREE.js components and assign to app instance
-                app.RENDERER = new THREE.WebGLRenderer({ alpha: true }); // Ensure background can be transparent if needed
-                app.LOCAR_SCENE = new THREE.Scene();
-                app.LOCAR_CAMERA = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000); // app.DEVICE.device.pixelRatio
-
-                app.RENDERER.setSize(window.innerWidth, window.innerHeight);
-                app.RENDERER.setPixelRatio(app.DEVICE.device.pixelRatio); 
-
-                // Initialize LOCAR and assign to app instance
-                app.LOCAR = new LocAR.LocationBased(app.LOCAR_SCENE, app.LOCAR_CAMERA);
-                app.DEVICE_ORIENTATION_CONTROLS = new LocAR.DeviceOrientationControls(app.LOCAR_CAMERA);
-                app.CAM = new LocAR.WebcamRenderer(app.RENDERER);
-                
-            } else {
+            if (!app.MOBILE_DEVICE) {
                 app.AR = false; // Disable AR mode for desktop
             }
 
@@ -124,11 +105,6 @@ const initializeConfig = (app) => {
             app.initializationError = true;
             // Reject the promise on critical failure
             reject(error);
-        } finally {
-            // Hide Framework7 preloader if available
-            if (app.preloader) {
-                app.preloader.hide();
-            }
         }
     });
 
