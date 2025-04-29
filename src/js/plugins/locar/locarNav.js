@@ -19,17 +19,22 @@ export function runLocarNav(app, locarInstance) {
         let nextCoordinate = app.NAVIGATION_ROUTE[1];  //! TEMP
 
         //display line
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
         const points = [];
         points.push(new THREE.Vector3(app.USER_LOCATION[0], app.USER_LOCATION[1], 1));
         points.push(new THREE.Vector3(nextCoordinate[0], nextCoordinate[1], 1)); 
         const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Line(lineGeometry, lineMaterial);
+       
         const mesh = new THREE.Mesh(
-            line,
+            lineGeometry,
             new THREE.MeshBasicMaterial({color: 0xff0000})
         );
+        console.log(mesh, lineGeometry, points);
         locarInstance.locar.add(mesh, app.USER_LOCATION[0], app.USER_LOCATION[1]);
+        console.log("Added line to locar instance");
+
+        console.log("User Location:", app.USER_LOCATION);
+        console.log("User Location Altitude:", app.USER_LOCATION_ALT);
+        console.log("locar", locarInstance.locar);
     });
 
     // --- Start GPS and Animation Loop --- 

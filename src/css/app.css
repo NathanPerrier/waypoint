@@ -17,12 +17,7 @@
     height: 100%; /* Make sure page-content has height */
 }
 
-#navbar, #route-input {
-    margin: 0rem 1rem 2rem 1rem;
-    border-radius: 2rem;
-    width: calc(100% - 2rem);
-    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
-}
+
 
 #navbar .tab-link:first-child {
     border-radius: 2rem 0rem 0rem 2rem;
@@ -41,6 +36,72 @@
     /* Ensure it doesn't shrink */
     flex-shrink: 0; 
 }
+
+#navbar, #route-input:not(#navigation-overview #route-input) { /* Exclude route-input inside navigation-overview from default fixed positioning */
+    margin: 0rem 1rem 2rem 1rem;
+    border-radius: 2rem;
+    width: calc(100% - 2rem);
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
+    position: fixed;
+    bottom: 0;
+    left: 0; /* Centering might need adjustment if left is not 0 */
+    z-index: 100;
+    background-color: var(--background-color);
+    flex-shrink: 0; 
+}
+
+#navigation-overview {
+    display: grid; /* Use Grid layout */
+    grid-template-columns: 1fr; /* Single column */
+    grid-template-rows: auto auto; /* Row for input content, Row for map (20vh height) */
+    position: fixed;
+    bottom: 0;
+    left: 0; 
+    width: calc(100vw - 2rem); /* Full viewport width */
+    margin: 0rem 1rem 2rem 1rem;
+    z-index: 98; /* Ensure it's above other content but potentially below modals */
+    /* Remove fixed height, background, border-radius, filter from the container */
+}
+
+#navigation-overview-map-container {
+    height: 15vh !important;
+    overflow: hidden !important;
+    width: 100%;
+}
+
+#navigation-overview #navigation-overview-map, #navigation-overview-map canvas {
+    grid-row: 1 / 2; /* Place in the first row */
+    grid-column: 1 / 2; /* Place in the first column */
+    height: 100%; /* Fill the grid row height (20vh) */
+    width: 100%; /* Fill the grid column width */
+    z-index: 98; /* Keep below route-input */
+    height: 100% !important; /* Set fixed height for the map */
+    border-radius: 2rem 2rem 0rem 0rem;
+    position: static; /* Override fixed */ 
+    overflow: hidden !important;
+}
+
+/* Styles for #route-input specifically when inside #navigation-overview */
+#navigation-overview #route-input {
+    grid-row: 2 / 3; /* Place in the second row */
+    grid-column: 1 / 2; /* Place in the first column */
+    z-index: 100; /* Ensure it's on top */
+    margin-top: -2rem; /* Pulls the element up, overlapping the element above (map) */
+    background-color: var(--background-color); /* Set background */
+    border-radius: 2rem; /* Round top corners */
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
+    /* Override default #route-input styles */
+    position: static; 
+    bottom: auto;
+    left: auto;
+    margin-left: 0; /* Remove default margins */
+    margin-right: 0;
+    width: 100%; /* Occupy full grid width */
+    
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+
 
 #route-input .nav {
     display: flex;
@@ -161,6 +222,36 @@
 
 }
 
+#current-direction-arrow {
+    color: var(--primary-color);
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#navigation-content, #navigation-content .row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#destination-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.25;
+    margin: 0;
+}
+
+#navigation-info {
+    font-size: .75rem;
+    color: var(--sub-text-color);
+    margin: 0;
+    font-weight: 600;
+}
+
 #app-preloader {
   position: fixed;
   left: 0;
@@ -199,9 +290,21 @@
 }
 
 @media screen and (min-width: 769px) {
-    #navbar, #route-input {
+    #navbar, #route-input:not(#navigation-overview #route-input) { /* Apply only to default route-input */
         margin: 0rem 4rem 2rem 4rem;
         width: calc(100% - 8rem);
+        left: 4rem; /* Adjust left positioning for wider screens */
+    }
+
+    /* Adjustments for navigation-overview on wider screens if necessary */
+    #navigation-overview {
+        /* Keep full width or adjust as needed */
+        width: 100vw; 
+        left: 0;
+    }
+
+    #navigation-overview #route-input {
+         padding: 0 4rem; /* Match wider padding */
     }
 
     #settings-actions, #confirm-route-action {

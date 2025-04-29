@@ -18,6 +18,7 @@
     "last 5 Firefox versions"
   ],
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.16.1",
     "@mapbox/search-js-core": "^1.0.0",
     "@mapbox/search-js-web": "^1.0.0",
     "@turf/turf": "^7.2.0",

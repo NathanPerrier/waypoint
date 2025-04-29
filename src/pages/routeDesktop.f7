@@ -5,13 +5,13 @@
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
-            <div id="map" class="h-100 w-100"></div>
+            <div id="mapDesktop" class="h-100 w-100"></div>
         </div>
     </div>
 
 </template>
 <script type="module">    
-    import * as turf from '@turf/turf';
+import { waitForElement } from "../js/utils/dom.js";
 
 export default async (props, { $, $on, $f7 }) => {
 
@@ -38,13 +38,16 @@ export default async (props, { $, $on, $f7 }) => {
     }
 
 
-    $on('pageInit', async () => {
+    $on('page:tabshow', async () => {
         const app = window.app;
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
+        const mapContainer = await waitForElement('mapDesktop')
+        console.log(mapContainer)
+
         const map = new mapboxgl.Map({
-            container: 'map', //! TODO: change to du=ocument and rename id
+            container: mapContainer, //! TODO: change to du=ocument and rename id
             zoom: 11.53,
             center: [6.5615, 46.0598],
             pitch: 65,
@@ -53,6 +56,7 @@ export default async (props, { $, $on, $f7 }) => {
             style: app.MAP_3D_STYLE, // style URL
             interactive: false
         });
+        console.log(map)
 
         // `routes` comes from https://docs.mapbox.com/mapbox-gl-js/assets/routes.js,
         // which has properties that are in the shape of an array of arrays that correspond

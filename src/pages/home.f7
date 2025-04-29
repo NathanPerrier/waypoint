@@ -4,20 +4,14 @@
       <img id="waypoint-logo" src="/logos/650x650Logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
     <div class="page-content overflow-hidden">
-        <div class="row p-5 m-5 w-100" style="height:100vh">
-          <div class="col-5 h-100 align-content-center">
-              <div class="card-header">Welcome to Waypoint!</div>
-              <div class="card-content card-content-padding">
-                <p>Waypoint is a simple app that allows you to create a list of waypoints and navigate to them in order. You can also share your list with others by generating a QR code.</p>
-              </div>
-              <button class="button button-fill button-raised">Get Started</button>
+        <div class="row w-100 d-flex" style="height:100vh">
+          <div class="col-12 m-4 h-100 text-center justify-center align-center align-content-center">
+                <h1 class="text-center">Welcome to Waypoint!</h1>
+                <p>Waypoint is a simple app that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging Mapbox, our data ensures accurate and reliable directions, making your journey seamless and efficient. Explore the world with confidence and ease using Waypoint.</p>
+             
+                <button style="width:200px; margin: 0 auto; display: block;" class="button button-large button-fill button-raised">Get Started</button>
           </div>
-          <div class="col-7">
-            <!-- <video width="100%" height="100%" autoplay loop muted>
-              <source src="/videos/waypoint.mp4" type="video/mp4"/>
-              Your browser does not support the video tag.
-            </video> -->
-          </div>
+          
         </div>
       </div>
   </div>

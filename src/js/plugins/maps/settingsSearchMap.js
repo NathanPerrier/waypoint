@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         style: app.MAP_LIGHT_STYLE,
     });
 
+    map.on('load', () => {
+        map.resize();
+    });
+
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
@@ -43,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     marker = new mapboxgl.Marker({
         color: "#762CEF",
         draggable: true,
+        offset: [0, 0],
         anchor: 'bottom',
         
     })
@@ -53,16 +58,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     map.on('click', function (e) {
         app.START_LOCATION = {lng: e.lngLat.lng, lat: e.lngLat.lat};
 
-        //REMOVE??
-        app.USER_LOCATION = [e.lngLat.lng, e.lngLat.lat];
-
         console.log('Updated startLocation input value:', app.START_LOCATION);
 
         if (marker == null) {
             marker = new mapboxgl.Marker(
                 {
                     color: "#762CEF",
-                    draggable: true
+                    draggable: true,
+                    offset: [-width / 2, -height],
+                    anchor: 'bottom',
                 }
             )
             .setLngLat(e.lngLat)
