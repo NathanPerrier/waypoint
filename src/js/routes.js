@@ -70,7 +70,7 @@ var routes = [
       //   severity: 'error',
       // },
       {
-        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER && !!app.MAP_LOCATION_BOUNDS,
+        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER,
         redirectPath: '/',
         title: 'Mapbox Access Token Missing',
         description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
@@ -90,7 +90,7 @@ var routes = [
         severity: 'error',
       },
       {
-        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER && !!app.MAP_LOCATION_BOUNDS,
+        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER,
         redirectPath: '/',
         title: 'Mapbox Access Token Missing',
         description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
@@ -136,19 +136,19 @@ var routes = [
       //   severity: 'error',
       // },
       {
-        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER && !!app.MAP_LOCATION_BOUNDS,
+        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER,
         redirectPath: '/',
         title: 'Mapbox Access Token Missing',
         description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
         severity: 'error',
       },
-      {
-        condition: (app) => !!app.NAVIGATION_ROUTE_DATA && !!app.NAVIGATION_ROUTE && !!app.NAVIGATION_ROUTE_STEPS && !!app.DESTINATION_LOCATION_COORDINATES && !!app.DESTINATION_LOCATION && !!app.DESTINATION_LOCATION_DATA && !!app.START_LOCATION && !!app.TRANSPORTATION_MODE,
-        redirectPath: '/route/',
-        title: 'Route Data Missing',
-        description: 'The route data is not available. Please check your route and try again.',
-        severity: 'error',
-      }    
+      // {
+      //   condition: (app) => !!app.NAVIGATION_ROUTE_DATA && !!app.NAVIGATION_ROUTE && !!app.NAVIGATION_ROUTE_STEPS && !!app.DESTINATION_LOCATION_COORDINATES && !!app.DESTINATION_LOCATION && !!app.DESTINATION_LOCATION_DATA && !!app.START_LOCATION && !!app.TRANSPORTATION_MODE,
+      //   redirectPath: '/route/',
+      //   title: 'Route Data Missing',
+      //   description: 'The route data is not available. Please check your route and try again.',
+      //   severity: 'error',
+      // }    
     ])
   },
   {

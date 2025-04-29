@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     map.on('click', function (e) {
         app.START_LOCATION = {lng: e.lngLat.lng, lat: e.lngLat.lat};
+
+        //REMOVE??
+        app.USER_LOCATION = [e.lngLat.lng, e.lngLat.lat];
+
         console.log('Updated startLocation input value:', app.START_LOCATION);
 
         if (marker == null) {

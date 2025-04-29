@@ -15,11 +15,20 @@
                                 <div class="row h-100">
                                     <div class="col-10">
                                         <div class="row h-100">
-                                            <div class="col-9 p-0">    
-                                                <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
+                                            <div class="col-3">    
+                                                <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
                                             </div>
-                                            <div class="col-3">
-                                                <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
+                                            <div class="col-9">
+                                                <div class="row h-100">
+                                                    <div class="col-12"> 
+                                                        <div id="destination-name" class="h-100"></div> 
+                                                    </div>
+                                                </div>
+                                                <div class="row h-100">
+                                                    <div class="col-12"> 
+                                                        <small id="navigation-info" class="h-100"></small> 
+                                                    </div>
+                                                </div>
                                             </div> 
                                         </div>  
                                     </div>
@@ -44,32 +53,72 @@
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
     import { displayDialog } from "../js/utils/dialog.js";
     import { checkForURLParams } from "../js/utils/routes.js";
+    import { navigationManager } from '../js/utils/navigation';
 
     export default async (props, { $, $on, $f7 }) => {
         const app = window.app;
         let locarInstance = null; // Define outside to be accessible by both handlers
         let locarContainerId = null; // Store the ID
 
-        $on('pageInit', async () => {
+        $on('page:tabshow', async () => {
+            await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
 
-            await checkForURLParams(app, this);
-
-            //! check for destination and nav data
+            // Add checks for necessary navigation data before initializing LocAR
+            if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
+                console.error("Navigation data missing. Cannot start navigation.");
+               
+                return;
+            }
 
             const locarConatiner = await waitForElement("NavLocarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found."); 
-                displayDialog(app, app.router, "Error", "LocAR container not found. Please try again later.");
+                displayDialog(app, $f7.views.main.router, "Error", "LocAR container not found. Please try again later.", '/');
                 return;
             }
             locarContainerId = locarConatiner.id;
-            locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
-            if (locarInstance) { // Check if initialization was successful
-                runLocarNav(app, locarInstance);
+            
+            try {
+                locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
+                console.log("LocAR instance initialized:", locarInstance); // Debugging line    
+                if (locarInstance) { // Check if initialization was successful
+                    runLocarNav(app, locarInstance);
+                } else {
+                    console.error("LocAR initialization failed.");
+                    displayDialog(app, $f7.views.main.router, "Error", "LocAR initialization failed. Please try again.", '/');
+                    return;
+                }
+            } catch (error) {
+                console.error("Error during LocAR initialization or runLocarNav:", error);
+                displayDialog(app, $f7.views.main.router, "AR Error", "Could not start the augmented reality navigation. Please try again.", '/route/');
             }
-        });
 
-        $on('pageBeforeRemove', () => {
+            // stop button pressed
+            const stopButton = document.getElementById("stop-button");
+            if (stopButton) {
+                // Ensure listener is only added once
+                stopButton.removeEventListener('click', handleStopNavigation); // Remove previous if exists
+                stopButton.addEventListener('click', handleStopNavigation);
+            }
+
+        })
+
+        const handleStopNavigation = () => {
+            console.log("Stop navigation button clicked.");
+            if (locarInstance && locarInstance.locar) {
+                locarInstance.locar.stopGps(); // Stop GPS updates
+            }
+            // Optionally clear navigation data
+            // app.NAVIGATION_ROUTE = null;
+            // app.NAVIGATION_ROUTE_STEPS = null;
+            // app.NAVIGATION_ROUTE_DATA = null;
+            
+            // Navigate back home or to route page
+            $f7.views.main.router.navigate('/'); 
+            app.tab.show('#view-home'); // Show home tab/view
+        };
+
+        $on('page:tabhide', () => {
             // Destroy LocAR instance using its ID when the page is removed
             if (locarContainerId) { // Use the stored ID
                 destroyLocARInstance(app, locarContainerId);
@@ -77,6 +126,8 @@
                 locarContainerId = null; // Clear the ID
             }
         });
+
+   
 
         return $render;
     };

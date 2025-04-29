@@ -106,51 +106,39 @@
 <script>    
     import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
-    import { getRoute } from "../js/plugins/maps/mapboxRoute.js";
-    import { createStaticRouteMap } from "../js/plugins/maps/routeOverviewMap.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
-    import { waitForElement } from "../js/utils/dom.js";
+    import { waitForElement, handleSearchClick, handleRedirect } from "../js/utils/dom.js";
     import { displayDialog } from "../js/utils/dialog.js";
-
-
-    function isWithinBounds(location) {
-        const isUserInBbx = app.MAPBOXGL_LOCATION_BOUNDS.contains(location);
-        return isUserInBbx;
-    }
       
     export default async (props, { $, $on, $f7 }) => {
 
         const app = window.app;
-        let locarInstance = null; // Define outside to be accessible by both handlers
-        let locarContainerId = null; // Store the ID
+        let locarInstance = null; 
+        let locarContainerId = null; 
+    
+        const boundConfirmRouteHandler = () => handleRedirect('#view-navigation', '/navigation/', $f7);
+        const boundSearchClickHandler = () => handleSearchClick(app, $f7);
 
-        // Define the handler function for the confirm route button
-        const handleConfirmRouteClick = () => {
-            $f7.actions.close('.confirm-route-actions');
-            console.log('navigating to navigation page');
-            $f7.views.navigation.router.navigate('/navigation/')
-            app.tab.show('#view-navigation');
-
-        };
-
-
-        $on('pageInit', async () => {
+        $on('page:tabshow', async () => {
             const locarConatiner = await waitForElement("locarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found.");
                 displayDialog(app, app.router, "Error", "LocAR container not found. Please try again later.");
                 return;
             }
+
             locarContainerId = locarConatiner.id; // Store the ID
-            console.log("locarConatiner", locarConatiner);
+
             locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
             if (locarInstance) { // Check if initialization was successful
                 runLocarRoute(app, locarInstance);
             }
+        });
+
+        $on('pageInit', async () => {
 
             var searchInput = document.getElementById('search-input');
             var searchResults = document.getElementById('search-results-list');
-            var confirmRouteButton = document.getElementById('confirm-route-button'); // Get button reference
 
             searchInput.addEventListener('input', async function() {
                 autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
@@ -165,8 +153,6 @@
                 }
             });
 
-
-            // add event listener to each mode button to change the TRANSPORTATION_MODE variable
             modeButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
                     modeButtons.forEach(function(btn) {
@@ -180,105 +166,64 @@
                 });            
             });
 
-            // Remove potential existing listener and add the new one
-            confirmRouteButton.removeEventListener('click', handleConfirmRouteClick);
-            confirmRouteButton.addEventListener('click', handleConfirmRouteClick);
-
-
             var searchButton = document.getElementById('search-button');
+            var confirmRouteButton = document.getElementById('confirm-route-button');
 
-            searchButton.addEventListener('click', async function() {
-                var searchValue = document.getElementById('search-input').value;
-                var navigationMode = app.TRANSPORTATION_MODE;
-                
-                if (searchValue === '') {
-                    $f7.dialog.alert('Please enter a search value');
-                    return;
-                }             
+            // --- Add listeners using the bound references ---
+            if (confirmRouteButton) {
+                // Remove listener first to prevent duplicates if pageInit runs again unexpectedly
+                confirmRouteButton.removeEventListener('click', boundConfirmRouteHandler);
+                confirmRouteButton.addEventListener('click', boundConfirmRouteHandler);
+            }
+            if (searchButton) {
+                // Remove listener first
+                searchButton.removeEventListener('click', boundSearchClickHandler);
+                searchButton.addEventListener('click', boundSearchClickHandler);
+            }
 
-                if (navigationMode === '' || navigationMode === null) {
-                    $f7.dialog.alert('Please select a navigation mode');
-                    return;
-                }
-
-                if (!app.START_LOCATION || typeof app.START_LOCATION.lng !== 'number' || typeof app.START_LOCATION.lat !== 'number') {
-                    $f7.dialog.alert('Valid start location is missing. Please set it in settings.');
-                    return;
-                }
-
-                if (!isWithinBounds(app.START_LOCATION)) {
-                    $f7.dialog.alert('Your current start location is outside the the UQ campus. Please adjust it in settings.');
-                    console.warn('Start location out of bounds:', app.START_LOCATION, 'Bounds:', app.MAP_LOCATION_BOUNDS);
-                    return;
-                }
-
-                if (searchValue === null || searchValue === undefined) {
-                    $f7.dialog.alert('No valid destination found for the search term.');
-                    return;
-                }
-
-                if (!app.DESTINATION_LOCATION_DATA || !app.DESTINATION_LOCATION_COORDINATES) {
-                    $f7.dialog.alert('No valid destination found for the search term. Please reenter the search destination.');
-                    return;
-                }
-
-                if (!isWithinBounds(app.DESTINATION_LOCATION_COORDINATES)) {
-                    $f7.dialog.alert('The selected destination is outside the allowed map area.');
-                    console.warn('Destination location out of bounds:', app.DESTINATION_LOCATION_COORDINATES, 'Bounds:', app.MAP_LOCATION_BOUNDS);
-                    return;
-                }
-   
-                app.DESTINATION_LOCATION_DATA.startLocation = app.START_LOCATION;
-
-                $f7.actions.close('.settings-actions');
-
-                await getRoute(app, $f7.router);
-
-                // Check if route data is valid before proceeding
-                if (!app.NAVIGATION_ROUTE_DATA || !app.NAVIGATION_ROUTE_DATA.duration || !app.NAVIGATION_ROUTE_DATA.distance) {
-                    console.error("Failed to get valid route data.");
-                    $f7.dialog.alert('Could not calculate the route. Please try again later.');
-                    return;
-                }
-
-                const mapContainerConfirm = document.getElementById('confirm-route-map');
-                await createStaticRouteMap(app, mapContainerConfirm);
-
-                document.getElementById('time').innerHTML = (app.NAVIGATION_ROUTE_DATA.duration / 60).toFixed(0) + 'mins';
-                document.getElementById('distance').innerHTML = (app.NAVIGATION_ROUTE_DATA.distance/1000).toFixed(1) + 'km';
-                document.getElementById('mode').innerHTML = `<i class="${app.TRANSPORTATION_MODE_ICON}"></i>`;
-                document.getElementById('destination_name').innerHTML = app.DESTINATION_LOCATION_DATA.name;
-
-                $f7.actions.open('.confirm-route-actions');
-
-            });
         });
 
 
-        $on('pageBeforeRemove', () => {
+        $on('page:tabhide', () => {
+            $f7.actions.close('.confirm-route-actions');
             
-            if (locarContainerId) { // Use the stored ID
+            if (locarInstance) { 
                 destroyLocARInstance(app, locarContainerId);
                 locarInstance = null; // Clear the instance variable
                 locarContainerId = null; // Clear the ID
             }
 
-             const settingsModal = $f7.actions.get('.settings-actions');
-             if (settingsModal) {
-                 settingsModal.off('actionsOpened');
-                 settingsModal.off('actionsClose');
-                 settingsModal.off('actionsClosed');
-             }
-             const mapContainer = document.getElementById('settings-map');
-             if (minimapInstance && mapContainer) {
-                 mapContainer.innerHTML = ''; 
-             }
+            const settingsModal = $f7.actions.get('.settings-actions');
+            if (settingsModal) {
+                settingsModal.off('actionsOpened');
+                settingsModal.off('actionsClose');
+                settingsModal.off('actionsClosed');
+            }
+            const mapContainer = document.getElementById('settings-map');
+   
+            if (mapContainer._mapInstance) {
+                container._mapInstance.remove();
+                container._mapInstance = null;
+            }
 
-             // Remove listener when page is removed
-             var confirmRouteButton = document.getElementById('confirm-route-button');
-             if (confirmRouteButton) {
-                 confirmRouteButton.removeEventListener('click', handleConfirmRouteClick);
-             }
+            const confirmMapContainer = document.getElementById('confirm-route-map');
+
+            if (confirmMapContainer._mapInstance) {
+                confirmMapContainer._mapInstance.remove();
+                confirmMapContainer._mapInstance = null;
+            }
+
+            // --- Remove listeners using the bound handler references ---
+            var confirmRouteButton = document.getElementById('confirm-route-button');
+            if (confirmRouteButton) { 
+                confirmRouteButton.removeEventListener('click', boundConfirmRouteHandler);
+            }
+
+            var searchButton = document.getElementById('search-button');
+            if (searchButton) {
+                searchButton.removeEventListener('click', boundSearchClickHandler);
+            }
+
         });
     
         return $render;

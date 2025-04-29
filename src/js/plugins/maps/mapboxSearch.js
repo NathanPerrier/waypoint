@@ -20,9 +20,9 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
     const result = await search.suggest(searchInput.value, { sessionToken : mapSessionToken });
     if (result.suggestions.length === 0) return;
 
-    searchResults.innerHTML = '';
     result.suggestions = result.suggestions.slice(0, 3);
 
+    let suggestionsHTML = ''; // Initialize an empty string to accumulate HTML
     for (const suggestion of result.suggestions) {
         
         const suggestionFeatures = await getCoordinatesFromMapboxId(suggestion.mapbox_id, mapSessionToken) || [];
@@ -43,7 +43,8 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
         const escapedFullAddress = suggestionData.full_address?.replace(/'/g, "\\'") || '';
         const coordinatesString = suggestionFeatures.features[0]?.geometry.coordinates ? suggestionFeatures.features[0]?.geometry.coordinates.join(',') : []
         
-        searchResults.innerHTML += `
+        // Append suggestion HTML to the string variable
+        suggestionsHTML += `
         <a href="#" onclick="window.handleRouteSuggestionClick('${escapedName}', '${escapedPlaceFormatted}', '${coordinatesString}', '${escapedFullAddress}', '${suggestionData.feature_type || ''}', '${suggestionData.mapbox_id || ''}', ${suggestionData.distance || null}); return false;">
             <li class="mx-2">
                 <div class="row w-100 h-100 mx-2">
@@ -69,4 +70,6 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
             </li>
         </a>`;
     }
+    // Update innerHTML once after the loop with the accumulated HTML
+    searchResults.innerHTML = suggestionsHTML; 
 };

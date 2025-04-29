@@ -124,7 +124,7 @@ export const destroyLocARInstance = (app, elementId) => {
 
     // Stop webcam, dispose renderer, scene, etc.
     if (instance.cam) {
-        instance.cam.stop(); // Assuming a stop method exists
+        instance.cam.dispose(); // Assuming a stop method exists
     }
     if (instance.renderer) {
         instance.renderer.dispose();

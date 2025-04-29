@@ -4,6 +4,8 @@ export function runLocarRoute(app, locarInstance) { // Accept app instance
     let firstLocation = true;
 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
+        app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
+        
         if(firstLocation) {
 
             const boxProps = [

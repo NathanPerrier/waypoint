@@ -22,9 +22,7 @@ export async function getRoute(app, router) {
         const data = await response.json();
         if (!data.routes || data.routes.length === 0) {
             throw new Error('No routes found.');
-        }
-
-        console.log('Route data:', data);   
+        } 
 
         const route = data.routes[0];
         app.NAVIGATION_ROUTE_DATA = {

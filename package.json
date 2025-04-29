@@ -20,6 +20,7 @@
   "dependencies": {
     "@mapbox/search-js-core": "^1.0.0",
     "@mapbox/search-js-web": "^1.0.0",
+    "@turf/turf": "^7.2.0",
     "dom7": "^4.0.6",
     "framework7": "^8.3.4",
     "framework7-icons": "^5.0.5",

@@ -13,6 +13,8 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
 
+        app.DEBUG = true;
+
         app.PRIMARY_COLOR = "#782cf6";
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
@@ -29,9 +31,10 @@ const initializeConfig = (app) => {
         app.NAVIGATION_ROUTE_COORDINATES = null;
         app.NAVIGATION_ROUTE_STEPS = null;
         app.NAVIGATION_ROUTE_DATA = null;
-        app.USER_LOCATION = null; 
+        app.USER_LOCATION = null;
         app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE = [[152.998221, -27.505890], [153.019359, -27.490149]]; // st lucia campus
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
         app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v11';
@@ -50,6 +53,15 @@ const initializeConfig = (app) => {
         app.DEVICE_ORIENTATION_CONTROLS = null;
         app.CAM = null;
         app.AR = true; 
+
+
+        if (app.DEBUG) {
+            console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
+            app.MAP_LOCATION_BOUNDS = null;
+            app.MAPBOXGL_LOCATION_BOUNDS = null;
+            app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; // Set to null for testing
+
+        }   
 
         try {
             // Parallelize geolocation and device detection
