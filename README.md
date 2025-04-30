@@ -30,10 +30,10 @@ git https://github.com/NathanPerrier/waypoint
 cd Waypoint
 ```
 
-> 👉 Create `.env` from `env.sample`
+> 👉 Create `.env` in `./src/`
 
 ```env
-GOOGLE_API_KEY=your-api-key
+VITE_MAPBOX_ACCESS_TOKEN=your-mapbox-token
 ```
 
 > 👉 Install npm dependencies
@@ -44,9 +44,8 @@ npm install
 
 > 👉 Run NPM scrips
 
-* 🔥 `start` - run development server
-* 🔧 `dev` - run development server
-* 🔧 `build` - build web app for production
+* 🔧 `npm run dev` - run development server
+* 🔧 `npm build` - build web app for production
 
 ## Vite
 

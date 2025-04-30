@@ -1,9 +1,6 @@
 import Device from './utils/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
-import PopupComponent from 'framework7/components/popup';
 
-
-//! Config initialization logic moved to use f7 app instance
 
 // Default values (can be overridden during initialization)
 const defaultUserLocation = [153.013306, -27.497503]; // great court
@@ -19,6 +16,8 @@ const initializeConfig = (app) => {
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
+        app.SESSION_TIMEOUT_HOURS = 12;
+        app.NOW = new Date().getTime();
         app.TRANSPORTATION_MODE = "walking";
         app.DRIVING_ICON = "fa-solid fa-car";
         app.BIKING_ICON = "fa-solid fa-bicycle";
@@ -39,9 +38,9 @@ const initializeConfig = (app) => {
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
         app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v11';
         app.MAP_3D_STYLE = 'mapbox://styles/mapbox/standard';
-        app.MAP_SESSION_TOKEN = new SessionToken();
+        app.MAP_SESSION_TOKEN = null; 
         app.MIN_SEARCH_LENGTH = 3; 
-        app.MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbG8ybW9pYnowOTRiMnZsZWZ6NHFhb2diIn0.NDD8iEfYO1t9kg6q_vkVzQ';
+        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN; // Set your Mapbox access token here
         app.DEVICE = null;
         app.WEBCAM_ENABLED = false;
         app.DESKTOP_DEVICE = false;
@@ -54,6 +53,15 @@ const initializeConfig = (app) => {
         app.CAM = null;
         app.AR = true; 
 
+        var setupTime = sessionStorage.getItem('setupTime');
+        if (setupTime == null) {
+            sessionStorage.setItem('setupTime', app.NOW)
+        } else {
+            if(app.NOW-setupTime > app.SESSION_TIMEOUT_HOURS*60*60*1000) {
+                sessionStorage.clear()
+                sessionStorage.setItem('setupTime', app.NOW);
+            }
+        }
 
         if (app.DEBUG) {
             console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
@@ -62,6 +70,13 @@ const initializeConfig = (app) => {
             app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; // Set to null for testing
 
         }   
+
+        if (sessionStorage.getItem('mapbox_session_token')) {
+            app.MAP_SESSION_TOKEN = sessionStorage.getItem('mapbox_session_token')
+        } else {
+            app.MAP_SESSION_TOKEN = new SessionToken(); // Fallback to a new session token
+            sessionStorage.setItem('mapbox_session_token', app.MAP_SESSION_TOKEN);
+        }
 
         try {
             // Parallelize geolocation and device detection
@@ -126,3 +141,6 @@ const initializeConfig = (app) => {
 
 // Only export the initialization function
 export { initializeConfig };
+
+const app = window.app;
+

@@ -28,7 +28,7 @@ export async function getCoordinatesFromMapboxId(mapboxId, mapSessionToken) {
     const url =`https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?access_token=${app.MAPBOX_ACCESS_TOKEN}&session_token=${mapSessionToken}`
     const response = await fetch(url);
     if (!response.ok) {
-        displayDialog(window.app, window.app.router, 'Error', 'Failed to fetch coordinates from address', '/');
+        window.app.dialog.alert('Failed to fetch coordinates from Mapbox ID');
         throw new Error('Failed to fetch coordinates from address');
     }
     const data = await response.json();

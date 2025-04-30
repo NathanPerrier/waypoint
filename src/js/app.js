@@ -1,4 +1,3 @@
-import $ from 'dom7';
 import Framework7 from 'framework7/bundle';
 
 // Import F7 Styles
