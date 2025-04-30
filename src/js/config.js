@@ -40,7 +40,10 @@ const initializeConfig = (app) => {
         app.MAP_3D_STYLE = 'mapbox://styles/mapbox/standard';
         app.MAP_SESSION_TOKEN = null; 
         app.MIN_SEARCH_LENGTH = 3; 
-        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN; // Set your Mapbox access token here
+
+        //fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
+        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbWEzYWk4Zm0wc293MmpvazltbnVxNWZqIn0.CZY6oAZgkYGHvxlGmwcdQw'; // Set your Mapbox access token here
+        
         app.DEVICE = null;
         app.WEBCAM_ENABLED = false;
         app.DESKTOP_DEVICE = false;

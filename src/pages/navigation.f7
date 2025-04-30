@@ -53,7 +53,6 @@
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
     import { displayDialog } from "../js/utils/dialog.js";
     import { checkForURLParams } from "../js/utils/routes.js";
-    import { navigationManager } from '../js/utils/navigation';
     import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 
     export default async (props, { $, $on, $f7 }) => {
