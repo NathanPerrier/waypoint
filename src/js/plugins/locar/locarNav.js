@@ -8,7 +8,7 @@ export function runLocarNav(app, locarInstance) {
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
         // Update global app state (used by navigationManager)
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
-        app.dialog.alert("User Location:", app.USER_LOCATION, "Distance Moved:", distMoved);
+        app.dialog.alert(("User Location:", app.USER_LOCATION, "Distance Moved:", distMoved));
 
 
 
