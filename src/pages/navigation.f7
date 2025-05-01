@@ -32,7 +32,7 @@
                                             </div>  
                                         </div>
                                         <div class="col-2 ml-2">
-                                            <button id="stop-button" class="button button-fill r-2 h-100">Stop</button> 
+                                            <button id="stop-button" href="#view-route"  class="tab-link tab-link-active button button-fill r-2 h-100">Stop</button> 
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +66,9 @@
             // Add checks for necessary navigation data before initializing LocAR
             if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
                 console.error("Navigation data missing. Cannot start navigation.");
-               
+                app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
+                    $f7.views.main.router.navigate('/route/'); // Navigate to the route page
+                });
                 return;
             }
 
@@ -101,20 +103,9 @@
                 displayDialog(app, $f7.views.main.router, "Map Error", "Could not initialize the route overview map. Please try again.", '/route/');
             }
 
-            // stop button pressed
-            const stopButton = document.getElementById("stop-button");
-            if (stopButton) {
-                // Ensure listener is only added once
-                stopButton.removeEventListener('click', handleStopNavigation); // Remove previous if exists
-                stopButton.addEventListener('click', handleStopNavigation);
-            }
-
         })
 
-        const handleStopNavigation = () => {
-            $f7.views.main.router.navigate('/route/'); 
-            app.tab.show('#view-route'); 
-        };
+
 
         $on('page:tabhide', () => {
             // Destroy LocAR instance using its ID when the page is removed

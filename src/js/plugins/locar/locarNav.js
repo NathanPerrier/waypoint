@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { displayDialog } from '../../utils/dialog';
-
+import { getRoute } from '../maps/mapboxRoute.js';
 
 export function runLocarNav(app, locarInstance) {
 
@@ -8,24 +8,38 @@ export function runLocarNav(app, locarInstance) {
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
         // Update global app state (used by navigationManager)
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
-        app.dialog.alert(("User Location:", app.USER_LOCATION, "Distance Moved:", distMoved));
 
+        console.log('User Location:', app.USER_LOCATION);
+        console.log('Distance Moved:', distMoved);
+        
+        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER) {
+            return;
+        }
 
+        app.START_LOCATION = {
+            lng: pos.coords.longitude,
+            lat: pos.coords.latitude,
+        };
 
+        getRoute(app, app.router).then(() => {
+            console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+        }).catch((error) => {
+            console.error('Error fetching route:', error);
+        });
 
+        if (app.NAVIGATION_ROUTE.length < 2) {
+            app.dialog.aler("You have arrived to your destination.");
+            return;
+        }
 
         //display line
-        // const points = [];
-        // points.push(new THREE.Vector3(app.USER_LOCATION[0], app.USER_LOCATION[1], 1));
-        // points.push(new THREE.Vector3(nextCoordinate[0], nextCoordinate[1], 1)); 
-        // const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-       
-        // const mesh = new THREE.Mesh(
-        //     lineGeometry,
-        //     new THREE.MeshBasicMaterial({color: 0xff0000})
-        // );
-        // console.log(mesh, lineGeometry, points);
-        // locarInstance.locar.add(mesh, app.USER_LOCATION[0], app.USER_LOCATION[1]);
+        const points = app.NAVIGATION_ROUTE.map(coord => locarInstance.locar.lonLatToWorldCoords(coord[0], coord[1]));
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+         const mesh = new THREE.Mesh(
+            geometry,
+            new THREE.MeshBasicMaterial({color: 0x0000ff})
+        );
+        locarInstance.locar.add(geometry, pos.coords.longitude, pos.coords.latitude, .001);
 
     });
 

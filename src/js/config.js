@@ -10,13 +10,14 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
 
-        app.DEBUG = false;
+        app.DEBUG = true;
 
         app.PRIMARY_COLOR = "#782cf6";
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.SESSION_TIMEOUT_HOURS = 12;
+        app.NAVIGATION_DISTANCE_BUFFER = 5; //5
         app.NOW = new Date().getTime();
         app.TRANSPORTATION_MODE = "walking";
         app.DRIVING_ICON = "fa-solid fa-car";

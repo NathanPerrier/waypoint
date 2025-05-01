@@ -28,7 +28,7 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
             accessToken: app.MAPBOX_ACCESS_TOKEN, 
             bbox: app.MAP_LOCATION_BOUNDS, 
             countries: app.SEARCH_COUNTRY_RESTRICTIONS, 
-            types: app.SEARCH_TYPES, 
+            types: app.SEARCH_TYPES, //! fix
             limit: app.SEARCH_RESULT_LIMIT, // Limit suggestions to 5
             language: app.LANGUAGE, 
             navigation_profile: app.TRANSPORTATION_MODE, 
