@@ -26,7 +26,7 @@
 
       <div id="view-route" class="view view-init tab" data-name="route" data-url="/route/"></div>
       <div id="view-navigation" class="view view-init tab" data-name="navigation" data-url="/navigation/"></div>
-      <div id="view-route-desktop" class="view view-init tab" data-name="routeDesktop" data-url="/routeDesktop/"></div>
+      <div id="view-route-desktop" class="view view-init tab" data-name="routeDesktopPage" data-url="/routeDesktop/"></div>
     </div>
   </div>
 </template>

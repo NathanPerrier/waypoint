@@ -5,13 +5,14 @@
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
-            <div id="mapDesktop" class="h-100 w-100"></div>
+            <div id="mapDesktopRoute" class="h-100 w-100"></div>
         </div>
     </div>
 
 </template>
-<script type="module">    
+<script>    
 import { waitForElement } from "../js/utils/dom.js";
+import * as turf from '@turf/turf';
 
 export default async (props, { $, $on, $f7 }) => {
 
@@ -35,16 +36,14 @@ export default async (props, { $, $on, $f7 }) => {
             return [x, y];
         });
         return bezierRoute;
-    }
+    };
 
-
-    $on('page:tabshow', async () => {
+    $on('pageInit', async () => {
         const app = window.app;
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
-        const mapContainer = await waitForElement('mapDesktop')
-        console.log(mapContainer)
+        const mapContainer = await waitForElement('mapDesktopRoute')
 
         const map = new mapboxgl.Map({
             container: mapContainer, //! TODO: change to du=ocument and rename id
@@ -56,7 +55,7 @@ export default async (props, { $, $on, $f7 }) => {
             style: app.MAP_3D_STYLE, // style URL
             interactive: false
         });
-        console.log(map)
+
 
         // `routes` comes from https://docs.mapbox.com/mapbox-gl-js/assets/routes.js,
         // which has properties that are in the shape of an array of arrays that correspond
@@ -111,12 +110,14 @@ export default async (props, { $, $on, $f7 }) => {
     
         // wait for the terrain and sky to load before starting animation
         map.on('load', () => {
+            map.resize();
+            
             const animationDuration = 1000000;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
 
             const relativeCameraAltitude = 50; 
             
-            const routeDistance = turf.lineDistance(turf.lineString(targetRoute));
-            const cameraRouteDistance = turf.lineDistance(
+            const routeDistance = turf.length(turf.lineString(targetRoute));
+            const cameraRouteDistance = turf.length(
                 turf.lineString(cameraRoute)
             );
 
@@ -189,6 +190,26 @@ export default async (props, { $, $on, $f7 }) => {
             window.requestAnimationFrame(frame);
         });
     });
+
+    // Add cleanup logic
+    $on('pageBeforeOut', () => {
+        console.log("Cleaning up routeDesktop.f7 page...");
+        const mapContainer = document.getElementById('mapDesktopRoute'); // Get container reference
+        if (map) {
+            map.remove();
+            map = null;
+            if (mapContainer) {
+                mapContainer._mapInstance = null; // Clear the stored instance
+                mapContainer.innerHTML = ''; // Explicitly clear container content
+            }
+            console.log("Desktop route map removed and container cleared.");
+        } else if (mapContainer) {
+             mapContainer.innerHTML = ''; // Clear container even if map instance wasn't found/removed
+             console.log("Desktop route container cleared (map instance not found).");
+        }
+         console.log("routeDesktop.f7 cleanup complete.");
+    });
+
     return $render;
 }
 </script>

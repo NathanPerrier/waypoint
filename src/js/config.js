@@ -11,7 +11,9 @@ const initializeConfig = (app) => {
         // Set default values on the app instance first
 
         app.DEBUG = true;
+        app.FEEDBACK = true;
 
+        app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
         app.PRIMARY_COLOR = "#782cf6";
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
@@ -123,7 +125,7 @@ const initializeConfig = (app) => {
             app.MOBILE_DEVICE = app.DEVICE.device.ios || app.DEVICE.device.android || app.DEVICE.device.iphone || app.DEVICE.device.androidChrome || app.DEVICE.device.cordova || app.DEVICE.device.ipad; 
 
             // Conditionally load libraries for mobile
-            if (!app.MOBILE_DEVICE) {
+            if (!app.MOBILE_DEVICE || !app.WEBCAM_ENABLED) {
                 app.AR = false; // Disable AR mode for desktop
             }
 

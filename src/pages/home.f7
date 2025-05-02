@@ -22,9 +22,21 @@
 
 
 export default (props, { $, $on, $f7 }) => {
-  //onload = () => {
-  //  document.getElementById('waypoint-logo').src = imgUrl
-  //}
+  const app = window.app;
+
+  $on('pageInit', async () => {
+    // Check if the user has already taken the survey
+    const hasTakenSurvey = sessionStorage.getItem('hasTakenSurvey');
+    if (!hasTakenSurvey && app.FEEDBACK) {
+      // Show the survey dialog
+      app.dialog.confirm('Thank you for trying out our demo, we hope you like it! Please be aware there may be bugs as it is an early release and it currently only supports outside navigation. Would you like to take a survey to help us improve the demo?', 'Welcome To The Waypoint Demo', () => {
+        console.log(app.FEEDBACK_URL);
+        window.open(app.FEEDBACK_URL, '_blank').focus();
+        sessionStorage.setItem('hasTakenSurvey', 'true'); 
+      });
+    }
+  });
+
   return $render;
 }
 </script>

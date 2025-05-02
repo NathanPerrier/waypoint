@@ -51,7 +51,6 @@
     import { waitForElement } from "../js/utils/dom.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
-    import { displayDialog } from "../js/utils/dialog.js";
     import { checkForURLParams } from "../js/utils/routes.js";
     import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 
@@ -75,32 +74,32 @@
             const locarConatiner = await waitForElement("NavLocarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found."); 
-                displayDialog(app, $f7.views.main.router, "Error", "LocAR container not found. Please try again later.", '/');
+                app.dialog.alert("LocAR container not found. Please try again.", "Error", () => {
+                    $f7.views.main.router.navigate('/route/'); // Navigate to the route page
+                });
                 return;
             }
             locarContainerId = locarConatiner.id;
             
             try {
+                await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
                 locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
                 console.log("LocAR instance initialized:", locarInstance); // Debugging line    
                 if (locarInstance) { // Check if initialization was successful
                     runLocarNav(app, locarInstance);
                 } else {
                     console.error("LocAR initialization failed.");
-                    displayDialog(app, $f7.views.main.router, "Error", "LocAR initialization failed. Please try again.", '/');
+                    app.dialog.alert("LocAR initialization failed. Please try again.", "Error", () => {
+                        $f7.views.main.router.navigate('/route/'); // Navigate to the route page
+                    });
                     return;
                 }
             } catch (error) {
                 console.error("Error during LocAR initialization or runLocarNav:", error);
-                displayDialog(app, $f7.views.main.router, "AR Error", "Could not start the augmented reality navigation. Please try again.", '/route/');
-            }
-
-            try {
-                // Initialize the route overview map
-            await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
-            } catch (error) {
-                console.error("Error initializing route overview map:", error);
-                displayDialog(app, $f7.views.main.router, "Map Error", "Could not initialize the route overview map. Please try again.", '/route/');
+                app.dialog.alert("An error occurred while initializing LocAR. Please try again.", "Error", () => {
+                    $f7.views.main.router.navigate('/route/'); // Navigate to the route page
+                });
+                return;
             }
 
         })

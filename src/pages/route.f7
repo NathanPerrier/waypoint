@@ -108,7 +108,6 @@
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { waitForElement, handleSearchClick, handleRedirect } from "../js/utils/dom.js";
-    import { displayDialog } from "../js/utils/dialog.js";
       
     export default async (props, { $, $on, $f7 }) => {
 
@@ -123,7 +122,9 @@
             const locarConatiner = await waitForElement("locarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found.");
-                displayDialog(app, app.router, "Error", "LocAR container not found. Please try again later.");
+                app.dialog.alert("LocAR container not found. Please try again later.", "Error" , () => {
+                    $f7.views.main.router.navigate('/'); // Navigate to the route page
+                });
                 return;
             }
 
@@ -211,17 +212,6 @@
             if (confirmMapContainer._mapInstance) {
                 confirmMapContainer._mapInstance.remove();
                 confirmMapContainer._mapInstance = null;
-            }
-
-            // --- Remove listeners using the bound handler references ---
-            var confirmRouteButton = document.getElementById('confirm-route-button');
-            if (confirmRouteButton) { 
-                confirmRouteButton.removeEventListener('click', boundConfirmRouteHandler);
-            }
-
-            var searchButton = document.getElementById('search-button');
-            if (searchButton) {
-                searchButton.removeEventListener('click', boundSearchClickHandler);
             }
 
         });

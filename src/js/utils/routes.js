@@ -1,5 +1,3 @@
-import { displayDialog } from './dialog.js';
-
 export async function checkForURLParams(app, router) {
     const urlParams = new URLSearchParams(window.location.search);
     console.log("URL Parameters:", urlParams.toString());
@@ -26,7 +24,9 @@ export async function checkForURLParams(app, router) {
     console.log("Parsed URL Parameters:", { startLocation: app.START_LOCATION, endLocation: app.END_LOCATION, route: app.TRANSPORTATION_MODE });
 
     if (!app.END_LOCATION) {
-      displayDialog(app, router, "Error", "No destination location provided. Please set a destination.", '/route/');
+      app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error', () => {
+        router.navigate('/');
+      });
     }
 }
 
@@ -34,15 +34,25 @@ export const createRouteGuard = (checks) => {
   return async function ({ resolve, reject }) {
     const router = this;
     const app = router.app;
-    
-    // Wait for the config initialization promise to resolve
+
+    // Ensure the route guard is not invoked multiple times
+    if (app.routeGuardActive) {
+      console.warn("Route guard already active, skipping duplicate invocation.");
+      return reject();
+    }
+    app.routeGuardActive = true;
+
     try {
+      // Wait for the config initialization promise to resolve
       await app.initializationPromise;
     } catch (error) {
       console.error("Config initialization failed, cannot proceed with route guard:", error);
-      displayDialog(app, router, "Initialization Error", "The application could not initialize properly. Please try again later.", '/');
+      app.dialog.alert("App initialization failed. Please try again later.", 'Error', () => {
+        app.router.navigate('/');
+      });
       app.AR = false;
-      return reject(); 
+      app.routeGuardActive = false;
+      return reject(); // Ensure reject is called here
     }
 
     for (const check of checks) {
@@ -51,23 +61,27 @@ export const createRouteGuard = (checks) => {
       // Check the primary condition
       let conditionMet = condition(app);
 
-      // If deviceCheck is specified and true, also check app.DEVICE
-      if (deviceCheck && app.DESKTOP_DEVICE) {
-        conditionMet = true // If device check is required and app.DEVICE is false, the overall condition fails
+      // If deviceCheck is specified, this check only applies to desktop devices.
+      // If it's not a desktop device, the check is considered passed/irrelevant.
+      if (deviceCheck && !app.DESKTOP_DEVICE) {
+        conditionMet = true; // Skip check for non-desktop devices if deviceCheck is true
       }
 
       if (!conditionMet) {
         // Display a dialog with custom error details
-        
-        displayDialog(app, router, title, description, redirectPath);
+        app.dialog.alert(description, title, () => {
+          router.navigate(redirectPath);
+        });
 
         const logMethod = console[severity] || console.log; // Default to console.log if severity is not a valid method
         logMethod(`Route guard check failed: ${title}`);
-        return reject(); // Reject immediately, navigation is handled by the dialog
+        app.routeGuardActive = false;
+        return reject(); // Ensure reject is called here
       }
     }
 
     // All checks passed
+    app.routeGuardActive = false;
     resolve();
   };
 };

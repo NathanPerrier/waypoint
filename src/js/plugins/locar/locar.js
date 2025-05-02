@@ -1,12 +1,15 @@
 
 import * as THREE from 'three';
 import * as LocAR from 'locar';
-import { displayDialog } from '../../utils/dialog';
 
 export const initializeLocAR = async (app, locarElement) => {
     if (!locarElement || !locarElement.id) {
         console.error("LocAR initialization requires a locarElement with a unique ID.");
-        displayDialog(app, app.router, 'Error', 'LocAR initialization requires a locarElement with a unique ID.', '/');  
+        app.dialog.alert('LocAR initialization requires a locarElement with a unique ID.','Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         return;
     }
     const elementId = locarElement.id;
@@ -42,7 +45,11 @@ export const initializeLocAR = async (app, locarElement) => {
 
     if (!app) {
         console.error("Framework7 app instance not found. LocAR cannot initialize.");
-        displayDialog(app, app.router, 'Error', 'Framework7 app instance not found. LocAR cannot initialize.', '/');
+        app.dialog.alert('Framework7 app instance not found. LocAR cannot initialize.','Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         delete app.locarInstances[elementId];
         return;
     }
@@ -51,7 +58,11 @@ export const initializeLocAR = async (app, locarElement) => {
         await app.initializationPromise; // Assuming this is a global app promise
       } catch (error) {
         console.error("Config initialization failed, cannot proceed:", error);
-        displayDialog(app, app.router, 'Error', 'Config initialization failed. Please try again later.', '/');
+        app.dialog.alert('Config initialization failed. Please try again later.', 'Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         delete app.locarInstances[elementId];
         return;
     }
@@ -59,7 +70,11 @@ export const initializeLocAR = async (app, locarElement) => {
     // Assuming app.AR and app.DESKTOP_DEVICE are global settings
     if (!app.AR) {
         console.warn("AR is not enabled. LocAR cannot initialize. Desktop device:", app.DESKTOP_DEVICE);
-        displayDialog(app, app.router, 'Error', 'AR is not enabled. LocAR cannot initialize.', '/');
+        app.dialog.alert('AR is not enabled. LocAR cannot initialize.','Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         delete app.locarInstances[elementId];
         return;
     }
@@ -67,7 +82,11 @@ export const initializeLocAR = async (app, locarElement) => {
     // Check components within the specific instance
     if (!instance.locar || !instance.renderer || !instance.scene || !instance.camera || !instance.cam || !instance.controls) {
         console.error(`LocAR components not initialized correctly for element ID '${elementId}'.`);
-        displayDialog(app, app.router, 'Error', `LocAR components not initialized correctly for element ID '${elementId}'.`, '/');
+        app.dialog.alert('LocAR components not initialized correctly. Please try again later.','Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         delete app.locarInstances[elementId];
         return;
     }
@@ -108,7 +127,11 @@ export const initializeLocAR = async (app, locarElement) => {
 export const destroyLocARInstance = (app, elementId) => {
     if (!app || !app.locarInstances || !app.locarInstances[elementId]) {
         console.warn(`No LocAR instance found for element ID '${elementId}' to destroy.`);
-        displayDialog(app, app.router, 'AR Error', `Issue deleting AR instance. Please try again later.`, '/');
+        app.dialog.alert(`No LocAR instance found. Please try again later.`, 'Error', {
+            onClose: () => {
+                app.router.navigate('/');
+            }
+        });
         return;
     }
 

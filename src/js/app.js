@@ -40,6 +40,7 @@ window.$ = jQuery;
 
       // App routes
       routes: routes,
+      
   });
 
   // Expose app globally

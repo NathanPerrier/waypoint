@@ -1,5 +1,4 @@
 import { SearchBoxCore } from '@mapbox/search-js-core';
-import { displayDialog } from '../../utils/dialog.js';
 
 // ...existing code...
 
@@ -50,6 +49,8 @@ export async function getRoute(app, router) {
 
     } catch (error) {
         console.error('Error fetching route:', error);
-        displayDialog(app, router, 'Route Error', error.message, '/');
+        app.dialog.alert('Failed to fetch route. Please try again later.', 'Error', () => {
+            router.navigate('/');
+        });
     }
 }

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { displayDialog } from '../../utils/dialog';
 import { getRoute } from '../maps/mapboxRoute.js';
 
 export function runLocarNav(app, locarInstance) {
@@ -28,7 +27,7 @@ export function runLocarNav(app, locarInstance) {
         });
 
         if (app.NAVIGATION_ROUTE.length < 2) {
-            app.dialog.aler("You have arrived to your destination.");
+            app.dialog.alert("You have arrived to your destination.");
             return;
         }
 
