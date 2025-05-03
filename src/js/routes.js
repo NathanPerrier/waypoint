@@ -54,6 +54,13 @@ var routes = [
         title: 'Mapbox Access Token Missing',
         description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
         severity: 'error',
+      },
+      {
+        condition: (app) => !!app.WEBCAM_ENABLED,
+        redirectPath: '/',
+        title: 'Webcam Access Denied',
+        description: 'The application could not access your webcam. Please enable webcam access and try again.',
+        severity: 'error',
       }
     ]),
   },
@@ -95,7 +102,13 @@ var routes = [
         description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
         severity: 'error',
       },
-   
+      {
+        condition: (app) => !!app.WEBCAM_ENABLED,
+        redirectPath: '/',
+        title: 'Webcam Access Denied',
+        description: 'The application could not access your webcam. Please enable webcam access and try again.',
+        severity: 'error',
+      }
     ])
   },
   {

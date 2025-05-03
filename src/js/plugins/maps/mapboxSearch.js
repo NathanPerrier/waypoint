@@ -68,7 +68,7 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
 
             // Append suggestion HTML to the string variable
             suggestionsHTML += `
-            <a href="#" onclick="window.handleRouteSuggestionClick('${escapedName}', '${escapedPlaceFormatted}', '${coordinatesString}', '${escapedFullAddress}', '${suggestionData.feature_type || ''}', '${suggestionData.mapbox_id || ''}', ${suggestionData.distance || null}); return false;">
+            <a href="#" onclick="window.handleRouteSuggestionClick('${searchInput.id}', '${searchResults.id}', '${escapedName}', '${escapedPlaceFormatted}', '${coordinatesString}', '${escapedFullAddress}', '${suggestionData.feature_type || ''}', '${suggestionData.mapbox_id || ''}', ${suggestionData.distance || null}); return false;">
                 <li class="mx-2">
                     <div class="row w-100 h-100 mx-2">
                         <div class="col-7">

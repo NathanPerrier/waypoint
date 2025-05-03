@@ -6,189 +6,197 @@
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
             <div id="mapDesktopRoute" class="h-100 w-100"></div>
+            <div id="route-input">
+                <div class="tabs-animated-wrap">
+                    <div class="tabs">
+                        <div id="tab1" class="tab tab-active">
+                            <div id="search-results-list-route">
+
+                            </div>
+                            <div class="nav">
+                                <div class="row h-100">
+                                    <div class="col-10">
+                                        <div class="row h-100">
+                                            <div class="col-9 p-0">    
+                                                <input id="search-input-route" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
+                                            </div>
+                                            <div class="col-3">
+                                                <a id="search-button-route" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
+                                            </div> 
+                                        </div>  
+                                    </div>
+                                    <div class="col-2 ml-2">
+                                        <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="actions-modal settings-actions bg-white" id="settings-actions">
+                <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
+                    <h1 class="text-align-center mb-2">Settings</h1>
+                    <ul>
+                        <li>
+                            <p class="segmented segmented-raised segmented-round mx-5">
+                                <a class="button button-round" data-value="walking">Walking</a>
+                                <a class="button button-round" data-value="cycling">Biking</button>
+                                <a class="button button-round" data-value="driving">Driving</a>
+                            </p>
+                        </li>
+                        <li>
+                            <div class="settings-map-div m-4">
+                                <div id="settings-map"></div>
+                            </div>
+                        </li>
+                      
+                    </ul>
+                    <div class="d-flex justify-content-center h-100  mx-4 align-items-center">
+                        <a id="settings-submit" data-actions=".settings-actions" class="actions-close button button-fill h-100 w-100 r-2 button-raised">Done</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="actions-modal confirm-route-actions bg-white" id="confirm-route-actions">
+                <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data mx-4" id="confirm-route-form">
+                    <h1 class="text-align-center mb-2">Confirm Your Route</h1>
+                    <ul>
+                        <li>
+                            <div class="confirm-route-map-div">
+                                <div id="confirm-route-map-desktop"></div>
+                            </div>
+                            <div id="route-info-overview">
+                                <div class="row">
+                                    <h3 class="text-left text-black">Navigate To <span id="destination_name_desktop"></span>?</h3>
+                                </div>
+                                <div class="row d-flex justify-between w-100">
+                                    
+                                    <div class="col-3">
+                                        <p class="text-center m-0" id="distance-desktop">2km</p>
+                                    </div>
+                                    <div class="col-3 mx-2">
+                                        <p class="text-center m-0" id="time-desktop">5mins</p>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="text-center m-0" id="mode-desktop"><i class="fa-solid fa-person-walking"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="row h-100">
+                        <div class="col-9">
+                            <a id="confirm-route-button-route" class="button button-fill r-2 button-raised">Confirm</a>
+
+                        </div>
+                        <div class="col-3 ml-2">
+                            <a id="close-button" class="actions-close button button-outline r-2 button-raised"><i class="fa fa-arrow-left"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
 </template>
 <script>    
-import { waitForElement } from "../js/utils/dom.js";
-import * as turf from '@turf/turf';
+import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
+import { waitForElement, handleSearchClick, handleRedirect, isWithinBounds } from "../js/utils/dom.js";
+import { initSettingsMap } from "../js/plugins/maps/settingsSearchMap.js";
 
 export default async (props, { $, $on, $f7 }) => {
 
-    function bezierCurve(route, t) {
-        // smooth route corners using a cubic bezier curve with format [[float, float], [float, float], [float, float], [float, float], ...] with n items and return route
-        const n = route.length - 1;
-        
-        const points = route.map(coord => turf.point(coord));
-        const bezierPoints = [];
-        for (let i = 0; i < n; i++) {
-            const p0 = points[i];
-            const p1 = points[i + 1];
-            const cp0 = turf.midpoint(p0, p1);
-            const cp1 = turf.midpoint(p0, p1);
-            bezierPoints.push([p0.geometry.coordinates, cp0.geometry.coordinates, cp1.geometry.coordinates, p1.geometry.coordinates]);
-        }
-        const bezierRoute = bezierPoints.map((bezier, i) => {
-            const [p0, cp0, cp1, p1] = bezier;
-            const x = (1 - t) * (1 - t) * p0[0] + 2 * (1 - t) * t * cp0[0] + t * t * p1[0];
-            const y = (1 - t) * (1 - t) * p0[1] + 2 * (1 - t) * t * cp0[1] + t * t * p1[1];
-            return [x, y];
-        });
-        return bezierRoute;
-    };
+    const app = window.app;
 
-    $on('pageInit', async () => {
-        const app = window.app;
+    const boundConfirmRouteHandler = () => handleRedirect('#view-navigation-desktop', '/navigationDesktop/', $f7);
+    const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input-route').value, 'confirm-route-map-desktop', 'time-desktop', 'distance-desktop', 'mode-desktop', 'destination_name_desktop');
+   
+    $on('page:tabshow', async () => {
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
         const mapContainer = await waitForElement('mapDesktopRoute')
+        const settingsMapContainer = await waitForElement('settings-map')
 
+        if (!isWithinBounds(app, {
+            lat: app.USER_LOCATION[1],
+            lng: app.USER_LOCATION[0],
+        })) {
+            app.USER_LOCATION = app.MAP_LOCATION_CENTER;
+            app.START_LOCATION = {
+                lat: app.MAP_LOCATION_CENTER[1],
+                lng: app.MAP_LOCATION_CENTER[0],
+            };
+        } 
+        console.log("Map container found:", mapContainer); // Debugging line
+        console.log("user location:", app.USER_LOCATION); // Debugging line
         const map = new mapboxgl.Map({
-            container: mapContainer, //! TODO: change to du=ocument and rename id
-            zoom: 11.53,
-            center: [6.5615, 46.0598],
+            container: mapContainer, 
+            zoom: 20,
+            minZoom: 19,
+            maxZoom: 23,
+            center: app.USER_LOCATION,
             pitch: 65,
-            bearing: -180,
-            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-            style: app.MAP_3D_STYLE, // style URL
-            interactive: false
+            style: app.MAP_3D_STYLE, 
+            maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
         });
 
+        const settingsMap = await initSettingsMap(settingsMapContainer);
 
-        // `routes` comes from https://docs.mapbox.com/mapbox-gl-js/assets/routes.js,
-        // which has properties that are in the shape of an array of arrays that correspond
-        //  to the `coordinates` property of a GeoJSON linestring, for example:
+        map.resize();
+        settingsMap.resize();
 
-        // const routes = {
-        //    target: [
-        //        [6.56158447265625, 46.059891147620725],
-        //        [6.5691375732421875, 46.05679376154153],
-        //    ]
-        // };
+    });
 
-        // this is the path the camera will look at
-        const targetRoute = routes.target;
-        // this is the path the camera will move along
-        const cameraRoute = routes.target;
-    
-        // add terrain, sky, and line layers once the style has loaded
-        map.on('style.load', () => {
-            map.addSource('mapbox-dem', {
-                'type': 'raster-dem',
-                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                'tileSize': 512,
-                'maxzoom': 14
-            });
-            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });  // exaggeration: 1.5
-            map.addSource('trace', {
-                type: 'geojson',
-                data: {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': {
-                        'type': 'LineString',
-                        'coordinates': targetRoute // smooth the target route issue is that the map joins the points with a straight line
-                    }
-                }
-            });
-            map.addLayer({
-                type: 'line',
-                source: 'trace',
-                id: 'line',
-                paint: {
-                    'line-color': app.PRIMARY_COLOR,
-                    'line-width': 25
-                },
-                layout: {
-                    'line-cap': 'round',
-                    'line-join': 'round',
-                }
-            });
+    $on('pageInit', async () => {
+        var searchInput = document.getElementById('search-input-route');
+        var searchResults = document.getElementById('search-results-list-route');
+
+        searchInput.addEventListener('input', async function() {
+            autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
         });
-    
-        // wait for the terrain and sky to load before starting animation
-        map.on('load', () => {
-            map.resize();
-            
-            const animationDuration = 1000000;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
 
-            const relativeCameraAltitude = 50; 
-            
-            const routeDistance = turf.length(turf.lineString(targetRoute));
-            const cameraRouteDistance = turf.length(
-                turf.lineString(cameraRoute)
-            );
-
-            // Pre-calculate cumulative distances for segment identification
-            const cumulativeDistances = [0];
-            for (let i = 0; i < cameraRoute.length - 1; i++) {
-                const dist = turf.distance(turf.point(cameraRoute[i]), turf.point(cameraRoute[i+1]));
-                cumulativeDistances.push(cumulativeDistances[i] + dist);
+        var modeButtons = document.querySelectorAll('.segmented .button');
+        modeButtons.forEach(function(button) {
+            if (button.getAttribute('data-value') === app.TRANSPORTATION_MODE) {
+                button.classList.add('button-active');
+            } else {
+                button.classList.remove('button-active');
             }
+        });
 
-            // Define how far ahead the camera should look
-            const lookAheadFactor = 0.005; // Adjust this value to control how far ahead the camera looks (as a fraction of total route distance)
-            const lookAheadDistance = routeDistance * lookAheadFactor;
-
-            let start;
-
-            // Updated the camera animation logic to ensure smooth transitions between nodes.
-            function frame(time) {
-                if (!start) start = time;
-                const phase = (time - start) / animationDuration;
-
-                if (phase >= 1) {
-                    // Reset animation or stop
-                    setTimeout(() => {
-                        start = 0.0; // Loop the animation
-                    }, 1500);
-                    window.requestAnimationFrame(frame);
-                    return;
-                }
-
-                // Calculate current position along the camera path
-                const currentDistance = cameraRouteDistance * phase;
-                const cameraPosition = turf.along(
-                    turf.lineString(cameraRoute),
-                    currentDistance
-                );
-                const cameraPositionCoords = cameraPosition.geometry.coordinates;
-
-                // Calculate the look-at position slightly ahead on the target path
-                const lookAtTargetDistance = Math.min(routeDistance, currentDistance + lookAheadDistance); // Ensure look-at doesn't go beyond the route end
-                const lookAtPosition = turf.along(
-                    turf.lineString(targetRoute),
-                    lookAtTargetDistance
-                );
-                const lookAtCoords = lookAtPosition.geometry.coordinates;
-
-                // Calculate terrain elevation at the camera's current position
-                const terrainElevation = map.queryTerrainElevation(cameraPositionCoords) || 0;
-                const finalAltitude = terrainElevation + relativeCameraAltitude;
-
-                // Set camera options
-                const camera = map.getFreeCameraOptions();
-                camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
-                    {
-                        lng: cameraPositionCoords[0],
-                        lat: cameraPositionCoords[1]
-                    },
-                    finalAltitude
-                );
-                camera.lookAtPoint({
-                    lng: lookAtCoords[0],
-                    lat: lookAtCoords[1],
+        modeButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                modeButtons.forEach(function(btn) {
+                    btn.classList.remove('button-active');
                 });
-
-                map.setFreeCameraOptions(camera); // Removed curve:'linear' as it's not a valid option here
-
-                window.requestAnimationFrame(frame);
-            }
-
-            window.requestAnimationFrame(frame);
+                button.classList.add('button-active');
+                var mode = button.getAttribute('data-value');
+                app.TRANSPORTATION_MODE = mode;
+                app.TRANSPORTATION_MODE_ICON = mode === 'driving' ? app.DRIVING_ICON : mode === 'cycling' ? app.BIKING_ICON : app.WALKING_ICON;
+                console.log('Config TRANSPORTATION_MODE changed to: ' + app.TRANSPORTATION_MODE);
+            });            
         });
+
+        var searchButton = document.getElementById('search-button-route');
+        var confirmRouteButton = document.getElementById('confirm-route-button-route');
+
+
+
+        // --- Add listeners using the bound references ---
+        if (confirmRouteButton) {
+            // Remove listener first to prevent duplicates if pageInit runs again unexpectedly
+            confirmRouteButton.removeEventListener('click', boundConfirmRouteHandler);
+            confirmRouteButton.addEventListener('click', boundConfirmRouteHandler);
+        }
+        if (searchButton) {
+            // Remove listener first
+            searchButton.removeEventListener('click', boundSearchClickHandler);
+            searchButton.addEventListener('click', boundSearchClickHandler);
+        }
     });
 
     // Add cleanup logic

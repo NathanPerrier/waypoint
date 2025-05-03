@@ -1,7 +1,7 @@
-window.handleRouteSuggestionClick = (name, placeFormatted, coordinatesString, fullAddress, featureType, mapboxId, distance) => {
+window.handleRouteSuggestionClick = (searchInputId, searchResultsId, name, placeFormatted, coordinatesString, fullAddress, featureType, mapboxId, distance) => {
     const app = window.app;
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results-list');
+    const searchInput = document.getElementById(searchInputId);
+    const searchResults = document.getElementById(searchResultsId);
 
     const coordinates = coordinatesString.split(',').map(coord => coord.trim());
     const coordinatesLNGLAT = {

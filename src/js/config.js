@@ -10,7 +10,7 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
 
-        app.DEBUG = true;
+        app.DEBUG = false;
         app.FEEDBACK = true;
 
         app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
@@ -21,6 +21,7 @@ const initializeConfig = (app) => {
         app.SESSION_TIMEOUT_HOURS = 12;
         app.NAVIGATION_DISTANCE_BUFFER = 5; //5
         app.NOW = new Date().getTime();
+        app.DEPARTURE_TIME = app.NOW ;
         app.TRANSPORTATION_MODE = "walking";
         app.DRIVING_ICON = "fa-solid fa-car";
         app.BIKING_ICON = "fa-solid fa-bicycle";

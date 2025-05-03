@@ -113,7 +113,7 @@
     background: var(--background-color);
 }
 
-#route-input .nav #search-input {
+#route-input .nav #search-input, #search-input-route {
     width: 100%;
     height: 100%;
     border: .1rem solid var(--primary-color);
@@ -122,7 +122,7 @@
     background: var(--background-color);
 }
 
-#search-button {
+#search-button, #search-button-route {
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
@@ -133,7 +133,7 @@
     border: .1rem solid var(--primary-color);
 }
 
-#settings-actions, #confirm-route-action {
+#settings-actions, #confirm-route-actions {
     width: 100vw;
     left: 0;
     bottom: 0;
@@ -154,13 +154,13 @@
 }
 
 
-#search-results-list {
+#search-results-list, #search-results-list-route {
     padding: 0;
     margin: 0;
 }
 
 
-#search-results-list li {
+#search-results-list li, #search-results-list-route li {
     padding: 0.5rem;
     border-radius: 2rem;
     background: var(--background-color);
@@ -183,7 +183,7 @@
     filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
 }
 
-#confirm-route-map {
+#confirm-route-map, #confirm-route-map-desktop {
     height: 100%;
     width: 100%;
     border-radius: 2rem 2rem 0rem 0rem;
@@ -291,9 +291,9 @@
 
 @media screen and (min-width: 769px) {
     #navbar, #route-input:not(#navigation-overview #route-input) { /* Apply only to default route-input */
-        margin: 0rem 4rem 2rem 4rem;
-        width: calc(100% - 8rem);
-        left: 4rem; /* Adjust left positioning for wider screens */
+        margin: 0rem 15vw 2rem 15vw;
+        width: calc(100% - 30vw);
+ /* Adjust left positioning for wider screens */
     }
 
     /* Adjustments for navigation-overview on wider screens if necessary */
@@ -307,14 +307,25 @@
          padding: 0 4rem; /* Match wider padding */
     }
 
-    #settings-actions, #confirm-route-action {
-        margin: 0rem;
-        width: 100vw;
+    #settings-actions, #confirm-route-actions {
+        margin: 0rem 15vw 0rem 15vw;
+        width: calc(100% - 30vw);
+    }
+
+    #settings-form {
+        margin: 0rem 4rem 2rem 4rem;
+    }
+
+    #settings-form #settings-submit {
+        max-width: 450px;
+
     }
 
     .settings-map-div, .confirm-route-map-div {
         height: 30vh !important;
         
     }
+
+    
 }
 

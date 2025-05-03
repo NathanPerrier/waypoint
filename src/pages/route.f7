@@ -40,7 +40,7 @@
 
             <div class="actions-modal settings-actions bg-white" id="settings-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
-                    <h1 class="text-align-center mb-2">Settings</h1>
+                    <h1 class="text-align-center">Settings</h1>
                     <ul>
                         <li>
                             <p class="segmented segmented-raised segmented-round mx-5">
@@ -49,14 +49,8 @@
                                 <a class="button button-round" data-value="driving">Driving</a>
                             </p>
                         </li>
-                        <li>
-                            <div class="settings-map-div m-4">
-                                <div id="settings-map"></div>
-                            </div>
-                        </li>
-                      
                     </ul>
-                    <a data-actions=".settings-actions" class="actions-close button button-fill mx-2 r-2 button-raised">Done</a>
+                    <a data-actions=".settings-actions" class="actions-close button button-fill mx-4 r-2 button-raised">Done</a>
                 </form>
             </div>
 
@@ -72,7 +66,7 @@
                                 <div class="row">
                                     <h3 class="text-left text-black">Navigate To <span id="destination_name"></span>?</h3>
                                 </div>
-                                <div class="row">
+                                <div class="row w-100">
                                     
                                     <div class="col-3">
                                         <p class="text-center m-0" id="distance">2km</p>
@@ -108,15 +102,17 @@
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { waitForElement, handleSearchClick, handleRedirect } from "../js/utils/dom.js";
+    
       
     export default async (props, { $, $on, $f7 }) => {
 
         const app = window.app;
         let locarInstance = null; 
         let locarContainerId = null; 
+
     
         const boundConfirmRouteHandler = () => handleRedirect('#view-navigation', '/navigation/', $f7);
-        const boundSearchClickHandler = () => handleSearchClick(app, $f7);
+        const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input').value, 'confirm-route-map', 'time', 'distance', 'mode', 'destination_name');
 
         $on('page:tabshow', async () => {
             const locarConatiner = await waitForElement("locarjs");

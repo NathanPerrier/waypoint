@@ -1,14 +1,13 @@
-import { waitForElement } from "../../utils/dom";
 
 
-document.addEventListener('DOMContentLoaded', async () => {
+
+export async function initSettingsMap(mapContainer) {
     const app = window.app;
 
     mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
-    const mapContainer = await waitForElement('settings-map');
     if (!mapContainer) {
-        console.error("Map container not found. Cannot initialize map.");
+        app.dialog.alert('Map container not found', 'Error');
         return;
     }
 
@@ -79,5 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('resize', function () {
         map.resize();
     });
-});
+
+    return map;
+};
 

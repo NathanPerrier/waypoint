@@ -36,8 +36,7 @@ export function isWithinBounds(app, location) {
 }
 
 //! MOVE TO DIFFERENT FILE
-export const handleSearchClick = async function(app, $f7) {
-    var searchValue = document.getElementById('search-input').value;
+export const handleSearchClick = async function(app, $f7, searchValue, mapContainerConfirmId, timeId, distanceId, modeId, destinationNameId) {
     
     if (searchValue === '') {
         $f7.dialog.alert('Please enter a search value');
@@ -93,7 +92,7 @@ export const handleSearchClick = async function(app, $f7) {
     console.log("Start location data:", app.START_LOCATION);
     console.log("Transportation mode:", app.TRANSPORTATION_MODE);
 
-    const mapContainerConfirm = await waitForElement('confirm-route-map');
+    const mapContainerConfirm = await waitForElement(mapContainerConfirmId);
 
     try {
         await createStaticRouteMap(app, mapContainerConfirm);
@@ -103,10 +102,10 @@ export const handleSearchClick = async function(app, $f7) {
         return;
     }
 
-    document.getElementById('time').innerHTML = (app.NAVIGATION_ROUTE_DATA.duration / 60).toFixed(0) + 'mins';
-    document.getElementById('distance').innerHTML = (app.NAVIGATION_ROUTE_DATA.distance/1000).toFixed(1) + 'km';
-    document.getElementById('mode').innerHTML = `<i class="${app.TRANSPORTATION_MODE_ICON}"></i>`;
-    document.getElementById('destination_name').innerHTML = app.DESTINATION_LOCATION_DATA.name;
+    document.getElementById(timeId).innerHTML = (app.NAVIGATION_ROUTE_DATA.duration / 60).toFixed(0) + 'mins';
+    document.getElementById(distanceId).innerHTML = (app.NAVIGATION_ROUTE_DATA.distance/1000).toFixed(1) + 'km';
+    document.getElementById(modeId).innerHTML = `<i class="${app.TRANSPORTATION_MODE_ICON}"></i>`;
+    document.getElementById(destinationNameId).innerHTML = app.DESTINATION_LOCATION_DATA.name;
 
     $f7.actions.open('.confirm-route-actions');
 }
