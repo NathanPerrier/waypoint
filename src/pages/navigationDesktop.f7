@@ -1,16 +1,56 @@
 <template>
-    <div class="page" data-name="routeDesktopPage">
+    <div class="page" data-name="navigationDesktopPage">
         <div class="page-content">
             <div id="mapDesktopNavigation" class="h-100 w-100"></div>
+            <div id="navigation-overview">
+                <div id="navigation-overview-map-container"><div id="navigation-overview-map"></div></div>
+                <div id="route-input">
+                    <div class="tabs-animated-wrap">
+                        <div class="tabs">
+                            <div id="tab1" class="tab tab-active">
+                                <div class="nav">
+                                    <div class="row h-100">
+                                        <div id="navigation-content" class="col-10">
+                                            <div class="row h-100">
+                                                <div class="col-3">    
+                                                    <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
+                                                </div>
+                                                <div class="col-9">
+                                                    <div class="row h-100">
+                                                        <div class="col-12"> 
+                                                            <h3 id="destination-name" class="h-100">Modwest (11A)</h3> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="row h-100">
+                                                        <div class="col-12"> 
+                                                            <small id="navigation-info" class="h-100">12 min - 340 m</small> 
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div>  
+                                        </div>
+                                        <div class="col-2 ml-2">
+                                            <button id="stop-button" href="#view-route-desktop"  class="tab-link tab-link-active button button-fill r-2 h-100">Stop</button> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>        
+            </div>
         </div>
     </div>
-
 </template>
 <script>    
 import { waitForElement, isWithinBounds } from "../js/utils/dom.js";
 import * as turf from '@turf/turf';
+import { checkForURLParams } from "../js/utils/routes.js";
+import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 
 export default async (props, { $, $on, $f7 }) => {
+
+    const app = window.app;
 
     function bezierCurve(route, t) {
         // smooth route corners using a cubic bezier curve with format [[float, float], [float, float], [float, float], [float, float], ...] with n items and return route
@@ -34,24 +74,34 @@ export default async (props, { $, $on, $f7 }) => {
         return bezierRoute;
     };
 
-    $on('pageInit', async () => {
-        const app = window.app;
+    $on('page:tabshow', async () => {  //! BREAKS CODE??
+        
+        await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
+
+        // Add checks for necessary navigation data before initializing LocAR
+        if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
+            console.error("Navigation data missing. Cannot start navigation.");
+            app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
+                $f7.views.main.router.navigate('/route/'); // Navigate to the route page
+            });
+            return;
+        }
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
         const mapContainer = await waitForElement('mapDesktopNavigation')
+        console.log("Map container found:", mapContainer);
 
         const map = new mapboxgl.Map({
             container: mapContainer, //! TODO: change to du=ocument and rename id
             zoom: 11.53,
-            center: [6.5615, 46.0598],
+            center: app.NAVIGATION_ROUTE[0],
             pitch: 65,
             bearing: -180,
             // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
             style: app.MAP_3D_STYLE, // style URL
             interactive: false
-        });
-
+        })
 
         // `routes` comes from https://docs.mapbox.com/mapbox-gl-js/assets/routes.js,
         // which has properties that are in the shape of an array of arrays that correspond
@@ -65,9 +115,9 @@ export default async (props, { $, $on, $f7 }) => {
         // };
 
         // this is the path the camera will look at
-        const targetRoute = routes.target;
+        const targetRoute = app.NAVIGATION_ROUTE
         // this is the path the camera will move along
-        const cameraRoute = routes.target;
+        const cameraRoute = app.NAVIGATION_ROUTE
     
         // add terrain, sky, and line layers once the style has loaded
         map.on('style.load', () => {
@@ -108,9 +158,9 @@ export default async (props, { $, $on, $f7 }) => {
         map.on('load', () => {
             map.resize();
             
-            const animationDuration = 1000000;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
+            const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
 
-            const relativeCameraAltitude = 50; 
+            const relativeCameraAltitude = 25; 
             
             const routeDistance = turf.length(turf.lineString(targetRoute));
             const cameraRouteDistance = turf.length(
@@ -125,7 +175,7 @@ export default async (props, { $, $on, $f7 }) => {
             }
 
             // Define how far ahead the camera should look
-            const lookAheadFactor = 0.005; // Adjust this value to control how far ahead the camera looks (as a fraction of total route distance)
+            const lookAheadFactor = 0.075; // Adjust this value to control how far ahead the camera looks (as a fraction of total route distance)
             const lookAheadDistance = routeDistance * lookAheadFactor;
 
             let start;
@@ -136,12 +186,33 @@ export default async (props, { $, $on, $f7 }) => {
                 const phase = (time - start) / animationDuration;
 
                 if (phase >= 1) {
-                    // Reset animation or stop
-                    setTimeout(() => {
-                        start = 0.0; // Loop the animation
-                    }, 1500);
-                    window.requestAnimationFrame(frame);
-                    return;
+
+                    app.dialog.create({     //! FIX BUTTONS DO NOT WORK!!!!!!
+                        title: "Navigation Complete",
+                        text: "You have reached your destination.",
+                        buttons: [
+                            {
+                                text: "Repeat",
+                                onClick: () => {
+                             
+                                    app.dialog.close();
+                                    setTimeout(() => {
+                                        start = 0.0; // Loop the animation
+                                    }, 1500);
+                                    window.requestAnimationFrame(frame);
+                                    return;
+                                }
+                            },
+                            {
+                                text: "Done",
+                                onClick: () => {
+                                    $f7.views.main.router.navigate('/routeDesktop/'); // Navigate to home or any desired page
+                                    return;
+                                }
+                            }
+                        ]
+                    }).open();
+            
                 }
 
                 // Calculate current position along the camera path
@@ -162,7 +233,7 @@ export default async (props, { $, $on, $f7 }) => {
 
                 // Calculate terrain elevation at the camera's current position
                 const terrainElevation = map.queryTerrainElevation(cameraPositionCoords) || 0;
-                const finalAltitude = terrainElevation + relativeCameraAltitude;
+                const finalAltitude = Math.max(terrainElevation + relativeCameraAltitude, relativeCameraAltitude); // Ensure a minimum altitude of 100
 
                 // Set camera options
                 const camera = map.getFreeCameraOptions();
@@ -173,12 +244,18 @@ export default async (props, { $, $on, $f7 }) => {
                     },
                     finalAltitude
                 );
-                camera.lookAtPoint({
-                    lng: lookAtCoords[0],
-                    lat: lookAtCoords[1],
-                });
+                
+                // Ensure lookAtPoint is valid and ahead of the camera
+                if (lookAtCoords && lookAtCoords.length === 2) {
+                    camera.lookAtPoint({
+                        lng: lookAtCoords[0],
+                        lat: lookAtCoords[1],
+                    });
+                } else {
+                    console.warn("Invalid lookAtCoords:", lookAtCoords);
+                }
 
-                map.setFreeCameraOptions(camera); // Removed curve:'linear' as it's not a valid option here
+                map.setFreeCameraOptions(camera);
 
                 window.requestAnimationFrame(frame);
             }

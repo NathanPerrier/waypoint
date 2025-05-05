@@ -133,11 +133,6 @@
     border: .1rem solid var(--primary-color);
 }
 
-#settings-actions, #confirm-route-actions {
-    width: 100vw;
-    left: 0;
-    bottom: 0;
-}
 
 #go-back {
     position: absolute;
@@ -303,11 +298,13 @@
         left: 0;
     }
 
-    #navigation-overview #route-input {
-         padding: 0 4rem; /* Match wider padding */
+    #settings-actions, #confirm-route-actions {
+        width: 100vw;
+        left: 0;
+        bottom: 0;
     }
 
-    #settings-actions, #confirm-route-actions {
+    #settings-actions, #confirm-route-actions, #navigation-overview #route-input {
         margin: 0rem 15vw 0rem 15vw;
         width: calc(100% - 30vw);
     }

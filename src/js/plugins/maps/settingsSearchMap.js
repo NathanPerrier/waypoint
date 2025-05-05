@@ -12,7 +12,7 @@ export async function initSettingsMap(mapContainer) {
     }
 
 
-    var map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: mapContainer, 
         zoom: 16, 
         minZoom: 14,
@@ -78,6 +78,7 @@ export async function initSettingsMap(mapContainer) {
     window.addEventListener('resize', function () {
         map.resize();
     });
+
 
     return map;
 };

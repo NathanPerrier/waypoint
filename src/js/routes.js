@@ -1,6 +1,7 @@
 import HomePage from '../pages/home.f7';
 import RoutePage from '../pages/route.f7';
 import RouteDesktopPage from '../pages/routeDesktop.f7';
+import NavigationDesktopPage from '../pages/navigationDesktop.f7';
 import NavigationPage from '../pages/navigation.f7';
 
 import NotFoundPage from '../pages/404.f7';
@@ -110,6 +111,10 @@ var routes = [
         severity: 'error',
       }
     ])
+  },
+  {
+    path: '/navigationDesktop/',
+    component: NavigationDesktopPage,
   },
   {
     path: '(.*)',
