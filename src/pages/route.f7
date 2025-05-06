@@ -112,7 +112,7 @@
 
     
         const boundConfirmRouteHandler = () => handleRedirect('#view-navigation', '/navigation/', $f7);
-        const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input').value, 'confirm-route-map', 'time', 'distance', 'mode', 'destination_name');
+        const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input').value, 'confirm-route-map', 'time', 'distance', 'mode', 'destination_name', '.confirm-route-actions');
 
         $on('page:tabshow', async () => {
             const locarConatiner = await waitForElement("locarjs");

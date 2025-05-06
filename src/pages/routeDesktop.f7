@@ -60,7 +60,7 @@
                 </form>
             </div>
 
-            <div class="actions-modal confirm-route-actions bg-white" id="confirm-route-actions">
+            <div class="actions-modal confirm-route-actions-desktop bg-white" id="confirm-route-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data mx-4" id="confirm-route-form">
                     <h1 class="text-align-center mb-2">Confirm Your Route</h1>
                     <ul>
@@ -112,7 +112,7 @@ export default async (props, { $, $on, $f7 }) => {
     const app = window.app;
 
     const boundConfirmRouteHandler = () => handleRedirect('#view-navigation-desktop', '/navigationDesktop/', $f7);
-    const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input-route').value, 'confirm-route-map-desktop', 'time-desktop', 'distance-desktop', 'mode-desktop', 'destination_name_desktop');
+    const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input-route').value, 'confirm-route-map-desktop', 'time-desktop', 'distance-desktop', 'mode-desktop', 'destination_name_desktop', '.confirm-route-actions-desktop');
    
     $on('page:tabshow', async () => {
 

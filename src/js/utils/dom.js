@@ -36,7 +36,7 @@ export function isWithinBounds(app, location) {
 }
 
 //! MOVE TO DIFFERENT FILE
-export const handleSearchClick = async function(app, $f7, searchValue, mapContainerConfirmId, timeId, distanceId, modeId, destinationNameId) {
+export const handleSearchClick = async function(app, $f7, searchValue, mapContainerConfirmId, timeId, distanceId, modeId, destinationNameId, confirmationActionsClass) {
     
     if (searchValue === '') {
         $f7.dialog.alert('Please enter a search value');
@@ -107,7 +107,7 @@ export const handleSearchClick = async function(app, $f7, searchValue, mapContai
     document.getElementById(modeId).innerHTML = `<i class="${app.TRANSPORTATION_MODE_ICON}"></i>`;
     document.getElementById(destinationNameId).innerHTML = app.DESTINATION_LOCATION_DATA.name;
 
-    $f7.actions.open('.confirm-route-actions');
+    $f7.actions.open(confirmationActionsClass);
 }
 
 export const handleRedirect = (view, route, $f7) => {         

@@ -160,7 +160,7 @@ export default async (props, { $, $on, $f7 }) => {
             
             const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
 
-            const relativeCameraAltitude = 25; 
+            const relativeCameraAltitude = 10; 
             
             const routeDistance = turf.length(turf.lineString(targetRoute));
             const cameraRouteDistance = turf.length(
@@ -175,7 +175,7 @@ export default async (props, { $, $on, $f7 }) => {
             }
 
             // Define how far ahead the camera should look
-            const lookAheadFactor = 0.075; // Adjust this value to control how far ahead the camera looks (as a fraction of total route distance)
+            const lookAheadFactor = 0.25; // 0.005?
             const lookAheadDistance = routeDistance * lookAheadFactor;
 
             let start;
