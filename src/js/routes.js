@@ -88,29 +88,29 @@ var routes = [
   {
     path: '/navigation/',
     component: NavigationPage,
-    beforeEnter: createRouteGuard([
-      {
-        condition: (app) => !!app.USER_LOCATION,
-        redirectPath: '/',
-        title: 'User Location Missing',
-        description: 'The application could not determine your location. Please enable location services and try again.',
-        severity: 'error',
-      },
-      {
-        condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER,
-        redirectPath: '/',
-        title: 'Mapbox Access Token Missing',
-        description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
-        severity: 'error',
-      },
-      {
-        condition: (app) => !!app.WEBCAM_ENABLED,
-        redirectPath: '/',
-        title: 'Webcam Access Denied',
-        description: 'The application could not access your webcam. Please enable webcam access and try again.',
-        severity: 'error',
-      }
-    ])
+    // beforeEnter: createRouteGuard([
+    //   {
+    //     condition: (app) => !!app.USER_LOCATION,
+    //     redirectPath: '/',
+    //     title: 'User Location Missing',
+    //     description: 'The application could not determine your location. Please enable location services and try again.',
+    //     severity: 'error',
+    //   },
+    //   {
+    //     condition: (app) => !!app.MAPBOX_ACCESS_TOKEN && !!app.MAP_SESSION_TOKEN && !!app.TRANSPORTATION_MODE && !!app.MAP_LOCATION_CENTER,
+    //     redirectPath: '/',
+    //     title: 'Mapbox Access Token Missing',
+    //     description: 'Mapbox failed to initialised. Navagtion services are not available. Please try again.',
+    //     severity: 'error',
+    //   },
+    //   {
+    //     condition: (app) => !!app.WEBCAM_ENABLED,
+    //     redirectPath: '/',
+    //     title: 'Webcam Access Denied',
+    //     description: 'The application could not access your webcam. Please enable webcam access and try again.',
+    //     severity: 'error',
+    //   }
+    // ])
   },
   {
     path: '/navigationDesktop/',

@@ -54,7 +54,7 @@ export const handleSearchClick = async function(app, $f7, searchValue, mapContai
     }
 
     if (!isWithinBounds(app, app.START_LOCATION)) {
-        $f7.dialog.alert('Your current start location is outside the the UQ campus. Please adjust it in settings.');
+        $f7.dialog.alert('Your current start location is outside the the UQ campus. Please ensure you are at UQ.');
         console.warn('Start location out of bounds:', app.START_LOCATION, 'Bounds:', app.MAP_LOCATION_BOUNDS);
         return;
     }

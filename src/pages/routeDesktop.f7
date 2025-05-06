@@ -201,7 +201,6 @@ export default async (props, { $, $on, $f7 }) => {
 
     // Add cleanup logic
     $on('pageBeforeOut', () => {
-        console.log("Cleaning up routeDesktop.f7 page...");
         const mapContainer = document.getElementById('mapDesktopRoute'); // Get container reference
         if (map) {
             map.remove();
@@ -210,12 +209,9 @@ export default async (props, { $, $on, $f7 }) => {
                 mapContainer._mapInstance = null; // Clear the stored instance
                 mapContainer.innerHTML = ''; // Explicitly clear container content
             }
-            console.log("Desktop route map removed and container cleared.");
         } else if (mapContainer) {
              mapContainer.innerHTML = ''; // Clear container even if map instance wasn't found/removed
-             console.log("Desktop route container cleared (map instance not found).");
         }
-         console.log("routeDesktop.f7 cleanup complete.");
     });
 
     return $render;

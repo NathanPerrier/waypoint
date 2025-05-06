@@ -186,33 +186,16 @@ export default async (props, { $, $on, $f7 }) => {
                 const phase = (time - start) / animationDuration;
 
                 if (phase >= 1) {
-
-                    app.dialog.create({     //! FIX BUTTONS DO NOT WORK!!!!!!
-                        title: "Navigation Complete",
-                        text: "You have reached your destination.",
-                        buttons: [
-                            {
-                                text: "Repeat",
-                                onClick: () => {
-                             
-                                    app.dialog.close();
-                                    setTimeout(() => {
-                                        start = 0.0; // Loop the animation
-                                    }, 1500);
-                                    window.requestAnimationFrame(frame);
-                                    return;
-                                }
-                            },
-                            {
-                                text: "Done",
-                                onClick: () => {
-                                    $f7.views.main.router.navigate('/routeDesktop/'); // Navigate to home or any desired page
-                                    return;
-                                }
-                            }
-                        ]
+                    //navigation to routeDesktop
+                    app.notification.create({
+                        icon: '<i class="fa-solid fa-location-dot"></i>',
+                        title: 'Arrived at destination',
+                        text: 'You have reached your destination. ',
+                        closeTimeout: 5000,
                     }).open();
-            
+                    $f7.views.main.router.navigate('/routeDesktop/'); 
+                    app.tab.show('#view-route-desktop'); 
+                    return;
                 }
 
                 // Calculate current position along the camera path
@@ -264,9 +247,14 @@ export default async (props, { $, $on, $f7 }) => {
         });
     });
 
+    $on('page:tabhide', () => {
+        app.NAVIGATION_ROUTE = null;
+        app.NAVIGATION_ROUTE_STEPS = null;
+        app.NAVIGATION_ROUTE_DATA = null; 
+    });
+
     // Add cleanup logic
-    $on('pageBeforeOut', () => {
-        console.log("Cleaning up routeDesktop.f7 page...");
+    $on('pageBeforeOut', () => {    
         const mapContainer = document.getElementById('mapDesktopNavigation'); // Get container reference
         if (map) {
             map.remove();
@@ -275,12 +263,9 @@ export default async (props, { $, $on, $f7 }) => {
                 mapContainer._mapInstance = null; // Clear the stored instance
                 mapContainer.innerHTML = ''; // Explicitly clear container content
             }
-            console.log("Desktop route map removed and container cleared.");
         } else if (mapContainer) {
              mapContainer.innerHTML = ''; // Clear container even if map instance wasn't found/removed
-             console.log("Desktop route container cleared (map instance not found).");
         }
-         console.log("routeDesktop.f7 cleanup complete.");
     });
 
     return $render;

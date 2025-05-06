@@ -38,7 +38,7 @@ export function runLocarNav(app, locarInstance) {
             geometry,
             new THREE.MeshBasicMaterial({color: 0x0000ff})
         );
-        locarInstance.locar.add(geometry, pos.coords.longitude, pos.coords.latitude, .001);
+        locarInstance.locar.add(geometry, pos.coords.longitude, pos.coords.latitude);
 
     });
 

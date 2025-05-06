@@ -59,6 +59,7 @@
         let locarContainerId = null; // Store the ID
 
         $on('page:tabshow', async () => {
+            console.log('NAVIGATION PAGE SHOW');
             await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
 
             // Add checks for necessary navigation data before initializing LocAR
@@ -106,14 +107,13 @@
 
 
         $on('page:tabhide', () => {
-            // Destroy LocAR instance using its ID when the page is removed
+            app.NAVIGATION_ROUTE = null;
+            app.NAVIGATION_ROUTE_STEPS = null;
+            app.NAVIGATION_ROUTE_DATA = null;      
             if (locarContainerId) { // Use the stored ID
                 destroyLocARInstance(app, locarContainerId);
                 locarInstance = null; // Clear the instance variable
-                locarContainerId = null; // Clear the ID
-                app.NAVIGATION_ROUTE = null;
-                app.NAVIGATION_ROUTE_STEPS = null;
-                app.NAVIGATION_ROUTE_DATA = null;             
+                locarContainerId = null; // Clear the ID       
             }
         });
 
