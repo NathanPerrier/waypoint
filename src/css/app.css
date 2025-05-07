@@ -220,7 +220,7 @@
 
 }
 
-#current-direction-arrow {
+#current-direction-arrow, #current-direction-arrow-desktop {
     color: var(--primary-color);
     font-size: 2rem;
     display: flex;
@@ -235,7 +235,7 @@
     align-items: center;
 }
 
-#destination-name {
+#destination-name, #destination-name-desktop {
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-color);
@@ -243,7 +243,7 @@
     margin: 0;
 }
 
-#navigation-info {
+#navigation-info, #navigation-info-desktop {
     font-size: .75rem;
     color: var(--sub-text-color);
     margin: 0;

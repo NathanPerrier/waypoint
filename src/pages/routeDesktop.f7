@@ -214,6 +214,37 @@ export default async (props, { $, $on, $f7 }) => {
         }
     });
 
+    $on('page:tabhide', () => {
+        $f7.actions.close('.confirm-route-actions-desktop');
+        
+        if (locarInstance) { 
+            destroyLocARInstance(app, locarContainerId);
+            locarInstance = null; // Clear the instance variable
+            locarContainerId = null; // Clear the ID
+        }
+
+        const settingsModal = $f7.actions.get('.settings-actions');
+        if (settingsModal) {
+            settingsModal.off('actionsOpened');
+            settingsModal.off('actionsClose');
+            settingsModal.off('actionsClosed');
+        }
+        const mapContainer = document.getElementById('settings-map');
+
+        if (mapContainer._mapInstance) {
+            container._mapInstance.remove();
+            container._mapInstance = null;
+        }
+
+        const confirmMapContainer = document.getElementById('confirm-route-map-desktop');
+
+        if (confirmMapContainer._mapInstance) {
+            confirmMapContainer._mapInstance.remove();
+            confirmMapContainer._mapInstance = null;
+        }
+
+    });
+
     return $render;
 }
 </script>
