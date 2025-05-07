@@ -1,5 +1,6 @@
 import Device from './utils/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
+import { isWithinSpecifiedBounds } from './utils/dom.js';
 
 
 // Default values (can be overridden during initialization)
@@ -35,9 +36,22 @@ const initializeConfig = (app) => {
         app.NAVIGATION_ROUTE_STEPS = null;
         app.NAVIGATION_ROUTE_DATA = null;
         app.USER_LOCATION = null;
+
+        //st lucia campus
         app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
         app.MAP_LOCATION_BOUNDS_LNGLATLIKE = [[152.998221, -27.505890], [153.019359, -27.490149]]; // st lucia campus
+
+        // Herston Campus
+        app.MAP_LOCATION_BOUNDS_HERSTON = new LngLatBounds([152.992, -27.500], [153.002, -27.490]); // herston campus
+        app.MAPBOXGL_LOCATION_BOUNDS_HERSTON = new mapboxgl.LngLatBounds([152.992, -27.500], [153.002, -27.490]); // herston campus
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON = [[152.992, -27.500], [153.002, -27.490]]; // herston campus
+
+        // Gatton Campus
+        app.MAP_LOCATION_BOUNDS_GATTON = new LngLatBounds([152.500, -27.500], [152.600, -27.490]); // gatton campus
+        app.MAPBOXGL_LOCATION_BOUNDS_GATTON = new mapboxgl.LngLatBounds([152.500, -27.500], [152.600, -27.490]); // gatton campus
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON = [[152.500, -27.500], [152.600, -27.490]]; // gatton campus
+
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
         app.MAP_LIGHT_STYLE = 'mapbox://styles/mapbox/light-v11';
@@ -69,14 +83,6 @@ const initializeConfig = (app) => {
                 sessionStorage.setItem('setupTime', app.NOW);
             }
         }
-
-        if (app.DEBUG) {
-            console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
-            app.MAP_LOCATION_BOUNDS = null;
-            app.MAPBOXGL_LOCATION_BOUNDS = null;
-            app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; // Set to null for testing
-
-        }   
 
         if (sessionStorage.getItem('mapbox_session_token')) {
             app.MAP_SESSION_TOKEN = sessionStorage.getItem('mapbox_session_token')
@@ -130,6 +136,18 @@ const initializeConfig = (app) => {
                 app.AR = false; // Disable AR mode for desktop
             }
 
+            if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_GATTON)) {
+                app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_GATTON;
+                app.MAPBOXGL_LOCATION_BOUNDS = app.MAPBOXGL_LOCATION_BOUNDS_GATTON;
+                app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON;
+            }
+
+            if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_HERSTON)) {
+                app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_HERSTON;
+                app.MAPBOXGL_LOCATION_BOUNDS = app.MAPBOXGL_LOCATION_BOUNDS_HERSTON;
+                app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON;
+            }
+
             // Resolve the promise when initialization is successful
             resolve();
 
@@ -139,6 +157,14 @@ const initializeConfig = (app) => {
             app.initializationError = true;
             // Reject the promise on critical failure
             reject(error);
+        }
+
+        if (app.DEBUG) {
+            console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
+            app.MAP_LOCATION_BOUNDS = null;
+            app.MAPBOXGL_LOCATION_BOUNDS = null;
+            app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; // Set to null for testing
+
         }
     });
 

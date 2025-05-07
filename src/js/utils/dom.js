@@ -35,6 +35,16 @@ export function isWithinBounds(app, location) {
     }
 }
 
+export function isWithinSpecifiedBounds(location, bounds) {
+    try {
+        const isUserInBbx = bounds.contains(location);
+        return isUserInBbx;
+    } catch (error) {
+        console.error("Error checking bounds:", error);
+        return false;
+    }
+}
+
 //! MOVE TO DIFFERENT FILE
 export const handleSearchClick = async function(app, $f7, searchValue, mapContainerConfirmId, timeId, distanceId, modeId, destinationNameId, confirmationActionsClass) {
     

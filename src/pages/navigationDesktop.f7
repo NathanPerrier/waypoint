@@ -3,41 +3,55 @@
         <div class="page-content">
             <div id="mapDesktopNavigation" class="h-100 w-100"></div>
             <div id="navigation-overview">
-                <div id="navigation-overview-map-container"><div id="navigation-overview-map"></div></div>
-                <div id="route-input">
-                    <div class="tabs-animated-wrap">
-                        <div class="tabs">
-                            <div id="tab1" class="tab tab-active">
-                                <div class="nav">
-                                    <div class="row h-100">
-                                        <div id="navigation-content" class="col-10">
-                                            <div class="row h-100">
-                                                <div class="col-3">    
-                                                    <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
+                <div id="nav-overview">
+                    <div class="row h-100">
+                        <div class="col-1 h-100 mr-4">
+                            <a href="#view-route-desktop">                    
+                                <div id="qr-navigation" class="desktop-navigation-overview-content"> </div>
+                            </a>
+                        </div>
+                        <div class="col-10">
+                            <div class="desktop-navigation-overview-content">                              
+                                <div class="row h-100">
+                                    <div id="navigation-content" class="col-9">
+                                        <div class="row h-100">
+                                            <div class="col-1">    
+                                                <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
+                                            </div>
+                                            <div class="col-11 ml-2">
+                                                <div class="row h-100">
+                                                    <div class="col-12"> 
+                                                        <h3 id="destination-name" class="h-100">Modwest (11A)</h3> 
+                                                    </div>
                                                 </div>
-                                                <div class="col-9">
-                                                    <div class="row h-100">
-                                                        <div class="col-12"> 
-                                                            <h3 id="destination-name" class="h-100">Modwest (11A)</h3> 
-                                                        </div>
+                                                <div class="row h-100">
+                                                    <div class="col-12"> 
+                                                        <small id="navigation-info" class="h-100">12 min - 340 m</small> 
                                                     </div>
-                                                    <div class="row h-100">
-                                                        <div class="col-12"> 
-                                                            <small id="navigation-info" class="h-100">12 min - 340 m</small> 
-                                                        </div>
-                                                    </div>
-                                                </div> 
-                                            </div>  
-                                        </div>
-                                        <div class="col-2 ml-2">
-                                            <button id="stop-button" href="#view-route-desktop"  class="tab-link tab-link-active button button-fill r-2 h-100">Stop</button> 
+                                                </div>
+                                            </div> 
+                                        </div>  
+                                    </div>
+                                    <div class="col-3 ml-2">
+                                        <!--Weather-->
+                                        <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary"> 
+                                            <i id="weather-icon" class="fa-solid fa-cloud-sun"></i> 
+                                            <span id="weather-text">23°</span>
+                                            <span id="weather-text-2">Sunny</span>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </div>                                           
+                            </div>                         
                         </div>
-                    </div> 
-                </div>        
+                        <div class="col-1 h-100 ml-4">
+                            <div class="desktop-navigation-overview-content">
+                                <a class="w-100 h-100 tab-link tab-link-active" href="#view-route-desktop">
+                                    <i id="current-direction-arrow" class="fa-solid fa-arrow-left text-primary"></i>
+                                </a>
+                            </div>    
+                        </div>
+                    </div>   
+                </div>    
             </div>
         </div>
     </div>
@@ -188,7 +202,7 @@ export default async (props, { $, $on, $f7 }) => {
                 if (phase >= 1) {
                     //navigation to routeDesktop
                     app.notification.create({
-                        icon: '<i class="fa-solid fa-location-dot"></i>',
+                        icon: '<i class="fa-solid  icon-center fa-location-dot"></i>',
                         title: 'Arrived at destination',
                         text: 'You have reached your destination. ',
                         closeTimeout: 5000,

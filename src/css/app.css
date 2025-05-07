@@ -27,7 +27,7 @@
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
-#route-input {
+#route-input, #nav-overview {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -82,7 +82,7 @@
 }
 
 /* Styles for #route-input specifically when inside #navigation-overview */
-#navigation-overview #route-input {
+#navigation-overview #route-input, #navigation-overview #nav-overview {
     grid-row: 2 / 3; /* Place in the second row */
     grid-column: 1 / 2; /* Place in the first column */
     z-index: 100; /* Ensure it's on top */
@@ -101,9 +101,12 @@
     box-sizing: border-box; /* Include padding in width calculation */
 }
 
+#nav-overview {
+    background-color: transparent !important; /* Make background transparent */
+}
 
 
-#route-input .nav {
+#route-input .nav, .desktop-navigation-overview-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -226,7 +229,7 @@
     
 }
 
-#navigation-content, #navigation-content .row {
+#navigation-content, #navigation-content .row, .desktop-navigation-overview-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -245,6 +248,11 @@
     color: var(--sub-text-color);
     margin: 0;
     font-weight: 600;
+}
+
+.desktop-navigation-overview-content {
+    border-radius: 2rem;
+    background-color: var(--background-color);
 }
 
 #app-preloader {
@@ -271,6 +279,15 @@
     animation: spin-pause-360 6s linear infinite; 
 }
 
+#qr-navigation {
+    border-radius: 2rem;
+    background-color: #782cf6 !important;
+    background-image: url('/icons/256x256.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 
 @keyframes spin-pause-360 {
     0%      { transform: rotate(0deg); }
@@ -285,15 +302,13 @@
 }
 
 @media screen and (min-width: 769px) {
-    #navbar, #route-input:not(#navigation-overview #route-input) { /* Apply only to default route-input */
+    #navbar, #route-input:not(#navigation-overview #route-input) {
         margin: 0rem 15vw 2rem 15vw;
         width: calc(100% - 30vw);
- /* Adjust left positioning for wider screens */
     }
 
-    /* Adjustments for navigation-overview on wider screens if necessary */
+
     #navigation-overview {
-        /* Keep full width or adjust as needed */
         width: 100vw; 
         left: 0;
     }
@@ -304,9 +319,14 @@
         bottom: 0;
     }
 
-    #settings-actions, #confirm-route-actions, #navigation-overview #route-input {
+    #settings-actions, #confirm-route-actions, #navigation-overview #route-input, #navigation-overview #nav-overview {
         margin: 0rem 15vw 0rem 15vw;
         width: calc(100% - 30vw);
+    }
+
+    #navigation-overview #nav-overview {
+        background-color: transparent !important;
+        border-radius: 0rem;
     }
 
     #settings-form {

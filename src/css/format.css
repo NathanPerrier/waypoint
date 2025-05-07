@@ -1,4 +1,3 @@
-
 .col {
     display: flex;
     flex-direction: column;
@@ -498,4 +497,10 @@
 
 .text-right {
     text-align: right;
+}
+
+.icon-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
