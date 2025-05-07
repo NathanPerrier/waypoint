@@ -81,7 +81,7 @@ export default async (props, { $, $on, $f7 }) => {
 
     // #qr-navigation click display dialog
     $('#qr-navigation').on('click', function() {
-        // create QR code here
+        //! TODO: create QR code here
 
         // display dialog
         app.dialog.create({
