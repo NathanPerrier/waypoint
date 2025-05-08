@@ -3,17 +3,68 @@
     <a href="#view-route" id="go-back" class="tab-link tab-link-active bg-primary overflow-hidden">         
       <img id="waypoint-logo" src="/logos/650x650Logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
-    <div class="page-content overflow-hidden">
-        <div class="row w-100 d-flex" style="height:100vh">
-          <div class="col-12 m-4 h-100 text-center justify-center align-center align-content-center">
-                <h1 class="text-center">Welcome to Waypoint!</h1>
-                <p>Waypoint is a simple app that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging Mapbox, our data ensures accurate and reliable directions, making your journey seamless and efficient. Explore the world with confidence and ease using Waypoint.</p>
-             
-                <button style="width:200px; margin: 0 auto; display: block;" class="button button-large button-fill button-raised">Get Started</button>
+    <div class="page-content overflow-x-hidden">
+      <div class="row w-100 d-flex p-0 m-0">
+        <div class="col-5 h-100 justify-center align-center align-content-center" id="hero-section">
+              <h1 class="hero-header">Welcome to Waypoint!</h1>
+              <p class="hero-sub-header">Your Campus Companion</p>
+            
+              <button style="width:200px; display: block;" class="button hero-button r-2 button-large button-fill button-raised">Get Started</button>
+        </div>
+        <div class="col-7 h-100 text-center justify-center align-center align-content-center" id="hero-image">
+              <img class="h-100 w-100" src="/images/hero-image.png" alt="Waypoint"/>
+        </div>  
+      </div>
+      
+      <div class="swiper custom-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide slide-card" style="background-image: url('/images/modwest.jpg');">
+            <div class="slide-overlay">
+              <p class="slide-label">Navigate To?</p>
+              <h3 class="slide-title">ModWest (11A)</h3>
+              <button class="go-button">Go!</button>
+            </div>
           </div>
-          
+          <div class="swiper-slide slide-card" style="background-image: url('/images/forgan.jpg');">
+            <div class="slide-overlay">
+              <p class="slide-label">Navigate To?</p>
+              <h3 class="slide-title">Forgan Smith</h3>
+              <button class="go-button">Go!</button>
+            </div>
+          </div>
+          <div class="swiper-slide slide-card" style="background-image: url('/images/gci.jpg');">
+            <div class="slide-overlay">
+              <p class="slide-label">Navigate To?</p>
+              <h3 class="slide-title">GCI</h3>
+              <button class="go-button">Go!</button>
+            </div>
+          </div>
+          <div class="swiper-slide slide-card" style="background-image: url('/images/engirneering.jpg');">
+            <div class="slide-overlay">
+              <p class="slide-label">Navigate To?</p>
+              <h3 class="slide-title">Advanced Engirneering</h3>
+              <button class="go-button">Go!</button>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="row">
+        <div class="wave-container">
+            <img class="wave wave-1" src="/images/wave-haikei-1.svg" alt="wave-1"/>
+            <img class="wave wave-2" src="/images/wave-haikei-2.svg" alt="wave-2"/>
+            <img class="wave wave-3" src="/images/wave-haikei-3.svg" alt="wave-3"/>
+        </div>
+      </div>
+      <div class="row h-100 bg-primary text-on-primary">
+        <div class="col-8 m-4 text-center justify-center align-center align-content-center">
+          <h1 class="text-center text-on-primary">Waypoint is a webapp brought to you by UQUnion</h1>
+          <p>We hope you enjoy using Waypoint! If you have any feedback or suggestions, please let us know.</p>
+        </div>
+        <div class="col-4 m-4 text-center justify-center align-center align-content-center">
+          <img class="h-100 w-100" src="/logos/uqunion.png" alt="UQUnion"/>
+        </div>
+      </div>
+    </div>
   </div>
 
   
@@ -35,7 +86,19 @@ export default (props, { $, $on, $f7 }) => {
         sessionStorage.setItem('hasTakenSurvey', 'true'); 
       });
     }
+      
+    var swiper = app.swiper.create('.swiper', {
+      speed: 200,
+      spaceBetween: -200,
+      loop: true,
+      parallax: true,
+      slidesPerView: 1.5,
+      centeredSlides: true,
+      windowWidth: 768,
+    });    
   });
+
+  
 
   return $render;
 }

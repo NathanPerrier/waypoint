@@ -88,6 +88,7 @@ var routes = [
   {
     path: '/navigation/',
     component: NavigationPage,
+    
     // beforeEnter: createRouteGuard([
     //   {
     //     condition: (app) => !!app.USER_LOCATION,
