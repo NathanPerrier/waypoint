@@ -8,8 +8,8 @@
         <div class="col-5 h-100 justify-center align-center align-content-center" id="hero-section">
               <h1 class="hero-header">Welcome to Waypoint!</h1>
               <p class="hero-sub-header">Your Campus Companion</p>
-            
-              <button style="width:200px; display: block;" class="button hero-button r-2 button-large button-fill button-raised">Get Started</button>
+              <p class="hero-text">Waypoint is a webapp brought to you by UQUnion that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging all that UQU has to offer we provide students with their very own campus companion.</p>
+              <a style="width:200px; display: block;" id="hero-button" href="#view-route" class="tab-link tab-link-active button hero-button r-2 button-large button-fill button-raised">Get Started</a>
         </div>
         <div class="col-7 h-100 text-center justify-center align-center align-content-center" id="hero-image">
               <img class="h-100 w-100" src="/images/hero-image.png" alt="Waypoint"/>
@@ -56,14 +56,30 @@
         </div>
       </div>
       <div class="row h-100 bg-primary text-on-primary">
-        <div class="col-8 m-4 text-center justify-center align-center align-content-center">
-          <h1 class="text-center text-on-primary">Waypoint is a webapp brought to you by UQUnion</h1>
-          <p>We hope you enjoy using Waypoint! If you have any feedback or suggestions, please let us know.</p>
+        <div class="col-8 m-16" id="nav-desc">
+          <h1 class="hero-header text-on-primary">A Guided Tour In Your Pocket!</h1>
+          <p class="hero-text text-on-primary mt-5">Through integrating with UQU and UQ data, we can deliver personalised recommendations for events, locations, and promotions based on each user's profile, interests, and behaviour. 
+           By leveraging real-time access to UQ's scheduling systems, campus maps, and faculty-specific activities, as well as UQU’s clubs, events, and vendor deals.</p>
+          <!-- widgets -->
         </div>
-        <div class="col-4 m-4 text-center justify-center align-center align-content-center">
-          <img class="h-100 w-100" src="/logos/uqunion.png" alt="UQUnion"/>
+        <div class="col-4 m-16" id="nav-demo">
+          <img class="h-100" src="/images/nav-demo.png" alt="Nav Demo"/>
         </div>
       </div>
+      <div class="row h-100">
+        <div id="map-content-overview">
+          <div class="row h-100">
+            <div class="col-6 h-100" id="nav-demo-empty-col"></div>
+            <div class="col-6 h-100 justify-center align-center align-content-center" id="map-overview-content-container-col">
+              <div id="map-overview-content-container">
+                <h1 class="hero-header">Campus Map</h1>
+                <p class="mt-5">Waypoint is a webapp brought to you by UQUnion that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging all that UQU has to offer we provide students with their very own campus companion.</p>
+                <button id="map-overview-button" href="#view-route" class="tab-link tab-link-active button hero-button r-2 button-large button-fill button-raised">Get Started</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
     </div>
   </div>
 

@@ -27,7 +27,9 @@ var routes = [
           if (preloader && preloader.style) {
             if (!app.AR) {
               const go_back = document.getElementById('go-back');
+              const hero_button = document.getElementById('hero-button');
               go_back.href = '#view-route-desktop';
+              hero_button.href = '#view-route-desktop';
             }
             preloader.style.display = 'none';
           }

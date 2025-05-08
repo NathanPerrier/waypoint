@@ -290,7 +290,7 @@
 
 #hero-section {
     text-align: left;
-    margin-left: 2rem;
+    margin-left: 4rem;
 }
 
 .hero-header {
@@ -307,6 +307,10 @@
     font-weight: 600;
     margin-bottom: 2rem;
     color: var(--primary-color);
+}
+
+.hero-text {
+    display: none;
 }
 
 .custom-swiper {
@@ -416,6 +420,28 @@
     cursor: pointer;
     margin-top: 0.5rem;
   }
+
+  #map-content-overview {
+    width: 100%;
+    height: 70vh !important;
+    background-image: url('/images/top-down-map.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  #map-overview-content-container {
+    justify-content: center;
+    align-items: center;
+    max-height: calc(70vh - 16rem) !important;
+    overflow: hidden !important;
+    text-align: left;
+    margin: 4rem;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    padding: 4rem;
+    border-radius: 2rem;
+  }
   
 
 @keyframes spin-pause-360 {
@@ -475,17 +501,37 @@
     
 }
 
+@media screen and (min-width: 1768px) {
+    .hero-text {
+        display: block;
+        margin-bottom: 3rem
+    }
 
+    .custom-swiper {
+        padding-bottom: 4rem;
+        width: 45%;
+    }
+
+    .swiper-slide.slide-card {
+        height: 450px;
+    }
+}
 
 @media screen and (max-width: 768px) {
     #hero-section {
         width: 100% !important;
         text-align: center;
         margin: auto;
-        height: 50vh
+        height: 50vh;
+        margin-top: 2rem;
     }
 
-    #hero-image {
+    #nav-desc, #map-overview-content-container-col {
+        width: 100% !important;
+        text-align: center;
+    }
+
+    #hero-image, #nav-demo, #nav-demo-empty-col {
         width: 0%;
         display: none;
     }   
@@ -497,6 +543,16 @@
         align-items: center;
         /* center horizontally  */
         
+    }
+
+    .hero-text {
+        display: block;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    #nav-demo {
+        display: none;
     }
 
     .custom-swiper {
