@@ -209,6 +209,34 @@
     line-height: 1; /* Adjusted for better text alignment */
 }
 
+.blobs {
+    position: relative; /* Ensure .col-3 is the positioning context for its children */
+    height: calc(70vh - 8rem);
+    width: calc(100% - 8rem);
+    overflow: hidden; /* Hide overflow to prevent scrollbars */
+}
+
+.blob-bg {
+    z-index: -2 !important; /* Ensure it is below .clip-blob */
+    color: var(--primary-color);
+    background-color: var(--primary-color); 
+    width: 100%; /* Full parent width */
+    height: 100%; /* Full parent height */
+    clip-path: url("#blob-bg");
+    position: absolute; /* Ensure it respects parent positioning */
+    top: 0;
+    left: 0;
+}
+
+.clip-blob {
+    z-index: 1; /* Ensure it is above .blob-bg */
+    height: 90%; /* Full parent height */
+    max-width: 100%;
+    clip-path: url("#blob");
+    position: absolute; /* Ensure it respects parent positioning */
+
+}
+
 .mapboxgl-ctrl-top-right {
     display: none !important;
 }
@@ -422,8 +450,8 @@
   }
 
   #map-content-overview {
-    width: 100%;
-    height: 70vh !important;
+    width: 100% !important;
+    height: 70vh;
     background-image: url('/images/top-down-map.png');
     background-size: cover;
     background-position: center;
@@ -433,7 +461,7 @@
   #map-overview-content-container {
     justify-content: center;
     align-items: center;
-    max-height: calc(70vh - 16rem) !important;
+    max-height: calc(70vh - 16rem);
     overflow: hidden !important;
     text-align: left;
     margin: 4rem;
@@ -441,8 +469,64 @@
     background-color: var(--background-color);
     padding: 4rem;
     border-radius: 2rem;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
+  }
+
+  .col-7-5 {
+    width: 66.15%
+  }
+
+  .col-4-5 {
+    width: 33.85%
   }
   
+  #desktop-demo {
+    height: 70vh;
+  }
+
+  #gif-demo {
+    height: 70vh !important;
+  }
+
+  #gif-demo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #uqu-demo {
+    height: 70vh !important;
+  }
+
+  #uqu-demo .col-6 {
+    height: 70vh !important;
+  }
+
+  #founder {
+    height: 70vh !important;
+    position: relative;
+    overflow-y: visible !important;
+  }
+
+  .founder-blob-bg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    z-index: -1 !important;
+    overflow-y: visible !important;
+  }
+
+  .founder-col .hero-sub-header {
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .founder-img-col img {
+    max-height: 100% !important;
+  }
+ 
 
 @keyframes spin-pause-360 {
     0%      { transform: rotate(0deg); }
@@ -515,6 +599,14 @@
     .swiper-slide.slide-card {
         height: 450px;
     }
+
+    .col-7-5 {
+        width: 64.5%
+    }
+
+    .col-4-5 {
+        width: 35.5%
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -526,12 +618,17 @@
         margin-top: 2rem;
     }
 
-    #nav-desc, #map-overview-content-container-col {
+    #nav-desc, #map-overview-content-container-col, .col-7-5, .uqu-demo-col, .founder-col {
         width: 100% !important;
         text-align: center;
     }
 
-    #hero-image, #nav-demo, #nav-demo-empty-col {
+    .uqu-demo-col, .uqu-demo-col .hero-header {
+        background-color: var(--secondary-color);
+        color: var(--background-color);
+    }
+
+    #hero-image, #nav-demo, #nav-demo-empty-col, .col-4-5, .col-blobs, .founder-img-col {
         width: 0%;
         display: none;
     }   

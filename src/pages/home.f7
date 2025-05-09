@@ -1,5 +1,5 @@
 <template>
-  <div class="page" data-name="home">
+  <div class="page bg-white" data-name="home">
     <a href="#view-route" id="go-back" class="tab-link tab-link-active bg-primary overflow-hidden">         
       <img id="waypoint-logo" src="/logos/650x650Logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
@@ -56,30 +56,88 @@
         </div>
       </div>
       <div class="row h-100 bg-primary text-on-primary">
-        <div class="col-8 m-16" id="nav-desc">
+        <div class="col-7 m-16" id="nav-desc">
           <h1 class="hero-header text-on-primary">A Guided Tour In Your Pocket!</h1>
           <p class="hero-text text-on-primary mt-5">Through integrating with UQU and UQ data, we can deliver personalised recommendations for events, locations, and promotions based on each user's profile, interests, and behaviour. 
            By leveraging real-time access to UQ's scheduling systems, campus maps, and faculty-specific activities, as well as UQU’s clubs, events, and vendor deals.</p>
           <!-- widgets -->
         </div>
-        <div class="col-4 m-16" id="nav-demo">
+        <div class="col-5 m-16" id="nav-demo">
           <img class="h-100" src="/images/nav-demo.png" alt="Nav Demo"/>
         </div>
       </div>
       <div class="row h-100">
         <div id="map-content-overview">
-          <div class="row h-100">
+          <div class="row h-100 founder-row">
             <div class="col-6 h-100" id="nav-demo-empty-col"></div>
             <div class="col-6 h-100 justify-center align-center align-content-center" id="map-overview-content-container-col">
               <div id="map-overview-content-container">
                 <h1 class="hero-header">Campus Map</h1>
                 <p class="mt-5">Waypoint is a webapp brought to you by UQUnion that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging all that UQU has to offer we provide students with their very own campus companion.</p>
-                <button id="map-overview-button" href="#view-route" class="tab-link tab-link-active button hero-button r-2 button-large button-fill button-raised">Get Started</button>
+                <a id="map-overview-button" href="https://www.mapbox.com/" target="_blank" class="button hero-button r-2 button-large button-fill button-raised">Find Out More</a>
               </div>
             </div>
           </div>
         </div>
       </div>  
+      <div class="row h-100" id="desktop-demo">
+        <div class="col-4-5 h-100">
+          <img class="w-100 h-100" src="/images/desktop-map.png" alt="Desktop Demo"/>         
+        </div>
+        <div class="col-7-5 h-100 justify-center align-center align-content-center">
+          <div class="m-16 justify-center align-center align-content-center">
+            <h1 class=" hero-header">Don't Have A Phone?<br/><span class="text-primary">No Problem!</span></h1>
+            <p class="my-8">Our AR navigation also extends to your desktop through integrating with <strong>MapBox™</strong> and three.js to virtually guide you through a 3D campus.  
+              his virtual interface allows users to explore buildings, pathways, and landmarks with detailed terrain and building models, all rendered directly in your browser. Whether you're 
+              planning your route for the first day or exploring campus remotely, our web-based 3D map ensures you feel confident and oriented before you even arrive.</p>
+            <a id="desktop-button" href="#view-route-desktop" class="tab-link tab-link-active button hero-button r-2 col-3 button-large button-fill button-raised">Get Started</a>
+          </div>
+        </div>
+      </div> 
+      <div class="row" id="uqu-demo">
+        <div class="col-6 uqu-demo-col justify-center align-center align-content-center">
+          <div class="m-16 justify-center align-center align-content-center">
+            <h1 class=" hero-header">Your Campus Companion!</h1>
+            <p class="my-8">Through partnering with UQU we are able to present an experience like no other — a unique blend of technology and campus culture that brings events to life through augmented reality. From discovering upcoming festivals as you walk through the Great Court, to unlocking exclusive offers and interactive previews, our collaboration transforms student engagement into a seamless, immersive experience that feels both natural and exciting.</p>
+            <a id="desktop-button" target="_blank" href="https://uqu.com.au/" class="button hero-button r-2 col-3 button-large button-fill button-raised">Learn More</a>
+          </div>
+        </div>
+        <div class="col-6 col-blobs justify-center align-center align-content-center">
+          <div class="blobs m-16">
+            <svg viewBox="0 0 398.6 435.4" width="0" height="0">
+              <clipPath id="blob-bg" clipPathUnits="objectBoundingBox" transform="scale(0.002508, 0.002296)">
+                <path class="st0" d="M332.3,48.8c32.6,18.1,58.5,49.4,64.7,83.7c6.3,34.3-7.1,71.5-15.8,107.1c-8.6,35.7-12.6,69.7-26,108.4
+                c-13.5,38.6-36.5,81.9-68,86.9c-31.4,5-71.5-28.3-117.1-41.8c-45.7-13.6-97.1-7.5-123.9-28.3c-26.7-20.8-28.9-68.5-35-115.4
+                c-6.2-46.8-16.4-92.6-8-138c8.3-45.3,35.3-90,74.7-105s91.3-0.3,136.9,9.6C260.4,25.8,299.7,30.6,332.3,48.8z"/>
+              </clipPath>
+            </svg>
+            <div class="blob-bg"></div>
+            <img class="clip-blob" src="/images/ar-ad.png" alt="UQU Ad Demo"/>
+            <svg viewBox="0 0 390.3 414.4" width="0" height="0">
+              <clipPath id="blob" clipPathUnits="objectBoundingBox" transform="scale(0.002562, 0.002413)">
+                <path class="st0" d="M276.8,56.9c23.5,25.9,33.9,61.3,53.7,95.3c19.8,33.9,49,66.4,57.3,104.6c8.2,38.2-4.5,82.3-35.2,102.2
+              c-30.6,20-79.2,15.8-121.3,23.7c-42.1,7.8-77.8,27.6-118.6,31.1c-40.9,3.5-86.9-9.3-99.3-41.4c-12.3-32.1,8.9-83.4,8.9-127.5
+              c0-44.2-21.1-81.2-22.3-121.6C-1.1,82.9,17.9,39,51.2,17.6C84.6-3.9,132.3-2.9,174.5,5.8S253.3,30.9,276.8,56.9z"/>
+              </clipPath>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="founder">
+        <img class="founder-blob-bg" src="/images/blob-background.svg"/>
+        <div class="col-5 founder-img-col justify-center align-center align-content-center">
+          <img class="w-100" src="/images/founder.png" alt="Founder"/>
+        </div>
+        <div class="col-7 founder-col justify-center align-center align-content-center">
+          <div class="m-16 justify-center align-center align-content-center">
+            <h3 class="hero-sub-header">Founder</h3>
+            <h1 class=" hero-header">Nathan Perrier</h1>
+            <p class="my-8">Hi i’m Nathan and I am the founder and creator of Waypoint. I am a Full-stack developer who is currently studying computer science at UQ. Thank you for checking out my project, i hope you liked it!</p>
+            <a id="desktop-button" target="_blank" href="https://github.com/NathanPerrier" class="button hero-button r-2 col-3 button-large button-fill button-raised">Learn More</a>
+          </div>
+        </div>
+        
+      </div> 
     </div>
   </div>
 
