@@ -80,11 +80,11 @@
           </div>
         </div>
       </div>  
-      <div class="row h-100" id="desktop-demo">
-        <div class="col-4-5 h-100">
+      <div class="row" id="desktop-demo">
+        <div class="col-4-5">
           <img class="w-100 h-100" src="/images/desktop-map.png" alt="Desktop Demo"/>         
         </div>
-        <div class="col-7-5 h-100 justify-center align-center align-content-center">
+        <div class="col-7-5 justify-center align-center align-content-center">
           <div class="m-16 justify-center align-center align-content-center">
             <h1 class=" hero-header">Don't Have A Phone?<br/><span class="text-primary">No Problem!</span></h1>
             <p class="my-8">Our AR navigation also extends to your desktop through integrating with <strong>MapBox™</strong> and three.js to virtually guide you through a 3D campus.  
