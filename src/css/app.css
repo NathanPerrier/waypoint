@@ -451,7 +451,8 @@
 
   #map-content-overview {
     width: 100% !important;
-    height: 70vh;
+    min-height: 70vh; 
+    height: 100%;
     background-image: url('/images/top-down-map.png');
     background-size: cover;
     background-position: center;
@@ -481,11 +482,12 @@
   }
   
   #desktop-demo {
-    height: 70vh;
+    
+    height: 100%
   }
 
   #gif-demo {
-    height: 70vh !important;
+    height: 100%
   }
 
   #gif-demo img {
@@ -495,15 +497,15 @@
   }
 
   #uqu-demo {
-    height: 70vh !important;
+    height: 100%
   }
 
   #uqu-demo .col-6 {
-    height: 70vh !important;
+    height: 100%
   }
 
   #founder {
-    height: 70vh !important;
+    height: 100%;
     position: relative;
     overflow-y: visible !important;
   }
@@ -614,7 +616,7 @@
         width: 100% !important;
         text-align: center;
         margin: auto;
-        height: 50vh;
+        height: 100vh;
         margin-top: 2rem;
     }
 
