@@ -72,6 +72,8 @@
         let locarInstance = null; 
         let locarContainerId = null; 
         let sheet;
+        let liveMap1 = null;
+        let liveMap2 = null;
 
         function updateRouteData(destinationName, navigationTime, navigationDistance) {
             const destinationElement = $('#destination-name'); // Use Framework7's $
@@ -109,6 +111,20 @@
             sheet.stepToggle();
         }
 
+
+        //! WORKS?
+        try {
+            const updateCenterInterval = setInterval(() => {
+                if (liveMap1 && liveMap1.map && app.USER_LOCATION) {
+                    liveMap1.setCenter(app.USER_LOCATION);
+                    liveMap2.setCenter(app.USER_LOCATION);
+                }     
+            }, 1000);
+        } catch (error) {
+            clearInterval(updateCenterInterval);
+        }
+        
+
         $on('page:tabshow', async () => {
             console.log('NAVIGATION PAGE SHOW');
             await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
@@ -133,8 +149,8 @@
             locarContainerId = locarConatiner.id;
             
             try {
-                await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
-                await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
+                liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
+                liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
                 locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
                 console.log("LocAR instance initialized:", locarInstance); // Debugging line    
                 if (locarInstance) { // Check if initialization was successful

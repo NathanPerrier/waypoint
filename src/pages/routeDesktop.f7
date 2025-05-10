@@ -217,12 +217,6 @@ export default async (props, { $, $on, $f7 }) => {
     $on('page:tabhide', () => {
         $f7.actions.close('.confirm-route-actions-desktop');
         
-        if (locarInstance) { 
-            destroyLocARInstance(app, locarContainerId);
-            locarInstance = null; // Clear the instance variable
-            locarContainerId = null; // Clear the ID
-        }
-
         const settingsModal = $f7.actions.get('.settings-actions');
         if (settingsModal) {
             settingsModal.off('actionsOpened');

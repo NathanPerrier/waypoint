@@ -51,6 +51,14 @@
                     </div>   
                 </div>    
             </div>
+            <div id="nav-directions-overview-desktop">
+                <div class="content">
+                    <div id="nav-directions-overview-map-desktop"></div>
+                    <div id="nav-directions-overview-content-desktop">
+                        <div  class="list" id="nav-directions-overview-content-list-desktop"></div>                     
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -63,7 +71,27 @@ import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 export default async (props, { $, $on, $f7 }) => {
 
     const app = window.app;
-    let componentMapInstance = null; // Variable to hold the map instance
+    let mapContainer;
+    let map;
+    let liveMap;
+
+    const getInstructionIcon = (instruction) => {
+        const lowerInstruction = instruction.toLowerCase();
+        if (lowerInstruction.includes('destination')) {
+            return 'map_pin_ellipse'; 
+        } else if (lowerInstruction.includes('arrived')) { 
+            return 'map_pin_ellipset'; 
+        } else if (lowerInstruction.includes('left')) {
+            return 'arrow_turn_up_left';
+        } else if (lowerInstruction.includes('right')) {
+            return 'arrow_turn_up_right';
+        } else if (lowerInstruction.includes('straight')) {
+            return 'arrow_up';
+        } else if (lowerInstruction.includes('depart')) {
+            return 'location_north_fill'; 
+        } 
+        return 'arrow_up';
+    };
 
     function updateRouteData(destinationName, navigationTime, navigationDistance) {
         const destinationElement = $('#destination-name-desktop'); // Use Framework7's $
@@ -77,6 +105,44 @@ export default async (props, { $, $on, $f7 }) => {
         if (navigationInfoElement && navigationInfoElement.length > 0) { // Dom7 returns a collection, check its length
             navigationInfoElement.html(`${navigationTime} - ${navigationDistance}`); // Use .html() to set content
         }
+    }
+
+    function addTerrainLayer(mapSource, targetRoute) {
+        try {
+            mapSource.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512,
+                'maxzoom': 14
+            });
+            mapSource.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });  
+        } catch (error) {
+            console.warn("Error adding terrain layer:", error);
+        }
+        mapSource.addSource('trace', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': targetRoute // smooth the target route issue is that the map joins the points with a straight line
+                }
+            }
+        });
+        mapSource.addLayer({
+            type: 'line',
+            source: 'trace',
+            id: 'line',
+            paint: {
+                'line-color': app.PRIMARY_COLOR,
+                'line-width': 25
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+            }
+        });
     }
 
     // #qr-navigation click display dialog
@@ -97,8 +163,8 @@ export default async (props, { $, $on, $f7 }) => {
         }).open();
     });
 
-    $on('page:tabshow', async () => {  //! BREAKS CODE??
-        
+    $on('page:tabshow', async () => {  
+
         await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
 
         // Add checks for necessary navigation data before initializing LocAR
@@ -112,92 +178,103 @@ export default async (props, { $, $on, $f7 }) => {
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
-        const mapContainer = await waitForElement('mapDesktopNavigation')
-        console.log("Map container found:", mapContainer);
-
-        const map = new mapboxgl.Map({
-            container: mapContainer, //! TODO: change to du=ocument and rename id
-            zoom: 11.53,
-            center: app.NAVIGATION_ROUTE[0],
-            pitch: 65,
-            bearing: -180,
-            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-            style: app.MAP_3D_STYLE, // style URL
-            interactive: false
-        })
-        componentMapInstance = map; // Assign to the higher-scoped variable
-
-        // this is the path the camera will look at
         const targetRoute = app.NAVIGATION_ROUTE
-        // this is the path the camera will move along
         const cameraRoute = app.NAVIGATION_ROUTE
-    
-        // add terrain, sky, and line layers once the style has loaded
-        map.on('style.load', () => {
-            map.addSource('mapbox-dem', {
-                'type': 'raster-dem',
-                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                'tileSize': 512,
-                'maxzoom': 14
-            });
-            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });  // exaggeration: 1.5
-            map.addSource('trace', {
-                type: 'geojson',
-                data: {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': {
-                        'type': 'LineString',
-                        'coordinates': targetRoute // smooth the target route issue is that the map joins the points with a straight line
-                    }
-                }
-            });
-            map.addLayer({
-                type: 'line',
-                source: 'trace',
-                id: 'line',
-                paint: {
-                    'line-color': app.PRIMARY_COLOR,
-                    'line-width': 25
-                },
-                layout: {
-                    'line-cap': 'round',
-                    'line-join': 'round',
-                }
-            });
-        });
-    
-        // wait for the terrain and sky to load before starting animation
-        map.on('load', () => {
-            map.resize();
-            
-            const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
+        app.NAVIGATION_ROUTE_STEPS.splice(0, 1);
 
+        mapContainer = await waitForElement('mapDesktopNavigation')
+        
+        if (!map) {
+            map = new mapboxgl.Map({
+                container: mapContainer, //! TODO: change to du=ocument and rename id
+                zoom: 11.53,
+                center: app.NAVIGATION_ROUTE[0],
+                pitch: 65,
+                bearing: -180,
+                // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+                style: app.MAP_3D_STYLE, // style URL
+                interactive: false
+            });
+            map.on('style.load', () => {
+                addTerrainLayer(map, targetRoute);
+            });
+        } else {
+            map.resize();
+            map.setCenter(app.NAVIGATION_ROUTE[0]);
+            map.setZoom(11.53);
+            map.setPitch(65);
+            map.setBearing(-180);
+            // Ensure layers and sources are present on reload
+            if (!map.getLayer('line')) {
+                addTerrainLayer(map, targetRoute);
+            }
+        }
+
+        console.log("Map initialized:", map);
+
+        liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"));
+
+        const firstTwoStepscontainer =$('#nav-directions-overview-content-list-desktop');
+        console.log("First two steps container found:", firstTwoStepscontainer);
+        firstTwoStepscontainer.html(''); // Changed from innerHTML = ''
+        app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
+            const stepElement = document.createElement("div");
+            stepElement.classList.add("step-item");
+            const iconClass = getInstructionIcon(step.instruction.instruction);
+            stepElement.innerHTML = `
+                <div class="step-item">
+                    <div class="h-100 row mb-2">
+                        <div class="col-3 d-flex align-items-center justify-content-center">
+                            <i class="text-primary f7-icons bold">${iconClass}</i>
+                        </div>
+                        <div class="col-9">
+                            <div class="row h-100">
+                                <div class="col-9">
+                                    <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3>
+                                </div>
+                                <div class="col-3 text-align-left">
+                                    <small class="h-100 step-distance">${Math.round(step.distance)}m</small>
+                                </div>
+                            </div>
+                            <div class="row h-100">
+                                <div class="col-12">
+                                    <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`; // Changed from stepElement.html()
+            firstTwoStepscontainer.append(stepElement); // Use .append() for Dom7 to append a native DOM element
+            if (index < app.NAVIGATION_ROUTE_STEPS.length - 1) {
+                const divider = document.createElement("hr");
+                divider.className = "purple-divider";
+                firstTwoStepscontainer.append(divider); // Use .append() for Dom7
+            }
+        });
+
+        map.on('idle', () => {
+            map.resize();
+            const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
             const relativeCameraAltitude = 10; 
-            
             const routeDistance = turf.length(turf.lineString(targetRoute));
             const cameraRouteDistance = turf.length(
                 turf.lineString(cameraRoute)
             );
-
             // Pre-calculate cumulative distances for segment identification
             const cumulativeDistances = [0];
             for (let i = 0; i < cameraRoute.length - 1; i++) {
                 const dist = turf.distance(turf.point(cameraRoute[i]), turf.point(cameraRoute[i+1]));
                 cumulativeDistances.push(cumulativeDistances[i] + dist);
             }
-
             // Define how far ahead the camera should look
             const lookAheadFactor = 0.25; // 0.005?
             const lookAheadDistance = routeDistance * lookAheadFactor;
-
             let start;
-
             // Updated the camera animation logic to ensure smooth transitions between nodes.
             function frame(time) {
+                if (!map) return; 
                 if (!start) start = time;
                 const phase = (time - start) / animationDuration;
-
                 if (phase >= 1) {
                     //navigation to routeDesktop
                     app.notification.create({
@@ -210,7 +287,6 @@ export default async (props, { $, $on, $f7 }) => {
                     app.tab.show('#view-route-desktop'); 
                     return;
                 }
-
                 // Calculate current position along the camera path
                 const currentDistance = cameraRouteDistance * phase;
                 const cameraPosition = turf.along(
@@ -218,7 +294,6 @@ export default async (props, { $, $on, $f7 }) => {
                     currentDistance
                 );
                 const cameraPositionCoords = cameraPosition.geometry.coordinates;
-
                 // Calculate the look-at position slightly ahead on the target path
                 const lookAtTargetDistance = Math.min(routeDistance, currentDistance + lookAheadDistance); // Ensure look-at doesn't go beyond the route end
                 const lookAtPosition = turf.along(
@@ -226,11 +301,9 @@ export default async (props, { $, $on, $f7 }) => {
                     lookAtTargetDistance
                 );
                 const lookAtCoords = lookAtPosition.geometry.coordinates;
-
                 // Calculate terrain elevation at the camera's current position
                 const terrainElevation = map.queryTerrainElevation(cameraPositionCoords) || 0;
                 const finalAltitude = Math.max(terrainElevation + relativeCameraAltitude, relativeCameraAltitude); // Ensure a minimum altitude of 100
-
                 // Set camera options
                 const camera = map.getFreeCameraOptions();
                 camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
@@ -240,7 +313,6 @@ export default async (props, { $, $on, $f7 }) => {
                     },
                     finalAltitude
                 );
-                
                 // Ensure lookAtPoint is valid and ahead of the camera
                 if (lookAtCoords && lookAtCoords.length === 2) {
                     camera.lookAtPoint({
@@ -250,11 +322,8 @@ export default async (props, { $, $on, $f7 }) => {
                 } else {
                     console.warn("Invalid lookAtCoords:", lookAtCoords);
                 }
-                
                 updateRouteData(app.DESTINATION_LOCATION, `${Math.round((app.NAVIGATION_ROUTE_DATA.duration-(app.NAVIGATION_ROUTE_DATA.duration*phase))/60)} min`, `${Math.round((app.NAVIGATION_ROUTE_DATA.distance-(currentDistance*1000)))} m`);
-
                 map.setFreeCameraOptions(camera);
-
                 // calculate bearing to the next point
                 const bearing = turf.bearing(
                     turf.point(cameraPositionCoords),
@@ -265,9 +334,30 @@ export default async (props, { $, $on, $f7 }) => {
                     arrowIcon.css('transform', `rotate(${bearing}deg)`);
                 }
 
+                liveMap.setCenter(cameraPositionCoords);
+
+                if (
+                    app.NAVIGATION_ROUTE_STEPS && app.NAVIGATION_ROUTE_STEPS.length > 1
+                ) {
+                    const nextStepCoord = app.NAVIGATION_ROUTE_STEPS[0].instruction.location;
+                    const distanceToNextStep = turf.distance(
+                        turf.point(cameraPositionCoords),
+                        turf.point(nextStepCoord)
+                    );
+                    if (distanceToNextStep < 0.0025) { // 2.5m
+                        const stepItems = document.querySelectorAll('.step-item');
+                        if (stepItems.length > 0) {
+                            const firstStep = stepItems[0];
+                            if (firstStep.nextSibling && firstStep.nextSibling.tagName === 'HR') {
+                                firstStep.nextSibling.remove();
+                            }
+                            firstStep.remove();
+                        }
+                        app.NAVIGATION_ROUTE_STEPS.splice(0, 1);
+                    }
+                }
                 window.requestAnimationFrame(frame);
             }
-
             window.requestAnimationFrame(frame);
         });
     });
@@ -276,6 +366,8 @@ export default async (props, { $, $on, $f7 }) => {
         app.NAVIGATION_ROUTE = null;
         app.NAVIGATION_ROUTE_STEPS = null;
         app.NAVIGATION_ROUTE_DATA = null; 
+        map.removeLayer('line');
+        map.removeSource('trace');
     });
 
     $on('pageBeforeRemove', () => {

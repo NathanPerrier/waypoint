@@ -160,4 +160,6 @@ export async function createLiveRouteMap(app, container) {
     } else {
         console.error('NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.');
     }
+
+    return map;
 }
