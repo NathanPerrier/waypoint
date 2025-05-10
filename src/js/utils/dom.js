@@ -125,3 +125,104 @@ export const handleRedirect = (view, route, $f7) => {
     $f7.views.navigation.router.navigate(route);
     app.tab.show(view);
 };
+
+
+export function updateRouteData(destinationName, navigationTime, navigationDistance, destinationElement, navigationInfoElement) {
+    if (destinationElement && destinationElement.length > 0) { 
+        destinationElement.html(destinationName); 
+    }
+
+    if (navigationInfoElement && navigationInfoElement.length > 0) { 
+        navigationInfoElement.html(`${navigationTime} - ${navigationDistance}`); 
+    }
+}
+
+export const getInstructionIcon = (instruction) => {
+    const lowerInstruction = instruction.toLowerCase();
+    if (lowerInstruction.includes('destination')) {
+        return 'map_pin_ellipse'; 
+    } else if (lowerInstruction.includes('arrived')) { 
+        return 'map_pin_ellipset'; 
+    } else if (lowerInstruction.includes('left')) {
+        return 'arrow_turn_up_left';
+    } else if (lowerInstruction.includes('right')) {
+        return 'arrow_turn_up_right';
+    } else if (lowerInstruction.includes('straight')) {
+        return 'arrow_up';
+    } else if (lowerInstruction.includes('depart')) {
+        return 'location_north_fill'; 
+    } 
+    return 'arrow_up'; // Default icon
+};
+
+export function populateRouteInstructions(app) {
+    const firstTwoStepscontainer = document.getElementById("first-two-steps");
+    firstTwoStepscontainer.innerHTML = ''; 
+    const firstTwoSteps = app.NAVIGATION_ROUTE_STEPS.slice(0, 2);
+    firstTwoSteps.forEach((step, index) => {
+        const stepElement = document.createElement("div");
+        stepElement.classList.add("step-item"); 
+        const iconClass = getInstructionIcon(step.instruction.instruction);
+        stepElement.innerHTML = `
+            <div class="h-100 row mb-2">
+                <div class="col-3 d-flex align-items-center justify-content-center">    
+                    <i class="text-primary f7-icons bold">${iconClass}</i>
+                </div>
+                <div class="col-9">
+                    <div class="row h-100">
+                        <div class="col-9"> 
+                            <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3> 
+                        </div>
+                        <div class="col-3 text-align-left"> 
+                            <small class="h-100 step-distance">${Math.round(step.distance)}m</small> 
+                        </div>
+                    </div>
+                    <div class="row h-100">
+                        <div class="col-12"> 
+                            <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small> 
+                        </div>
+                    </div>
+                </div> 
+            </div>`;
+        firstTwoStepscontainer.appendChild(stepElement);
+        if (index < firstTwoSteps.length - 1) { 
+            const divider = document.createElement("hr");
+            divider.className = "purple-divider";
+            firstTwoStepscontainer.appendChild(divider);
+        }
+    });
+    const navigationStepsContainer = document.getElementById("navigation-steps");
+    navigationStepsContainer.innerHTML = ''; 
+    app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
+        const stepElement = document.createElement("div");
+        stepElement.classList.add("step-item"); 
+        const iconClass = getInstructionIcon(step.instruction.instruction);
+        stepElement.innerHTML = `
+            <div class="row h-100 mb-2">
+                <div class="col-3 d-flex align-items-center justify-content-center">    
+                    <i class="text-primary f7-icons bold">${iconClass}</i>
+                </div>
+                <div class="col-9">
+                    <div class="row h-100">
+                        <div class="col-9"> 
+                            <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3> 
+                        </div>
+                        <div class="col-3 text-align-left"> 
+                            <small class="h-100 step-distance">${Math.round(step.distance)}m</small> 
+                        </div>
+                    </div>
+                    <div class="row h-100">
+                        <div class="col-12"> 
+                            <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small> 
+                        </div>
+                    </div>
+                </div> 
+            </div>`;
+        navigationStepsContainer.appendChild(stepElement);
+        if (index < app.NAVIGATION_ROUTE_STEPS.length - 1) { // Add divider if not the last item
+            const divider = document.createElement("hr");
+            divider.className = "purple-divider";
+            navigationStepsContainer.appendChild(divider);
+        }
+    });
+}
