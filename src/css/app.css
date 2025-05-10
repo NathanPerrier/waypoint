@@ -523,7 +523,40 @@
   .founder-img-col img {
     max-height: 100% !important;
   }
+
+  #navigation-overview-map-sheet {
+    height: 200px !important;
+    width: 100%;
+    border-radius: 2rem;
+  }
  
+
+.purple-divider {
+    border: none;
+    height: 2px;
+    width: 80%;
+    margin-left: 10%;
+    background-color: var(--primary-color);  
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    height: 100%;
+}
+
+.step-item .row {
+    height: inherit !important;
+}
+
+.step-item h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    line-height: 1;
+}
 
 @keyframes spin-pause-360 {
     0%      { transform: rotate(0deg); }
@@ -610,9 +643,8 @@
     #hero-section {
         width: 100% !important;
         text-align: center;
-        margin: auto;
         height: 100vh;
-        margin-top: 2rem;
+        margin: 1rem;
     }
 
     #nav-desc, #map-overview-content-container-col, .col-7-5, .uqu-demo-col, .founder-col {

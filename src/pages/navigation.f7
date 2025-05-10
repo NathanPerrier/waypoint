@@ -12,7 +12,7 @@
                             <div id="tab1" class="tab tab-active">
                                 <div class="nav">
                                     <div class="row h-100">
-                                        <div id="navigation-content" class="col-10">
+                                        <div id="navigation-content" data-sheet=".overview-sheet-swipe-to-step" class="col-10 sheet-open">
                                             <div class="row h-100">
                                                 <div class="col-3">    
                                                     <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
@@ -41,6 +41,20 @@
                     </div> 
                 </div>        
             </div>
+            <div class="sheet-modal overview-sheet-swipe-to-step" style="height:auto">
+                <div class="sheet-modal-inner">
+                  <div class="sheet-modal-swipe-step">
+                    <div class="display-flex justify-content-space-between align-items-center">
+                      <div class="w-100" id="navigation-overview-map-sheet"></div>
+                    </div>
+                    <div class="padding-horizontal padding-bottom">
+                        <div id="first-two-steps" class="list"></div>
+                      <div class="text-align-center"><i class="text-secondary f7-icons">chevron_down</i></div>
+                    </div>
+                  </div>
+                  <div class="list" id="navigation-steps"></div>
+                </div>
+            </div>
         </div>
     </div>
    
@@ -55,8 +69,45 @@
 
     export default async (props, { $, $on, $f7 }) => {
         const app = window.app;
-        let locarInstance = null; // Define outside to be accessible by both handlers
-        let locarContainerId = null; // Store the ID
+        let locarInstance = null; 
+        let locarContainerId = null; 
+        let sheet;
+
+        function updateRouteData(destinationName, navigationTime, navigationDistance) {
+            const destinationElement = $('#destination-name'); // Use Framework7's $
+            const navigationInfoElement = $('#navigation-info'); // Use Framework7's $
+            // console.log(navigationInfoElement); // Note: This will now log a Dom7 object, not a raw DOM element
+    
+            if (destinationElement && destinationElement.length > 0) { // Dom7 returns a collection, check its length
+                destinationElement.html(destinationName); // Use .html() to set content
+            }
+    
+            if (navigationInfoElement && navigationInfoElement.length > 0) { // Dom7 returns a collection, check its length
+                navigationInfoElement.html(`${navigationTime} - ${navigationDistance}`); // Use .html() to set content
+            }
+        }
+
+        const getInstructionIcon = (instruction) => {
+            const lowerInstruction = instruction.toLowerCase();
+            if (lowerInstruction.includes('destination')) {
+                return 'map_pin_ellipse'; 
+            } else if (lowerInstruction.includes('arrived')) { 
+                return 'map_pin_ellipset'; 
+            } else if (lowerInstruction.includes('left')) {
+                return 'arrow_turn_up_left';
+            } else if (lowerInstruction.includes('right')) {
+                return 'arrow_turn_up_right';
+            } else if (lowerInstruction.includes('straight')) {
+                return 'arrow_up';
+            } else if (lowerInstruction.includes('depart')) {
+                return 'location_north_fill'; 
+            } 
+            return 'arrow_up'; // Default icon
+        };
+
+        const toggleSwipeStep = () => {
+            sheet.stepToggle();
+        }
 
         $on('page:tabshow', async () => {
             console.log('NAVIGATION PAGE SHOW');
@@ -83,6 +134,7 @@
             
             try {
                 await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
+                await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
                 locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
                 console.log("LocAR instance initialized:", locarInstance); // Debugging line    
                 if (locarInstance) { // Check if initialization was successful
@@ -94,6 +146,78 @@
                     });
                     return;
                 }
+
+                updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`);
+
+                const firstTwoStepscontainer = document.getElementById("first-two-steps");
+                firstTwoStepscontainer.innerHTML = ''; 
+                const firstTwoSteps = app.NAVIGATION_ROUTE_STEPS.slice(0, 2);
+                firstTwoSteps.forEach((step, index) => {
+                    const stepElement = document.createElement("div");
+                    stepElement.classList.add("step-item"); 
+                    const iconClass = getInstructionIcon(step.instruction.instruction);
+                    stepElement.innerHTML = `
+                        <div class="h-100 row mb-2">
+                            <div class="col-3 d-flex align-items-center justify-content-center">    
+                                <i class="text-primary f7-icons bold">${iconClass}</i>
+                            </div>
+                            <div class="col-9">
+                                <div class="row h-100">
+                                    <div class="col-9"> 
+                                        <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3> 
+                                    </div>
+                                    <div class="col-3 text-align-left"> 
+                                        <small class="h-100 step-distance">${Math.round(step.distance)}m</small> 
+                                    </div>
+                                </div>
+                                <div class="row h-100">
+                                    <div class="col-12"> 
+                                        <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small> 
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>`;
+                    firstTwoStepscontainer.appendChild(stepElement);
+                    if (index < firstTwoSteps.length - 1) { 
+                        const divider = document.createElement("hr");
+                        divider.className = "purple-divider";
+                        firstTwoStepscontainer.appendChild(divider);
+                    }
+                });
+                const navigationStepsContainer = document.getElementById("navigation-steps");
+                navigationStepsContainer.innerHTML = ''; 
+                app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
+                    const stepElement = document.createElement("div");
+                    stepElement.classList.add("step-item"); 
+                    const iconClass = getInstructionIcon(step.instruction.instruction);
+                    stepElement.innerHTML = `
+                        <div class="row h-100 mb-2">
+                            <div class="col-3 d-flex align-items-center justify-content-center">    
+                                <i class="text-primary f7-icons bold">${iconClass}</i>
+                            </div>
+                            <div class="col-9">
+                                <div class="row h-100">
+                                    <div class="col-9"> 
+                                        <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3> 
+                                    </div>
+                                    <div class="col-3 text-align-left"> 
+                                        <small class="h-100 step-distance">${Math.round(step.distance)}m</small> 
+                                    </div>
+                                </div>
+                                <div class="row h-100">
+                                    <div class="col-12"> 
+                                        <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small> 
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>`;
+                    navigationStepsContainer.appendChild(stepElement);
+                    if (index < app.NAVIGATION_ROUTE_STEPS.length - 1) { // Add divider if not the last item
+                        const divider = document.createElement("hr");
+                        divider.className = "purple-divider";
+                        navigationStepsContainer.appendChild(divider);
+                    }
+                });
             } catch (error) {
                 console.error("Error during LocAR initialization or runLocarNav:", error);
                 app.dialog.alert("An error occurred while initializing LocAR. Please try again.", "Error", () => {
@@ -104,20 +228,33 @@
 
         })
 
+        $on('pageInit', async () => {
+            sheet = $f7.sheet.create({
+                el: '.overview-sheet-swipe-to-step',
+                swipeToClose: true,
+                swipeToStep: true,
+                push: true,
+                backdrop: true,
+            });
+        });
+
 
 
         $on('page:tabhide', () => {
+            $f7.sheet.close();
             app.NAVIGATION_ROUTE = null;
             app.NAVIGATION_ROUTE_STEPS = null;
             app.NAVIGATION_ROUTE_DATA = null;      
-            if (locarContainerId) { // Use the stored ID
+            if (locarContainerId) { 
                 destroyLocARInstance(app, locarContainerId);
-                locarInstance = null; // Clear the instance variable
-                locarContainerId = null; // Clear the ID       
+                locarInstance = null; 
+                locarContainerId = null;     
             }
         });
 
-   
+        $on('pageBeforeRemove', () => {
+            if (sheet) sheet.destroy();
+        });
 
         return $render;
     };

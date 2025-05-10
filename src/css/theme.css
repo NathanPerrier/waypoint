@@ -85,3 +85,7 @@ h4 {
 .text-black {
     color: var(--text-color) !important;
 }
+
+.bold {
+    font-weight: bolder;
+}

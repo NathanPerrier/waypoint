@@ -81,6 +81,7 @@ export async function createStaticRouteMap(app, container) {
 }
 
 export async function createLiveRouteMap(app, container) {
+    console.log(container);
     if (!container) {
         console.error('Container is not defined');
         return;

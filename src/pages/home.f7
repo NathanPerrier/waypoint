@@ -90,16 +90,16 @@
             <p class="my-8">Our AR navigation also extends to your desktop through integrating with <strong>MapBox™</strong> and three.js to virtually guide you through a 3D campus.  
               his virtual interface allows users to explore buildings, pathways, and landmarks with detailed terrain and building models, all rendered directly in your browser. Whether you're 
               planning your route for the first day or exploring campus remotely, our web-based 3D map ensures you feel confident and oriented before you even arrive.</p>
-            <a id="desktop-button" href="#view-route-desktop" class="tab-link tab-link-active button hero-button r-2 col-3 button-large button-fill button-raised">Get Started</a>
+            <a id="desktop-button" href="#view-route-desktop" class="tab-link tab-link-active button hero-button r-2 col-6 button-large button-fill button-raised">Get Started</a>
           </div>
         </div>
       </div> 
       <div class="row" id="uqu-demo">
         <div class="col-6 uqu-demo-col justify-center align-center align-content-center">
           <div class="m-16 justify-center align-center align-content-center">
-            <h1 class=" hero-header">Your Campus Companion!</h1>
+            <h1 class="hero-header">Your Campus Companion!</h1>
             <p class="my-8">Through partnering with UQU we are able to present an experience like no other — a unique blend of technology and campus culture that brings events to life through augmented reality. From discovering upcoming festivals as you walk through the Great Court, to unlocking exclusive offers and interactive previews, our collaboration transforms student engagement into a seamless, immersive experience that feels both natural and exciting.</p>
-            <a id="desktop-button" target="_blank" href="https://uqu.com.au/" class="button hero-button r-2 col-3 button-large button-fill button-raised">Learn More</a>
+            <a id="desktop-button" target="_blank" href="https://uqu.com.au/" class="button hero-button r-2 col-6 button-large button-fill button-raised">Learn More</a>
           </div>
         </div>
         <div class="col-6 col-blobs justify-center align-center align-content-center">
@@ -131,9 +131,9 @@
         <div class="col-7 founder-col justify-center align-center align-content-center">
           <div class="m-16 justify-center align-center align-content-center">
             <h3 class="hero-sub-header">Founder</h3>
-            <h1 class=" hero-header">Nathan Perrier</h1>
-            <p class="my-8">Hi i’m Nathan and I am the founder and creator of Waypoint. I am a Full-stack developer who is currently studying computer science at UQ. Thank you for checking out my project, i hope you liked it!</p>
-            <a id="desktop-button" target="_blank" href="https://github.com/NathanPerrier" class="button hero-button r-2 col-3 button-large button-fill button-raised">Learn More</a>
+            <h1 class="hero-header invert-text">Nathan Perrier</h1>
+            <p class="my-8 invert-text">Hi i’m Nathan and I am the founder and creator of Waypoint. I am a Full-stack developer who is currently studying computer science at UQ. Thank you for checking out my project, i hope you liked it!</p>  
+            <a id="desktop-button" target="_blank" href="https://github.com/NathanPerrier" class="button hero-button r-2 col-6 button-large button-fill button-raised">Learn More</a>
           </div>
         </div>
         
@@ -172,6 +172,9 @@ export default (props, { $, $on, $f7 }) => {
     });    
   });
 
+
+  
+  
   
 
   return $render;
