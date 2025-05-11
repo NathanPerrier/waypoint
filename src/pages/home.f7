@@ -60,7 +60,7 @@
           <h1 class="hero-header text-on-primary">A Guided Tour In Your Pocket!</h1>
           <p class="hero-text text-on-primary mt-5">Through integrating with UQU and UQ data, we can deliver personalised recommendations for events, locations, and promotions based on each user's profile, interests, and behaviour. 
            By leveraging real-time access to UQ's scheduling systems, campus maps, and faculty-specific activities, as well as UQU’s clubs, events, and vendor deals.</p>
-          <!-- widgets -->
+          <img class="w-100" id="waypoint-places" src="/images/group.png" alt="Waypoint Places"/>
         </div>
         <div class="col-5 m-16" id="nav-demo">
           <img class="h-100" src="/images/nav-demo.png" alt="Nav Demo"/>
@@ -135,9 +135,51 @@
             <p class="my-8 invert-text">Hi i’m Nathan and I am the founder and creator of Waypoint. I am a Full-stack developer who is currently studying computer science at UQ. Thank you for checking out my project, i hope you liked it!</p>  
             <a id="desktop-button" target="_blank" href="https://github.com/NathanPerrier" class="button hero-button r-2 col-6 button-large button-fill button-raised">Learn More</a>
           </div>
-        </div>
-        
+        </div> 
       </div> 
+      <!--<div class="row bg-primary" id="timeline">
+        <div class="col-6 timeline-col justify-center align-center align-content-center">
+          <div class="m-16 justify-center align-center align-content-center">
+            <h1 class="hero-header text-white">Timeline</h1>
+            <p class="my-8 text-white">With the help of UQU we plan to make Waypoint truely amazing over the next couple of months..</p>
+            <a id="desktop-button" target="_blank" href="" class="button hero-button r-2 col-6 button-large button-fill button-raised bg-secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="col-6 timeline-col justify-center align-center align-content-center">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-item-date text-white bold">21 <small>DEC</small></div>
+              <div class="timeline-item-divider"></div>
+              <div class="timeline-item-content">
+                <div class="timeline-item-inner">Some text goes here</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-item-date text-white bold">22 <small>DEC</small></div>
+              <div class="timeline-item-divider"></div>
+              <div class="timeline-item-content">
+                <div class="timeline-item-inner">Another text goes here</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-item-date text-white bold">23 <small>DEC</small></div>
+              <div class="timeline-item-divider"></div>
+              <div class="timeline-item-content">
+                <div class="timeline-item-inner">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam
+                  hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+                  iure, aperiam pariatur?</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-item-date text-white bold">24 <small>DEC</small></div>
+              <div class="timeline-item-divider"></div>
+              <div class="timeline-item-content">
+                <div class="timeline-item-inner">One more text here</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>-->
     </div>
   </div>
 

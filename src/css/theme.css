@@ -78,7 +78,7 @@ h4 {
     color: var(--tertiary-color) !important;
 }
 
-.text-on-primary {
+.text-on-primary, .text-white {
     color: var(--background-color) !important;
 }
 
