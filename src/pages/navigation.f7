@@ -64,7 +64,6 @@
     import { waitForElement, updateRouteData, getInstructionIcon, populateRouteInstructions } from "../js/utils/dom.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
-    import { checkForURLParams } from "../js/utils/routes.js";
     import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 
     export default async (props, { $, $on, $f7 }) => {
@@ -93,7 +92,7 @@
         
 
         $on('page:tabshow', async () => {
-            await checkForURLParams(app, $f7.views.main.router); 
+
 
             if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
                 console.error("Navigation data missing. Cannot start navigation.");

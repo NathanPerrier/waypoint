@@ -85,7 +85,6 @@
 <script>    
 import { waitForElement, isWithinBounds, updateRouteData, getInstructionIcon } from "../js/utils/dom.js";
 import * as turf from '@turf/turf';
-import { checkForURLParams } from "../js/utils/routes.js";
 import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 import { addTerrainLayer, runDesktopNav } from '../js/plugins/maps/DesktopNav.js';
 
@@ -99,8 +98,6 @@ export default async (props, { $, $on, $f7 }) => {
 
     $on('page:tabshow', async () => {  
 
-        await checkForURLParams(app, $f7.views.main.router); 
-
         if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
             console.error("Navigation data missing. Cannot start navigation.");
             app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
@@ -110,7 +107,7 @@ export default async (props, { $, $on, $f7 }) => {
         }
 
         var qrcode = new QRCode("qrCode", {
-            text: `${app.BASE_URL}?startLocation=${JSON.stringify(app.START_LOCATION)}&destinationLocation=${JSON.stringify(app.DESTINATION_LOCATION)}&destinationLocationCoordinates=${JSON.stringify(app.DESTINATION_LOCATION_COORDINATES)}&destinationLocationData=${JSON.stringify(app.DESTINATION_LOCATION_DATA)}&mode=${app.TRANSPORTATION_MODE}`,
+            text: `${app.BASE_URL}?startLocation=${encodeURIComponent(JSON.stringify(app.START_LOCATION))}&destinationLocation=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION))}&destinationLocationCoordinates=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION_COORDINATES))}&destinationLocationData=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION_DATA))}&mode=${encodeURIComponent(app.TRANSPORTATION_MODE)}`,
             width: 200,
             height: 200,
             colorDark : app.PRIMARY_COLOR,

@@ -8,6 +8,8 @@ import NotFoundPage from '../pages/404.f7';
 
 import { createRouteGuard } from './utils/routes.js';
 
+import { checkForURLParams } from './utils/routes.js';
+
 var routes = [
   {
     path: '/',
@@ -31,6 +33,7 @@ var routes = [
               go_back.href = '#view-route-desktop';
               hero_button.href = '#view-route-desktop';
             }
+            checkForURLParams(app, this); 
             preloader.style.display = 'none';
           }
           // Perform any additional actions after initialization here

@@ -13,10 +13,17 @@ export async function checkForURLParams(app, router) {
       return;
     }
 
-    if (startLocation) {
-      app.START_LOCATION = JSON.parse(startLocation);
+    try {
+      if (startLocation) {
+        app.START_LOCATION = JSON.parse(startLocation);
+      }
+      if (mode) {
+        app.TRANSPORTATION_MODE = mode;
+      }
+    } catch (error) {
+      console.warn('Could not parse startLocation or mode from URL params:', error);
     }
-
+    
     if (destinationLocation) {
       app.DESTINATION_LOCATION = JSON.parse(destinationLocation);
     }
@@ -29,11 +36,7 @@ export async function checkForURLParams(app, router) {
       app.DESTINATION_LOCATION_DATA = JSON.parse(destinationLocationData);
     }
 
-    if (mode) {
-      app.TRANSPORTATION_MODE = JSON.parse(mode);
-    }
-
-    console.log("Parsed URL Parameters:", { startLocation: app.START_LOCATION, endLocation: app.END_LOCATION, route: app.TRANSPORTATION_MODE });
+    
 
     if (!app.DESTINATION_LOCATION || !app.DESTINATION_LOCATION_COORDINATES || !app.DESTINATION_LOCATION_COORDINATES) {
       app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error', () => {
@@ -41,19 +44,28 @@ export async function checkForURLParams(app, router) {
       });
     }
 
-    getRoute(app, router).then(() => {
-      console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
-      if (app.AR) {
-        app.router.navigate('/navigation');
-      } else {
-        app.router.navigate('/navigationDesktop');
-      }
-    }).catch((error) => {
-      console.error('Error fetching route:', error);
-      app.dialog.alert('No valid route for the destination proivded. Please reenter the search destination.', 'Error', () => {
-        router.navigate('/');
+    app.DESTINATION_LOCATION_DATA.startLocation = app.START_LOCATION;
+
+    //check if user wishes to navigate to app.DESTINATION_LOCATION
+    app.dialog.confirm(`Do you want to navigate to ${app.DESTINATION_LOCATION}?`, 'Navigation', () => {
+      app.dialog.close();
+      app.dialog.preloader('Loading route...');
+      getRoute(app, router).then(() => {
+        app.dialog.close();
+        if (app.AR) {
+          router.navigate('/navigation/');
+          app.tab.show('#view-navigation');
+        } else {
+          router.navigate('/navigationDesktop/');
+          app.tab.show('#view-navigation-desktop');
+        }
+      }).catch((error) => {
+        console.error('Error fetching route:', error);
+        app.dialog.alert('No valid route for the destination proivded. Please reenter the search destination.', 'Error', () => {
+          router.navigate('/');
+        });
       });
-    });
+    });    
 }
 
 export const createRouteGuard = (checks) => {
