@@ -18,19 +18,19 @@ export async function checkForURLParams(app, router) {
     try {
       if (startLocation) {
         app.START_LOCATION = JSON.parse(startLocation);
-
-        if (!isWithinBounds(app, app.START_LOCATION)) {
-          app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Error', () => {
-            router.navigate('/');
-          });
-          return;
-        }
       }
-      if (mode) {
+      if (mode && (mode === 'driving' || mode === 'walking' || mode === 'cycling')) {
         app.TRANSPORTATION_MODE = mode;
       }
     } catch (error) {
       console.warn('Could not parse startLocation or mode from URL params:', error);
+    }
+
+    if (!isWithinBounds(app, app.START_LOCATION)) {
+      app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Error', () => {
+        router.navigate('/');
+      });
+      return;
     }
 
     if (destinationLocation) {
