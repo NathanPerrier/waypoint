@@ -1,4 +1,6 @@
+import { is } from "dom7";
 import { getRoute } from "../plugins/maps/mapboxRoute";
+import { isWithinBounds } from "./dom";
 
 export async function checkForURLParams(app, router) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -16,6 +18,13 @@ export async function checkForURLParams(app, router) {
     try {
       if (startLocation) {
         app.START_LOCATION = JSON.parse(startLocation);
+
+        if (!isWithinBounds(app, app.START_LOCATION)) {
+          app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Error', () => {
+            router.navigate('/');
+          });
+          return;
+        }
       }
       if (mode) {
         app.TRANSPORTATION_MODE = mode;

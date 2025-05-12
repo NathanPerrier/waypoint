@@ -214,10 +214,13 @@ export default (props, { $, $on, $f7 }) => {
     });    
   });
 
-
-  
-  
-  
+  $on('page:tabshow', () => {
+    if (app.WEBCAM_ENABLED === false) {
+      app.dialog.alert("Webcam is not enabled. Please enable it in the settings.", "Error");
+      app.AR = true;
+      app.WEBCAM_ENABLED = false
+    }
+  });
 
   return $render;
 }
