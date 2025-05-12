@@ -15,7 +15,7 @@ export async function initSettingsMap(mapContainer) {
     const map = new mapboxgl.Map({
         container: mapContainer, 
         zoom: 16, 
-        minZoom: 14,
+        minZoom: 15,
         maxZoom: 18,
         center: app.START_LOCATION,  
         pitch: 0,
@@ -23,6 +23,7 @@ export async function initSettingsMap(mapContainer) {
         minPitch: 0,
         refreshExpiredTiles: false,
         style: app.MAP_LIGHT_STYLE,
+        maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
     map.on('load', () => {
@@ -80,6 +81,6 @@ export async function initSettingsMap(mapContainer) {
     });
 
 
-    return map;
+    return {map: map, marker: marker};
 };
 

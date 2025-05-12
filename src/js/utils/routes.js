@@ -1,11 +1,15 @@
+import { getRoute } from "../plugins/maps/mapboxRoute";
+
 export async function checkForURLParams(app, router) {
     const urlParams = new URLSearchParams(window.location.search);
-    console.log("URL Parameters:", urlParams.toString());
+
     const startLocation = urlParams.get('startLocation');
-    const endLocation = urlParams.get('endLocation');
+    const destinationLocation = urlParams.get('destinationLocation');
+    const destinationLocationCoordinates = urlParams.get('destinationLocationCoordinates');
+    const destinationLocationData = urlParams.get('destinationLocationData');
     const mode = urlParams.get('mode');
 
-    if (!(urlParams.has('startLocation') || urlParams.has('endLocation') || urlParams.has('mode'))) {
+    if (!(urlParams.has('startLocation') || urlParams.has('destinationLocation') || urlParams.has('destinationLocationCoordinates') || urlParams.has('destinationLocationData') || urlParams.has('mode'))) {
       return;
     }
 
@@ -13,8 +17,16 @@ export async function checkForURLParams(app, router) {
       app.START_LOCATION = JSON.parse(startLocation);
     }
 
-    if (endLocation) {
-      app.END_LOCATION = JSON.parse(endLocation);
+    if (destinationLocation) {
+      app.DESTINATION_LOCATION = JSON.parse(destinationLocation);
+    }
+
+    if (destinationLocationCoordinates) {
+      app.DESTINATION_LOCATION_COORDINATES = JSON.parse(destinationLocationCoordinates);
+    }
+
+    if (destinationLocationData) {
+      app.DESTINATION_LOCATION_DATA = JSON.parse(destinationLocationData);
     }
 
     if (mode) {
@@ -23,11 +35,25 @@ export async function checkForURLParams(app, router) {
 
     console.log("Parsed URL Parameters:", { startLocation: app.START_LOCATION, endLocation: app.END_LOCATION, route: app.TRANSPORTATION_MODE });
 
-    if (!app.END_LOCATION) {
+    if (!app.DESTINATION_LOCATION || !app.DESTINATION_LOCATION_COORDINATES || !app.DESTINATION_LOCATION_COORDINATES) {
       app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error', () => {
         router.navigate('/');
       });
     }
+
+    getRoute(app, router).then(() => {
+      console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+      if (app.AR) {
+        app.router.navigate('/navigation');
+      } else {
+        app.router.navigate('/navigationDesktop');
+      }
+    }).catch((error) => {
+      console.error('Error fetching route:', error);
+      app.dialog.alert('No valid route for the destination proivded. Please reenter the search destination.', 'Error', () => {
+        router.navigate('/');
+      });
+    });
 }
 
 export const createRouteGuard = (checks) => {

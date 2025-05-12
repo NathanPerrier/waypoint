@@ -6,7 +6,7 @@
                 <div id="nav-overview">
                     <div class="row h-100">
                         <div class="col-1 h-100 mr-4">                 
-                            <div id="qr-navigation" class="desktop-navigation-overview-content"> </div>
+                            <div id="qr-navigation" class="desktop-navigation-overview-content sheet-open" data-sheet=".qr-sheet-swipe-to-close"> </div>
                         </div>
                         <div class="col-10">
                             <div class="desktop-navigation-overview-content">                              
@@ -59,6 +59,26 @@
                     </div>
                 </div>
             </div>
+            <div class="sheet-modal qr-sheet-swipe-to-close" id="settings-actions" style="height:auto">
+            <div class="sheet-modal-inner">
+                <div class="swipe-handler"></div>
+                    <div class="page-content p-4">
+                    <div class="block-title block-title-large text-align-center hero-header">Continue In AR?</div>
+                    <div class="block justify-center align-content-center text-align-center">
+                        <small class="text-align-center mb-4">Scan the QR code to navigate to your destination.</small>
+                        <div class="text-align-center justify-center align-content-center d-flex justify-content-center align-items-center my-8" style="height: 100%;">
+                            <div id="qrCode"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="button button-fill r-2 w-100 sheet-close" data-sheet=".qr-sheet-swipe-to-close">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 </template>
@@ -74,29 +94,13 @@ export default async (props, { $, $on, $f7 }) => {
     const app = window.app;
     let mapContainer;
     let map;
-    let liveMap;
-
-    $('#qr-navigation').on('click', function() {
-        //! TODO: create QR code here
-
-        app.dialog.create({
-            title: 'Continue With AR Navigation?',
-            text: 'Scan the QR code to navigate to your destination.',
-            cssClass: 'custom-dialog',
-            buttons: [
-                {
-                    text: 'OK',
-                    onClick: function() {}
-                }
-            ]
-        }).open();
-    });
+    let liveMap;   
+    let sheetSwipeToClose;
 
     $on('page:tabshow', async () => {  
 
-        await checkForURLParams(app, $f7.views.main.router); // Pass the correct router instance
+        await checkForURLParams(app, $f7.views.main.router); 
 
-        // Add checks for necessary navigation data before initializing LocAR
         if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
             console.error("Navigation data missing. Cannot start navigation.");
             app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
@@ -104,6 +108,15 @@ export default async (props, { $, $on, $f7 }) => {
             });
             return;
         }
+
+        var qrcode = new QRCode("qrCode", {
+            text: `${app.BASE_URL}?startLocation=${JSON.stringify(app.START_LOCATION)}&destinationLocation=${JSON.stringify(app.DESTINATION_LOCATION)}&destinationLocationCoordinates=${JSON.stringify(app.DESTINATION_LOCATION_COORDINATES)}&destinationLocationData=${JSON.stringify(app.DESTINATION_LOCATION_DATA)}&mode=${app.TRANSPORTATION_MODE}`,
+            width: 200,
+            height: 200,
+            colorDark : app.PRIMARY_COLOR,
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
 
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
@@ -186,10 +199,23 @@ export default async (props, { $, $on, $f7 }) => {
         });
 
         map.on('idle', () => {
-            runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7);
+            runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7, $('#current-direction-arrow-desktop'));
         });
     });
 
+    $on('pageInit', () => {
+        sheetSwipeToClose = $f7.sheet.create({
+            el: '.qr-sheet-swipe-to-close',
+            swipeToClose: true,
+            push: true,
+            backdrop: true,
+        });
+    });
+
+    $on('pageBeforeOut', () => {
+      $f7.sheet.close();
+    });
+    
     $on('page:tabhide', () => {
         app.NAVIGATION_ROUTE = null;
         app.NAVIGATION_ROUTE_STEPS = null;
@@ -199,6 +225,9 @@ export default async (props, { $, $on, $f7 }) => {
     });
 
     $on('pageBeforeRemove', () => {
+        if (sheetSwipeToClose) {
+            sheetSwipeToClose.destroy();
+        }
         if (componentMapInstance) {
             componentMapInstance.remove();
             componentMapInstance = null;

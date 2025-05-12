@@ -1,6 +1,3 @@
-import { SearchBoxCore } from '@mapbox/search-js-core';
-
-// ...existing code...
 
 export async function getRoute(app, router) {
     try {

@@ -656,6 +656,7 @@
         left: 0;
     }
 
+
     #settings-actions, #confirm-route-actions {
         width: 100vw;
         left: 0;
@@ -752,6 +753,7 @@
         height: 100vh;
         margin: 1rem;
     }
+
 
     #map-overview-content-container {
         padding: 1rem;

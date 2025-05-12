@@ -131,7 +131,7 @@
         <div class="col-7 founder-col justify-center align-center align-content-center">
           <div class="m-16 justify-center align-center align-content-center">
             <h3 class="hero-sub-header">Founder</h3>
-            <h1 class="hero-header invert-text">Nathan Perrier</h1>
+            <h1 class="hero-header invert-text hero-inverted">Nathan Perrier</h1>
             <p class="my-8 invert-text">Hi i’m Nathan and I am the founder and creator of Waypoint. I am a Full-stack developer who is currently studying computer science at UQ. Thank you for checking out my project, i hope you liked it!</p>  
             <a id="desktop-button" target="_blank" href="https://github.com/NathanPerrier" class="button hero-button r-2 col-6 button-large button-fill button-raised">Learn More</a>
           </div>

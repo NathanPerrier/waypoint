@@ -131,8 +131,7 @@ export default async (props, { $, $on, $f7 }) => {
                 lng: app.MAP_LOCATION_CENTER[0],
             };
         } 
-        console.log("Map container found:", mapContainer); // Debugging line
-        console.log("user location:", app.USER_LOCATION); // Debugging line
+
         const map = new mapboxgl.Map({
             container: mapContainer, 
             zoom: 20,
@@ -144,10 +143,23 @@ export default async (props, { $, $on, $f7 }) => {
             maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
         });
 
-        const settingsMap = await initSettingsMap(settingsMapContainer);
+        const settingsMapItems = await initSettingsMap(settingsMapContainer);
+        const settingsMap = settingsMapItems.map;
+        const settingsMapMarker = settingsMapItems.marker;
 
         map.resize();
         settingsMap.resize();
+
+        map.on('move', () => {
+            const center = map.getCenter();
+            app.USER_LOCATION = [center.lng, center.lat];
+            app.START_LOCATION = {
+                lat: center.lat,
+                lng: center.lng,
+            };
+            settingsMap.setCenter(app.USER_LOCATION);
+            settingsMapMarker.setLngLat(app.USER_LOCATION);
+        });
 
     });
 

@@ -1,7 +1,9 @@
 import * as turf from '@turf/turf';
-import { updateRouteData } from "../../utils/dom.js";
 
-export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7) => {
+let temp;
+let lastBearing = undefined; // Variable to store the last bearing
+
+export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, arrowIcon) => {
     map.resize();
     const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
     const relativeCameraAltitude = 10; 
@@ -81,14 +83,30 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7) 
         app.NAVIGATION_ROUTE_DATA.distance = initialDistance * (1 - phase);
 
         map.setFreeCameraOptions(camera);
-        // calculate bearing to the next point
-        const bearing = turf.bearing(
+        
+        var bearing = turf.bearing(
             turf.point(cameraPositionCoords),
             turf.point(lookAtCoords)
         );
-        const arrowIcon = $('#current-direction-arrow-desktop');
+
+
         if (arrowIcon && arrowIcon.length > 0) {
-            arrowIcon.css('transform', `rotate(${bearing}deg)`);
+            arrowIcon.css({
+                'transform': `rotate(${bearing}deg)`,
+            });
+
+            // temp = bearing;
+
+            // if (Math.abs(lastBearing - bearing) < .25) { // Check if the difference between bearings is less than 1 degree
+            //     arrowIcon.css({
+            //         'transform': `rotate(0deg)`,
+            //         'transition': 'transform 1s ease-in-out',
+            //     });
+            //     bearing = 0;
+            // }
+
+            // lastBearing = temp;
+            
         }
 
         liveMap.setCenter(cameraPositionCoords);

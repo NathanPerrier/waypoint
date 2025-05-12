@@ -11,10 +11,12 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
 
-        app.DEBUG = true;
+        app.DEBUG = false;
         app.FEEDBACK = true;
 
+        app.BASE_URL = 'https://uqunion.info/';
         app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
+
         app.PRIMARY_COLOR = "#782cf6";
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
