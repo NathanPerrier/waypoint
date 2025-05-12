@@ -31,7 +31,7 @@
                                         </div>  
                                     </div>
                                     <div id="weather-div" class="col-4 ml-2">
-                                        <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary"></div>
+                                        <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary">LOADING...</div>
                                     </div>
                                 </div>                                           
                             </div>                         
@@ -146,8 +146,9 @@ export default async (props, { $, $on, $f7 }) => {
             }
         }
 
-        await displayWeather(app, $f7, await waitForElement('weather'));
         liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"));
+        var weatherContent = await displayWeather(app, $f7);
+        $('#weather').html(weatherContent);
 
         const firstTwoStepscontainer = $('#nav-directions-overview-content-list-desktop');
         firstTwoStepscontainer.html(''); // Changed from innerHTML = ''

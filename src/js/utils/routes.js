@@ -26,13 +26,6 @@ export async function checkForURLParams(app, router) {
       console.warn('Could not parse startLocation or mode from URL params:', error);
     }
 
-    if (!isWithinBounds(app, app.START_LOCATION)) {
-      app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Error', () => {
-        router.navigate('/');
-      });
-      return;
-    }
-
     if (destinationLocation) {
       app.DESTINATION_LOCATION = JSON.parse(destinationLocation);
     }
@@ -46,31 +39,36 @@ export async function checkForURLParams(app, router) {
     }  
 
     if (!app.DESTINATION_LOCATION || !app.DESTINATION_LOCATION_COORDINATES || !app.DESTINATION_LOCATION_COORDINATES) {
-      app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error', () => {
-        router.navigate('/');
-      });
+      app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error');
     }
 
     app.DESTINATION_LOCATION_DATA.startLocation = app.START_LOCATION;
 
     //check if user wishes to navigate to app.DESTINATION_LOCATION
     app.dialog.confirm(`Do you want to navigate to ${app.DESTINATION_LOCATION}?`, 'Navigation', () => {
+
       app.dialog.close();
       app.dialog.preloader('Loading route...');
+
       getRoute(app, router).then(() => {
         app.dialog.close();
+
+        if (!isWithinBounds(app, app.START_LOCATION)) {
+          app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Invalid Start Location');
+          return;
+        }
+
         if (app.AR) {
           app.tab.show('#view-navigation');
         } else {
           app.tab.show('#view-navigation-desktop');
         }
+        
       }).catch((error) => {
         console.error('Error fetching route:', error);
-        app.dialog.alert('No valid route for the destination proivded. Please reenter the search destination.', 'Error', () => {
-          router.navigate('/');
-        });
+        app.dialog.alert('No valid route for the destination proivded. Please reenter the search destination.', 'Error');
       });
-    });    
+    });  
 }
 
 export const createRouteGuard = (checks) => {

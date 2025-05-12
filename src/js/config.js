@@ -1,6 +1,7 @@
 import Device from './utils/device.js';
 import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
 import { isWithinSpecifiedBounds } from './utils/dom.js';
+import { queryWeatherAPI } from './utils/weather.js';
 
 
 // Default values (can be overridden during initialization)
@@ -157,6 +158,8 @@ const initializeConfig = (app) => {
                 app.MAPBOXGL_LOCATION_BOUNDS = app.MAPBOXGL_LOCATION_BOUNDS_HERSTON;
                 app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON;
             }
+
+            await queryWeatherAPI(app, app.USER_LOCATION[1], app.USER_LOCATION[0], app.BASE_WEATHER_API_URL, app.WEATHER_PARAMETERS);
 
             // Resolve the promise when initialization is successful
             resolve();
