@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getLocarSuggestions } from './locarSuggestions';
 
 export function runLocarRoute(app, locarInstance) { // Accept app instance
     let firstLocation = true;
@@ -31,6 +32,10 @@ export function runLocarRoute(app, locarInstance) { // Accept app instance
             }
 
             firstLocation = false;
+        }
+
+        if (distMoved > app.NAVIGATION_DISTANCE_BUFFER) {
+            getLocarSuggestions(app, locarInstance.locar);
         }
     });
 

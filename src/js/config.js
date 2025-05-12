@@ -20,7 +20,8 @@ const initializeConfig = (app) => {
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.SESSION_TIMEOUT_HOURS = 12;
-        app.NAVIGATION_DISTANCE_BUFFER = 5; //5
+        app.NAVIGATION_DISTANCE_BUFFER = 5; //5m
+        app.AR_SUGGESTION_RADIUS = 500; //500m
         app.NOW = new Date().getTime();
         app.DEPARTURE_TIME = app.NOW ;
         app.TRANSPORTATION_MODE = "walking";
@@ -28,6 +29,9 @@ const initializeConfig = (app) => {
         app.BIKING_ICON = "fa-solid fa-bicycle";
         app.WALKING_ICON = "fa-solid fa-person-walking";
         app.TRANSPORTATION_MODE_ICON = app.WALKING_ICON;
+        app.SEARCH_TYPES = ['address', 'street', 'poi', 'place'];  //! TEST
+        app.SEARCH_SUGGEST_TYPES = ['poi', 'place', 'category'];
+        app.AR_SUGGESTIONS = [];
         app.START_LOCATION = null; 
         app.DESTINATION_LOCATION = null;
         app.DESTINATION_LOCATION_COORDINATES = null;
