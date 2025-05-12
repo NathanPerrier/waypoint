@@ -23,7 +23,7 @@ export async function checkForURLParams(app, router) {
     } catch (error) {
       console.warn('Could not parse startLocation or mode from URL params:', error);
     }
-    
+
     if (destinationLocation) {
       app.DESTINATION_LOCATION = JSON.parse(destinationLocation);
     }
@@ -34,9 +34,7 @@ export async function checkForURLParams(app, router) {
 
     if (destinationLocationData) {
       app.DESTINATION_LOCATION_DATA = JSON.parse(destinationLocationData);
-    }
-
-    
+    }  
 
     if (!app.DESTINATION_LOCATION || !app.DESTINATION_LOCATION_COORDINATES || !app.DESTINATION_LOCATION_COORDINATES) {
       app.dialog.alert('No valid destination found for the search term. Please reenter the search destination.', 'Error', () => {
@@ -53,10 +51,8 @@ export async function checkForURLParams(app, router) {
       getRoute(app, router).then(() => {
         app.dialog.close();
         if (app.AR) {
-          router.navigate('/navigation/');
           app.tab.show('#view-navigation');
         } else {
-          router.navigate('/navigationDesktop/');
           app.tab.show('#view-navigation-desktop');
         }
       }).catch((error) => {

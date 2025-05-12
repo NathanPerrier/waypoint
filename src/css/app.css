@@ -631,6 +631,20 @@
     margin-top: 2rem;
 }
 
+#weather {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#weather-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    line-height: 1;
+}
+
 
 @keyframes spin-pause-360 {
     0%      { transform: rotate(0deg); }
@@ -754,7 +768,6 @@
         margin: 1rem;
     }
 
-
     #map-overview-content-container {
         padding: 1rem;
         margin: 1rem;
@@ -765,9 +778,13 @@
         display: none;
     }
 
-    #nav-desc, #map-overview-content-container-col, .col-7-5, .uqu-demo-col, .founder-col {
+    #nav-desc, #map-overview-content-container-col, .col-7-5, .uqu-demo-col, .founder-col, #navigation-content {
         width: 100% !important;
         text-align: center;
+    }
+
+    #navigation-content {
+        text-align: left;
     }
 
     .uqu-demo-col, .uqu-demo-col .hero-header {
@@ -775,7 +792,7 @@
         color: var(--background-color);
     }
 
-    #hero-image, #nav-demo, #nav-demo-empty-col, .col-4-5, .col-blobs, .founder-img-col {
+    #hero-image, #nav-demo, #nav-demo-empty-col, .col-4-5, .col-blobs, .founder-img-col, #weather-div {
         width: 0%;
         display: none;
     }   

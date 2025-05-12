@@ -11,7 +11,7 @@
                         <div class="col-10">
                             <div class="desktop-navigation-overview-content">                              
                                 <div class="row h-100">
-                                    <div id="navigation-content" class="col-9">
+                                    <div id="navigation-content" class="col-8">
                                         <div class="row h-100">
                                             <div class="col-1 icon-center">    
                                                 <i id="current-direction-arrow-desktop" class="fa-solid fa-arrow-up"></i>                              
@@ -30,13 +30,8 @@
                                             </div> 
                                         </div>  
                                     </div>
-                                    <div class="col-3 ml-2">
-                                        <!--Weather-->
-                                        <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary"> 
-                                            <i id="weather-icon" class="fa-solid fa-cloud-sun"></i> 
-                                            <span id="weather-text">23°</span>
-                                            <span id="weather-text-2">Sunny</span>
-                                        </div>
+                                    <div id="weather-div" class="col-4 ml-2">
+                                        <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary"></div>
                                     </div>
                                 </div>                                           
                             </div>                         
@@ -87,6 +82,7 @@ import { waitForElement, isWithinBounds, updateRouteData, getInstructionIcon } f
 import * as turf from '@turf/turf';
 import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 import { addTerrainLayer, runDesktopNav } from '../js/plugins/maps/DesktopNav.js';
+import { displayWeather } from '../js/utils/weather.js';
 
 export default async (props, { $, $on, $f7 }) => {
 
@@ -150,6 +146,7 @@ export default async (props, { $, $on, $f7 }) => {
             }
         }
 
+        await displayWeather(app, $f7, await waitForElement('weather'));
         liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"));
 
         const firstTwoStepscontainer = $('#nav-directions-overview-content-list-desktop');

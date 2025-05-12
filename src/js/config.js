@@ -17,6 +17,9 @@ const initializeConfig = (app) => {
         app.BASE_URL = 'https://uqunion.info/';
         app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
 
+        app.BASE_WEATHER_API_URL = 'https://api.open-meteo.com/v1/';
+        app.WEATHER_PARAMETERS = `&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,wind_speed_10m&wind_speed_unit=ms`;
+
         app.PRIMARY_COLOR = "#782cf6";
         app.SECONDARY_COLOR = "#b694f2";
         app.COUNTRY = 'au';
@@ -42,6 +45,7 @@ const initializeConfig = (app) => {
         app.NAVIGATION_ROUTE_STEPS = null;
         app.NAVIGATION_ROUTE_DATA = null;
         app.USER_LOCATION = null;
+        app.WEATHER_DATA = null;
 
         //st lucia campus
         app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
