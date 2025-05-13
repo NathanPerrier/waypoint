@@ -12,7 +12,7 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
         // Set default values on the app instance first
 
-        app.DEBUG = false;
+        app.DEBUG = true;
         app.FEEDBACK = true;
 
         app.BASE_URL = 'https://uqunion.info/';

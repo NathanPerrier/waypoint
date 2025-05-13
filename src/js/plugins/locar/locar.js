@@ -1,6 +1,21 @@
-
 import * as THREE from 'three';
 import * as LocAR from 'locar';
+
+// Extend the LocAR.LocationBased class to add a hasSuggestion method
+LocAR.LocationBased.prototype.hasSuggestion = function(coords) {
+    // Assuming locar instance has a way to track added suggestions, e.g., this.suggestions
+    if (!this.suggestions) {
+        this.suggestions = new Set();
+    }
+
+    const key = `${coords[0]}_${coords[1]}`; // Create a unique key for the coordinates
+    if (this.suggestions.has(key)) {
+        return true; // Suggestion already exists
+    }
+
+    this.suggestions.add(key); // Add the suggestion to the set
+    return false;
+};
 
 export const initializeLocAR = async (app, locarElement) => {
     if (!locarElement || !locarElement.id) {

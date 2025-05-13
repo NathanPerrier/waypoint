@@ -16,19 +16,21 @@ export async function getLocarSuggestions(app, locar) {
 
     console.log('AR_Suggestions:', app.AR_SUGGESTIONS);
 
-    //! issue with ading existing ones?
+    //! issue with adding existing ones?
     for (const suggestion of app.AR_SUGGESTIONS) {    
         const coords = locar.lonLatToWorldCoords(
             suggestion.geometry.coordinates[0],
             suggestion.geometry.coordinates[1]
         );
-        console.log('Suggestion coordinates:', coords);
-        const geom = new THREE.BoxGeometry(20,20,20);
 
-        const mesh = new THREE.Mesh(
-            geom,
-            new THREE.MeshBasicMaterial({color: 0xff0000})
-        );
+        if (locar.hasSuggestion(coords)) {
+            console.log('Suggestion already exists in LocAR:', suggestion);
+            continue;
+        }
+
+        //! WORKS?
+        console.log('Suggestion coordinates:', coords);
+        const mesh = getMarkerForSuggestion(suggestion);
 
         locar.add(
             mesh,
@@ -38,4 +40,46 @@ export async function getLocarSuggestions(app, locar) {
        
         console.log('Suggestion added to LocAR:', suggestion);
     };
+}
+
+function getIconForType(type) {
+    const iconMap = {
+        'restaurant': 'fa-utensils',
+        'park': 'fa-tree',
+        'shop': 'fa-shopping-bag',
+        'default': 'fa-map-marker'
+    };
+    return iconMap[type] || iconMap['default'];
+}
+
+function getMarkerForSuggestion(suggestion) {
+    const group = new THREE.Group();
+
+    // Create the circle
+    const circleGeometry = new THREE.CircleGeometry(10, 32);
+    const circleMaterial = new THREE.MeshBasicMaterial({ color: app.PRIMARY_COLOR });
+    const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+    group.add(circle);
+
+    //! FIX
+      // const iconType = getIconForType(suggestion.properties.type);
+    // const iconTexture = new THREE.TextureLoader().load(`/icons/${iconType}.png`); // Assuming icons are stored in /icons
+    // const iconMaterial = new THREE.MeshBasicMaterial({ map: iconTexture, transparent: true });
+    const iconGeometry = new THREE.PlaneGeometry(5, 5);
+    const iconMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const icon = new THREE.Mesh(iconGeometry, iconMaterial);
+    icon.position.set(0, 0, 0.1); // Slightly above the circle
+    group.add(icon);
+
+    // Add the dotted line
+    const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 1, gapSize: 0.5 });
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, -10, 0),
+        new THREE.Vector3(0, -20, 0)
+    ]);
+    const line = new THREE.Line(lineGeometry, lineMaterial);
+    line.computeLineDistances(); // Required for dashed lines
+    group.add(line);
+
+    return group;
 }

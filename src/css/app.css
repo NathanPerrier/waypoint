@@ -677,8 +677,9 @@
         bottom: 0;
     }
 
-    #settings-actions, #confirm-route-actions, #navigation-overview #route-input, #navigation-overview #nav-overview {
-        margin: 0rem 15vw 0rem 15vw;
+    #settings-actions, #confirm-route-actions, #navigation-overview #route-input, #navigation-overview #nav-overview, #navigation-overview #navigation-overview-map {
+        margin-left: 15vw;
+        margin-right: 15vw;
         width: calc(100% - 30vw);
     }
 
