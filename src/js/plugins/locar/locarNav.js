@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { getRoute } from '../maps/mapboxRoute.js';
+import { updateRouteData } from '../../utils/dom.js';
 
-export function runLocarNav(app, locarInstance) {
+export function runLocarNav(app, locarInstance, destinationName, navigationInfo) {
 
     // --- GPS Update Listener --- 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
@@ -31,14 +32,18 @@ export function runLocarNav(app, locarInstance) {
             return;
         }
 
+        updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
+
+
         //display line
-        const points = app.NAVIGATION_ROUTE.map(coord => locarInstance.locar.lonLatToWorldCoords(coord[0], coord[1]));
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-         const mesh = new THREE.Mesh(
-            geometry,
-            new THREE.MeshBasicMaterial({color: 0x0000ff})
-        );
-        locarInstance.locar.add(geometry, pos.coords.longitude, pos.coords.latitude);
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const point1 = new THREE.Vector3(app.START_LOCATION.lng + 0.001, app.START_LOCATION.lat, 0);
+        const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
+
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([point1, point2]);
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+
+        locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);
 
     });
 

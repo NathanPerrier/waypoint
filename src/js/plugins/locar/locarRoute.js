@@ -16,6 +16,8 @@ export function runLocarRoute(app, locarInstance) { // Accept app instance
                 { latDis: 0, lonDis: 0.001, colour: 0x00ff00 },
             ];
 
+            console.log('User Location:', app.USER_LOCATION);
+
             const geom = new THREE.BoxGeometry(20,20,20);
 
             for(const boxProp of boxProps) {

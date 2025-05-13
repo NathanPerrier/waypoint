@@ -16,12 +16,13 @@ export async function getLocarSuggestions(app, locar) {
 
     console.log('AR_Suggestions:', app.AR_SUGGESTIONS);
 
-    //add suggestion to map
+    //! issue with ading existing ones?
     for (const suggestion of app.AR_SUGGESTIONS) {    
         const coords = locar.lonLatToWorldCoords(
             suggestion.geometry.coordinates[0],
             suggestion.geometry.coordinates[1]
         );
+        console.log('Suggestion coordinates:', coords);
         const geom = new THREE.BoxGeometry(20,20,20);
 
         const mesh = new THREE.Mesh(
@@ -31,8 +32,8 @@ export async function getLocarSuggestions(app, locar) {
 
         locar.add(
             mesh,
-            coords[0],
-            coords[1]
+            app.USER_LOCATION[0] + coords[0],
+            app.USER_LOCATION[1] + coords[1]
         );
        
         console.log('Suggestion added to LocAR:', suggestion);
