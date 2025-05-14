@@ -12,7 +12,7 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
 
         console.log('User Location:', app.USER_LOCATION);
         console.log('Distance Moved:', distMoved);
-        app.alert('Distance Moved:', pos.coords.heading, pos.coords.altitude);
+        app.dialog.alert('Distance Moved:', pos.coords.heading, pos.coords.altitude);
         
         if (distMoved < app.NAVIGATION_DISTANCE_BUFFER) { // check if firstRoute before
             return;

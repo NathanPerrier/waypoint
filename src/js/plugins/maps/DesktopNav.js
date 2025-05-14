@@ -110,6 +110,7 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
         }
 
         liveMap.setCenter(cameraPositionCoords);
+        liveMap.setBearing(bearing);
 
         if (
             app.NAVIGATION_ROUTE_STEPS && app.NAVIGATION_ROUTE_STEPS.length > 1
