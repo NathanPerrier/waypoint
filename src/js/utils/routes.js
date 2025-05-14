@@ -10,6 +10,15 @@ export async function checkForURLParams(app, router) {
     const destinationLocationCoordinates = urlParams.get('destinationLocationCoordinates');
     const destinationLocationData = urlParams.get('destinationLocationData');
     const mode = urlParams.get('mode');
+    const debug = urlParams.get('debugMode');
+
+    if (debug) {
+      console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
+      app.DEBUG = true;
+      app.MAP_LOCATION_BOUNDS = null;
+      app.MAPBOXGL_LOCATION_BOUNDS = null;
+      app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null;
+    }
 
     if (!(urlParams.has('startLocation') || urlParams.has('destinationLocation') || urlParams.has('destinationLocationCoordinates') || urlParams.has('destinationLocationData') || urlParams.has('mode'))) {
       return;
