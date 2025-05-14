@@ -17,12 +17,11 @@ var routes = [
     on: {
       pageInit: function (page) {
         const app = this.app;
-        // Check if the app is initialized and ready
+
         if (!app.initializationPromise) {
           console.error("App initialization promise is not set. Cannot proceed.");
           return;
         }
-        // Wait for the config initialization promise to resolve
         app.initializationPromise.then(() => {
           console.log("App initialized successfully.");
           const preloader = document.getElementById('app-preloader');
@@ -36,7 +35,6 @@ var routes = [
             checkForURLParams(app, this); 
             preloader.style.display = 'none';
           }
-          // Perform any additional actions after initialization here
         }).catch((error) => {
           console.error("Config initialization failed:", error);
         });

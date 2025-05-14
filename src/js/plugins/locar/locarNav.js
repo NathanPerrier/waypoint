@@ -36,10 +36,10 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo)
 
         //display line
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-        const point1 = new THREE.Vector3(app.START_LOCATION.lng + 0.001, app.START_LOCATION.lat, 0);
-        const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
+        // const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
+        // const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
 
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints([point1, point2]);
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints(app.NAVIGATION_ROUTE.map(coord => new THREE.Vector3(coord[0], coord[1], 0)));
         const line = new THREE.Line(lineGeometry, lineMaterial);
 
         locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);

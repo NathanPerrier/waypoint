@@ -3,14 +3,11 @@ import { SessionToken, LngLatBounds } from '@mapbox/search-js-core';
 import { isWithinSpecifiedBounds } from './utils/dom.js';
 import { queryWeatherAPI } from './utils/weather.js';
 
-
-// Default values (can be overridden during initialization)
 const defaultUserLocation = [153.013306, -27.497503]; // great court
 
 const initializeConfig = (app) => {
-    // Create a promise that resolves when initialization is done
+
     app.initializationPromise = new Promise(async (resolve, reject) => {
-        // Set default values on the app instance first
 
         app.DEBUG = false;
         app.FEEDBACK = true;
@@ -50,19 +47,19 @@ const initializeConfig = (app) => {
         app.WEATHER_DATA = null;
 
         //st lucia campus
-        app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
-        app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); // st lucia campus
-        app.MAP_LOCATION_BOUNDS_LNGLATLIKE = [[152.998221, -27.505890], [153.019359, -27.490149]]; // st lucia campus
+        app.MAP_LOCATION_BOUNDS = new LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); 
+        app.MAPBOXGL_LOCATION_BOUNDS = new mapboxgl.LngLatBounds([152.998221, -27.505890], [153.019359, -27.490149]); 
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE = [[152.998221, -27.505890], [153.019359, -27.490149]]; 
 
         // Herston Campus
-        app.MAP_LOCATION_BOUNDS_HERSTON = new LngLatBounds([152.992, -27.500], [153.002, -27.490]); // herston campus
-        app.MAPBOXGL_LOCATION_BOUNDS_HERSTON = new mapboxgl.LngLatBounds([152.992, -27.500], [153.002, -27.490]); // herston campus
-        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON = [[152.992, -27.500], [153.002, -27.490]]; // herston campus
+        app.MAP_LOCATION_BOUNDS_HERSTON = new LngLatBounds([152.992, -27.500], [153.002, -27.490]); 
+        app.MAPBOXGL_LOCATION_BOUNDS_HERSTON = new mapboxgl.LngLatBounds([152.992, -27.500], [153.002, -27.490]); 
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON = [[152.992, -27.500], [153.002, -27.490]]; 
 
         // Gatton Campus
-        app.MAP_LOCATION_BOUNDS_GATTON = new LngLatBounds([152.500, -27.500], [152.600, -27.490]); // gatton campus
-        app.MAPBOXGL_LOCATION_BOUNDS_GATTON = new mapboxgl.LngLatBounds([152.500, -27.500], [152.600, -27.490]); // gatton campus
-        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON = [[152.500, -27.500], [152.600, -27.490]]; // gatton campus
+        app.MAP_LOCATION_BOUNDS_GATTON = new LngLatBounds([152.500, -27.500], [152.600, -27.490]); 
+        app.MAPBOXGL_LOCATION_BOUNDS_GATTON = new mapboxgl.LngLatBounds([152.500, -27.500], [152.600, -27.490]); 
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON = [[152.500, -27.500], [152.600, -27.490]]; 
 
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
@@ -71,7 +68,7 @@ const initializeConfig = (app) => {
         app.MAP_SESSION_TOKEN = null; 
         app.MIN_SEARCH_LENGTH = 3; 
 
-        //fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
+        //! fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
         app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbWEzYWk4Zm0wc293MmpvazltbnVxNWZqIn0.CZY6oAZgkYGHvxlGmwcdQw'; // Set your Mapbox access token here
         
         app.DEVICE = null;
@@ -143,9 +140,8 @@ const initializeConfig = (app) => {
             app.DESKTOP_DEVICE = app.DEVICE.device.desktop;
             app.MOBILE_DEVICE = app.DEVICE.device.ios || app.DEVICE.device.android || app.DEVICE.device.iphone || app.DEVICE.device.androidChrome || app.DEVICE.device.cordova || app.DEVICE.device.ipad; 
 
-            // Conditionally load libraries for mobile
             if (!app.MOBILE_DEVICE || !app.WEBCAM_ENABLED) {
-                app.AR = false; // Disable AR mode for desktop
+                app.AR = false; 
             }
 
             if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_GATTON)) {
@@ -162,14 +158,11 @@ const initializeConfig = (app) => {
 
             await queryWeatherAPI(app, app.USER_LOCATION[1], app.USER_LOCATION[0], app.BASE_WEATHER_API_URL, app.WEATHER_PARAMETERS);
 
-            // Resolve the promise when initialization is successful
             resolve();
 
         } catch (error) {
             console.error("Error initializing app config:", error);
-            // Optionally set flags or default states on app if initialization fails critically
             app.initializationError = true;
-            // Reject the promise on critical failure
             reject(error);
         }
 
@@ -177,16 +170,14 @@ const initializeConfig = (app) => {
             console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
             app.MAP_LOCATION_BOUNDS = null;
             app.MAPBOXGL_LOCATION_BOUNDS = null;
-            app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; // Set to null for testing
+            app.MAP_LOCATION_BOUNDS_LNGLATLIKE = null; 
 
         }
     });
 
-    // Return the promise so app.js can optionally wait if needed elsewhere
     return app.initializationPromise;
 };
 
-// Only export the initialization function
 export { initializeConfig };
 
 const app = window.app;
