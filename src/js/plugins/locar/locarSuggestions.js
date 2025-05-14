@@ -40,8 +40,8 @@ export async function getLocarSuggestions(app, locar) {
 
         locar.add(
             mesh,
-            app.USER_LOCATION[0] + coords[0],
-            app.USER_LOCATION[1] + coords[1],
+            coords[0], // Use absolute world coordinates
+            coords[1],
             height
         );
        
@@ -63,7 +63,7 @@ function getMarkerForSuggestion(suggestion) {
     const group = new THREE.Group();
 
     // Create the circle
-    const circleGeometry = new THREE.CircleGeometry(10, 32);
+    const circleGeometry = new THREE.CircleGeometry(1.0, 3.2);
     const circleMaterial = new THREE.MeshBasicMaterial({ color: app.PRIMARY_COLOR });
     const circle = new THREE.Mesh(circleGeometry, circleMaterial);
     group.add(circle);

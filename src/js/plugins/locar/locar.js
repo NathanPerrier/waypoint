@@ -3,13 +3,16 @@ import * as LocAR from 'locar';
 
 // Extend the LocAR.LocationBased class to add a hasSuggestion method
 LocAR.LocationBased.prototype.hasSuggestion = function(coords) {
-    // Assuming locar instance has a way to track added suggestions, e.g., this.suggestions
     if (!this.suggestions) {
         this.suggestions = new Set();
     }
 
-    const key = `${coords[0]}_${coords[1]}`; // Create a unique key for the coordinates
+    // Normalize coordinates to a fixed precision
+    const normalizedCoords = coords.map(coord => coord.toFixed(6));
+    const key = `${normalizedCoords[0]}_${normalizedCoords[1]}`;
+
     if (this.suggestions.has(key)) {
+        console.log('Suggestion already exists:', key);
         return true; // Suggestion already exists
     }
 
