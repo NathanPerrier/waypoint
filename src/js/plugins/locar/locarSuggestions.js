@@ -23,7 +23,7 @@ export async function getLocarSuggestions(app, locar) {
             suggestion.geometry.coordinates[1]
         );
 
-        if (locar.hasSuggestion(coords)) {
+        if (!app.PLACED_AR_SUGGESTIONS[suggestion.id]) {
             console.log('Suggestion already exists in LocAR:', suggestion);
             continue;
         }
@@ -40,10 +40,16 @@ export async function getLocarSuggestions(app, locar) {
 
         locar.add(
             mesh,
-            suggestion.geometry.coordinates[0] + coords[0],
-            suggestion.geometry.coordinates[1] + coords[1],
+            // EITHER
+            // suggestion.geometry.coordinates[0],
+            // suggestion.geometry.coordinates[0] + coords[0],
+            // app.USER_LOCATION[0] + coords[0],
+            suggestion.geometry.coordinates[0],
+            suggestion.geometry.coordinates[1],
             height
         );
+
+        app.PLACED_AR_SUGGESTIONS[suggestion.id] = mesh;
        
         console.log('Suggestion added to LocAR:', suggestion);
     };

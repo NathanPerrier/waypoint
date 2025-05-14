@@ -38,6 +38,7 @@ const initializeConfig = (app) => {
         app.SEARCH_TYPES = ['address', 'street', 'poi', 'place'];  //! TEST
         app.SEARCH_SUGGEST_TYPES = ['poi', 'place', 'category'];
         app.AR_SUGGESTIONS = [];
+        app.PLACED_AR_SUGGESTIONS = {};
         app.START_LOCATION = null; 
         app.DESTINATION_LOCATION = null;
         app.DESTINATION_LOCATION_COORDINATES = null;

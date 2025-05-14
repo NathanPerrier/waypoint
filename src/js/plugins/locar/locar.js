@@ -1,25 +1,6 @@
 import * as THREE from 'three';
 import * as LocAR from 'locar';
 
-// Extend the LocAR.LocationBased class to add a hasSuggestion method
-LocAR.LocationBased.prototype.hasSuggestion = function(coords) {
-    if (!this.suggestions) {
-        this.suggestions = new Set();
-    }
-
-    // Normalize coordinates to a fixed precision
-    const normalizedCoords = coords.map(coord => coord.toFixed(6));
-    const key = `${normalizedCoords[0]}_${normalizedCoords[1]}`;
-
-    if (this.suggestions.has(key)) {
-        console.log('Suggestion already exists:', key);
-        return true; // Suggestion already exists
-    }
-
-    this.suggestions.add(key); // Add the suggestion to the set
-    return false;
-};
-
 export const initializeLocAR = async (app, locarElement) => {
     if (!locarElement || !locarElement.id) {
         console.error("LocAR initialization requires a locarElement with a unique ID.");
