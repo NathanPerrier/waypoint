@@ -23,7 +23,7 @@ const initializeConfig = (app) => {
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.SESSION_TIMEOUT_HOURS = 12;
-        app.NAVIGATION_DISTANCE_BUFFER = 5; //5m
+        app.NAVIGATION_DISTANCE_BUFFER = .5; //5m
         app.AR_SUGGESTION_RADIUS = 500; //500m
         app.NOW = new Date().getTime();
         app.DEPARTURE_TIME = app.NOW ;

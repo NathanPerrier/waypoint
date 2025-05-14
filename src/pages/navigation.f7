@@ -77,18 +77,6 @@
         const toggleSwipeStep = () => {
             sheet.stepToggle();
         }
-
-        //! WORKS?
-        try {
-            const updateCenterInterval = setInterval(() => {
-                if (liveMap1 && liveMap1.map && app.USER_LOCATION) {
-                    liveMap1.setCenter(app.USER_LOCATION);
-                    liveMap2.setCenter(app.USER_LOCATION);
-                }     
-            }, 1000);
-        } catch (error) {
-            clearInterval(updateCenterInterval);
-        }
         
 
         $on('page:tabshow', async () => {
@@ -116,7 +104,9 @@
                 locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
                 console.log("LocAR instance initialized:", locarInstance); // Debugging line    
                 if (locarInstance) { // Check if initialization was successful
-                    runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'));
+                    liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
+                    liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
+                    runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), liveMap1, liveMap2);
                 } else {
                     console.error("LocAR initialization failed.");
                     app.dialog.alert("LocAR initialization failed. Please try again.", "Error", () => {
@@ -124,9 +114,6 @@
                     });
                     return;
                 }
-
-                liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
-                liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
 
                 updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name'), $('#navigation-info'));
 

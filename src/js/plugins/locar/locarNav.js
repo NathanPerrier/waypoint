@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { getRoute } from '../maps/mapboxRoute.js';
 import { updateRouteData } from '../../utils/dom.js';
+import { updateRouteLayer } from '../maps/routeOverviewMap.js';
 
-export function runLocarNav(app, locarInstance, destinationName, navigationInfo) {
+export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2) {
 
     // --- GPS Update Listener --- 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
@@ -31,6 +32,11 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo)
             app.dialog.alert("You have arrived to your destination.");
             return;
         }
+
+        updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
+        updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
+        liveMap1.setCenter(app.USER_LOCATION);
+        liveMap2.setCenter(app.USER_LOCATION);
 
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
 

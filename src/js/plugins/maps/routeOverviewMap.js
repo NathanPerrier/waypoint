@@ -163,3 +163,17 @@ export async function createLiveRouteMap(app, container) {
 
     return map;
 }
+
+export function updateRouteLayer(map, routeCoordinates) {
+    if (map && map.getSource('route')) {
+        map.getSource('route').setData({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: routeCoordinates,
+            },
+        });
+    } else {
+        console.warn('Map or route source is not defined.');
+    }
+}
