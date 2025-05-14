@@ -32,10 +32,17 @@ export async function getLocarSuggestions(app, locar) {
         console.log('Suggestion coordinates:', coords);
         const mesh = getMarkerForSuggestion(suggestion);
 
+        let height = 0;
+        if (suggestion.properties.height) {
+            height = suggestion.properties.height;
+        }
+        console.log('Height:', height);
+
         locar.add(
             mesh,
             app.USER_LOCATION[0] + coords[0],
-            app.USER_LOCATION[1] + coords[1]
+            app.USER_LOCATION[1] + coords[1],
+            height
         );
        
         console.log('Suggestion added to LocAR:', suggestion);
