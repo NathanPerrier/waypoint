@@ -146,7 +146,7 @@ export default async (props, { $, $on, $f7 }) => {
             }
         }
 
-        liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"));
+        liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"), false);
         var weatherContent = await displayWeather(app, $f7);
         $('#weather').html(weatherContent);
 

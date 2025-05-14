@@ -4,6 +4,7 @@ import { updateRouteData, populateRouteInstructions } from '../../utils/dom.js';
 import { updateRouteLayer } from '../maps/routeOverviewMap.js';
 
 export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer) {
+    let firstPosition = true;
 
     // --- GPS Update Listener --- 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
@@ -12,22 +13,23 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
 
         console.log('User Location:', app.USER_LOCATION);
         console.log('Distance Moved:', distMoved);
-        app.dialog.alert('Distance Moved:', pos.coords.heading, pos.coords.altitude);
         
-        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER) { // check if firstRoute before
+        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
             return;
-        }
+        } 
 
         app.START_LOCATION = {
             lng: pos.coords.longitude,
             lat: pos.coords.latitude,
         };
 
-        getRoute(app, app.router).then(() => {
-            console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
-        }).catch((error) => {
-            console.error('Error fetching route:', error);
-        });
+        if (!firstPosition) {
+            getRoute(app, app.router).then(() => {
+                console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+            }).catch((error) => {
+                console.error('Error fetching route:', error);
+            });
+        }
 
         if (app.NAVIGATION_ROUTE.length < 2) {
             app.dialog.alert("You have arrived to your destination.");
@@ -38,6 +40,10 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
         liveMap1.setCenter(app.USER_LOCATION);
         liveMap2.setCenter(app.USER_LOCATION);
+
+        //? pos.coords.bearing
+        liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+        liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
 
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
         populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
@@ -56,6 +62,8 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         const line = new THREE.Mesh(lineGeometry, lineMaterial);
 
         locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);
+
+        firstPosition = false;
 
     });
 

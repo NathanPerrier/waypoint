@@ -105,7 +105,7 @@
                 locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
                 console.log("LocAR instance initialized:", locarInstance); // Debugging line    
                 if (locarInstance) { // Check if initialization was successful
-                    liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"));
+                    liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"), false);
                     liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
                     runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer);
                 } else {

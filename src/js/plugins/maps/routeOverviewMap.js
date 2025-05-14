@@ -80,7 +80,7 @@ export async function createStaticRouteMap(app, container) {
     }
 }
 
-export async function createLiveRouteMap(app, container) {
+export async function createLiveRouteMap(app, container, interactive = true) {
     console.log(container);
     if (!container) {
         console.error('Container is not defined');
@@ -102,6 +102,7 @@ export async function createLiveRouteMap(app, container) {
         maxZoom: 18,
         pitch: 0,
         maxPitch: 0,
+        interactive: interactive,
         minPitch: 0,
         accessToken: app.MAPBOX_ACCESS_TOKEN,
         maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
@@ -110,20 +111,6 @@ export async function createLiveRouteMap(app, container) {
 
     // Store the map instance in the container for future reference
     container._mapInstance = map;
-
-    // // Add start position marker
-    // if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 0) {
-    //     new mapboxgl.Marker({ color: app.PRIMARY_COLOR, offset: [0, 0], anchor: 'bottom' })
-    //         .setLngLat(app.NAVIGATION_ROUTE[0]) // Use exact coordinates from NAVIGATION_ROUTE
-    //         .addTo(map);
-    // }
-
-    // // Add destination marker
-    // if (app.NAVIGATION_ROUTE && app.NAVIGATION_ROUTE.length > 1) {
-    //     new mapboxgl.Marker({ color: app.SECONDARY_COLOR, offset: [0, 0], anchor: 'bottom' })
-    //         .setLngLat(app.NAVIGATION_ROUTE[app.NAVIGATION_ROUTE.length - 1]) // Use exact coordinates from NAVIGATION_ROUTE
-    //         .addTo(map);
-    // }
 
     // Add route line
     if (app.NAVIGATION_ROUTE && Array.isArray(app.NAVIGATION_ROUTE)) {
