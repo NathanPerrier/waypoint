@@ -34,7 +34,6 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo)
 
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
 
-
         //display line
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
         const point1 = new THREE.Vector3(app.START_LOCATION.lng + 0.001, app.START_LOCATION.lat, 0);

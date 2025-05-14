@@ -16,7 +16,6 @@ export async function getLocarSuggestions(app, locar) {
 
     console.log('AR_Suggestions:', app.AR_SUGGESTIONS);
 
-    //! issue with adding existing ones?
     for (const suggestion of app.AR_SUGGESTIONS) {    
         const coords = locar.lonLatToWorldCoords(
             suggestion.geometry.coordinates[0],
