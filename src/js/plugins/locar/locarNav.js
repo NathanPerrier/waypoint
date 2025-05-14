@@ -45,8 +45,13 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         // const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
         // const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
 
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(app.NAVIGATION_ROUTE.map(coord => new THREE.Vector3(coord[0], coord[1], 0)));
-        const line = new THREE.Line(lineGeometry, lineMaterial);
+        const points = [];
+        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+            points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
+        }
+
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Mesh(lineGeometry, lineMaterial);
 
         locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);
 

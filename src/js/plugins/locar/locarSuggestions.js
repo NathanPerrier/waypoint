@@ -42,9 +42,10 @@ export async function getLocarSuggestions(app, locar) {
             // EITHER
             // suggestion.geometry.coordinates[0],
             // suggestion.geometry.coordinates[0] + coords[0],
-            // app.USER_LOCATION[0] + coords[0],
-            suggestion.geometry.coordinates[0],
-            suggestion.geometry.coordinates[1],
+            app.USER_LOCATION[0] + coords[0],
+            app.USER_LOCATION[1] + coords[1],
+            //suggestion.geometry.coordinates[0],
+            //suggestion.geometry.coordinates[1],
             height
         );
 
