@@ -155,8 +155,8 @@ export const getInstructionIcon = (instruction) => {
     return 'arrow_up'; // Default icon
 };
 
-export function populateRouteInstructions(app) {
-    const firstTwoStepscontainer = document.getElementById("first-two-steps");
+export function populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer) {
+
     firstTwoStepscontainer.innerHTML = ''; 
     const firstTwoSteps = app.NAVIGATION_ROUTE_STEPS.slice(0, 2);
     firstTwoSteps.forEach((step, index) => {
@@ -191,7 +191,7 @@ export function populateRouteInstructions(app) {
             firstTwoStepscontainer.appendChild(divider);
         }
     });
-    const navigationStepsContainer = document.getElementById("navigation-steps");
+ 
     navigationStepsContainer.innerHTML = ''; 
     app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
         const stepElement = document.createElement("div");
@@ -223,6 +223,44 @@ export function populateRouteInstructions(app) {
             const divider = document.createElement("hr");
             divider.className = "purple-divider";
             navigationStepsContainer.appendChild(divider);
+        }
+    });
+}
+
+export function populateRouteInstructionsDesktop(app, firstTwoStepscontainer) {
+    firstTwoStepscontainer.html(''); 
+    app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
+        const stepElement = document.createElement("div");
+        stepElement.classList.add("step-item");
+        const iconClass = getInstructionIcon(step.instruction.instruction);
+        stepElement.innerHTML = `
+            <div class="step-item">
+                <div class="h-100 row mb-2">
+                    <div class="col-3 d-flex align-items-center justify-content-center">
+                        <i class="text-primary f7-icons bold">${iconClass}</i>
+                    </div>
+                    <div class="col-9">
+                        <div class="row h-100">
+                            <div class="col-9">
+                                <h3 class="h-100 step-name">${step.distance === 0 ? 'Arrived' : step.name}</h3>
+                            </div>
+                            <div class="col-3 text-align-left">
+                                <small class="h-100 step-distance">${Math.round(step.distance)}m</small>
+                            </div>
+                        </div>
+                        <div class="row h-100">
+                            <div class="col-12">
+                                <small class="h-100 step-instruction mb-2">${step.instruction.instruction}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`; // Changed from stepElement.html()
+        firstTwoStepscontainer.append(stepElement); // Use .append() for Dom7 to append a native DOM element
+        if (index < app.NAVIGATION_ROUTE_STEPS.length - 1) {
+            const divider = document.createElement("hr");
+            divider.className = "purple-divider";
+            firstTwoStepscontainer.append(divider); // Use .append() for Dom7
         }
     });
 }

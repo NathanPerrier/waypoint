@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { getRoute } from '../maps/mapboxRoute.js';
-import { updateRouteData } from '../../utils/dom.js';
+import { updateRouteData, populateRouteInstructions } from '../../utils/dom.js';
 import { updateRouteLayer } from '../maps/routeOverviewMap.js';
 
-export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2) {
+export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer) {
 
     // --- GPS Update Listener --- 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
@@ -39,6 +39,7 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         liveMap2.setCenter(app.USER_LOCATION);
 
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
+        populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
         //display line
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
