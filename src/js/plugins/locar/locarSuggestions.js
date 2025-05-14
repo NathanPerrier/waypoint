@@ -40,8 +40,8 @@ export async function getLocarSuggestions(app, locar) {
 
         locar.add(
             mesh,
-            coords[0], // Use absolute world coordinates
-            coords[1],
+            suggestion.geometry.coordinates[0] + coords[0],
+            suggestion.geometry.coordinates[1] + coords[1],
             height
         );
        
@@ -79,7 +79,7 @@ function getMarkerForSuggestion(suggestion) {
     group.add(icon);
 
     // Add the dotted line
-    const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 1, gapSize: 0.5 });
+    const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 1, gapSize: 0.5, linewidth: 2 });
     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, -10, 0),
         new THREE.Vector3(0, -20, 0)
