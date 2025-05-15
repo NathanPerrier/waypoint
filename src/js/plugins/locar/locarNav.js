@@ -12,61 +12,69 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         // Update global app state (used by navigationManager)
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
 
-        // console.log('User Location:', app.USER_LOCATION);
-        // console.log('Distance Moved:', distMoved);
+        console.log('User Location:', app.USER_LOCATION);
+        console.log('Distance Moved:', distMoved);
         
-        // if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
-        //     return;
-        // } 
+        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
+            return;
+        } 
 
-        // getLocarSuggestions(app, locarInstance.locar);
+        getLocarSuggestions(app, locarInstance.locar);
 
-        // app.START_LOCATION = {
-        //     lng: pos.coords.longitude,
-        //     lat: pos.coords.latitude,
-        // };
+        app.START_LOCATION = {
+            lng: pos.coords.longitude,
+            lat: pos.coords.latitude,
+        };
 
-        // if (!firstPosition) {
-        //     getRoute(app, app.router).then(() => {
-        //         console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
-        //     }).catch((error) => {
-        //         console.error('Error fetching route:', error);
-        //     });
-        // }
+        if (!firstPosition) {
+            getRoute(app, app.router).then(() => {
+                console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+            }).catch((error) => {
+                console.error('Error fetching route:', error);
+            });
+        }
 
-        // if (app.NAVIGATION_ROUTE.length < 2) {
-        //     app.dialog.alert("You have arrived to your destination.");
-        //     return;
-        // }
+        if (app.NAVIGATION_ROUTE.length < 2) {
+            app.dialog.alert("You have arrived to your destination.");
+            return;
+        }
 
-        // updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
-        // updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
-        // liveMap1.setCenter(app.USER_LOCATION);
-        // liveMap2.setCenter(app.USER_LOCATION);
+        updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
+        updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
+        liveMap1.setCenter(app.USER_LOCATION);
+        liveMap2.setCenter(app.USER_LOCATION);
 
-        // //? pos.coords.bearing
-        // liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
-        // liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+        //? pos.coords.bearing
+        liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+        liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
 
-        // updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
-        // populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
+        updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
+        populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
         //display line
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        // const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
-        // const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
+        const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
+        const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
 
-        //? SET USER_LOCATION AS STARTING POINT if user location is not the same as starting point?
-        const points = [];
-        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
-            points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
-        }
+        //ensure coords are lat, lon not lon, lat
+        console.log('Point 1:', app.START_LOCATION);
+        console.log('Point 2:', app.NAVIGATION_ROUTE[0]); //mainly for this
+        console.log('Position:', pos.coords);
 
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        //! this was causing locar to not display anything
+        // const points = [];
+        // for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+        //     points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
+        // }
+        // const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([point1, point2]);
+
         //const line = new THREE.Mesh(lineGeometry, lineMaterial);
-        const line = new THREE.Line(lineGeometry, lineMaterial); //? CORRECT?
+        const line = new THREE.Line(lineGeometry, lineMaterial); //? CORRECT? or use line above?
 
-        locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
+        // locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
 
         firstPosition = false;
 

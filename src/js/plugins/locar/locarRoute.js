@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { getLocarSuggestions } from './locarSuggestions';
 
+import { MeshLineGeometry, MeshLineMaterial, raycast } from 'meshline'
+
 export function runLocarRoute(app, locarInstance) { // Accept app instance
     // let firstLocation = true;
 
@@ -35,6 +37,20 @@ export function runLocarRoute(app, locarInstance) { // Accept app instance
 
         //     firstLocation = false;
         // }
+;
+        const point1 = new THREE.Vector3(pos.coords.longitude, pos.coords.latitude, 0);
+        const point2 = new THREE.Vector3(pos.coords.longitude+0.001, pos.coords.latitude, 0);
+
+        const line = new MeshLineGeometry();
+        line.setPoints([point1, point2]);
+
+        const material = new MeshLineMaterial();
+
+        const mesh = new THREE.Mesh( line, material );
+
+        // mesh.raycast = raycast;
+
+        locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);
 
         if (distMoved > app.NAVIGATION_DISTANCE_BUFFER) {
             getLocarSuggestions(app, locarInstance.locar);
