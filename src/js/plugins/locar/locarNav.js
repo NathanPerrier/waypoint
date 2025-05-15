@@ -6,7 +6,7 @@ import { updateRouteData, populateRouteInstructions } from '../../utils/dom.js';
 import { updateRouteLayer } from '../maps/routeOverviewMap.js';
 import { getLocarSuggestions } from './locarSuggestions.js';
 
-export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer) {
+export function runLocarNav(app, locarInstance, destinationName, navigationInfo, firstTwoStepscontainer, navigationStepsContainer) {
     let firstPosition = true;
 
     // --- GPS Update Listener --- 
@@ -17,41 +17,43 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         console.log('User Location:', app.USER_LOCATION);
         console.log('Distance Moved:', distMoved);
         
-        // if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
-        //     return;
-        // } 
+        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
+            return;
+        } 
 
-        // getLocarSuggestions(app, locarInstance.locar);
+        getLocarSuggestions(app, locarInstance.locar);
 
-        // app.START_LOCATION = {
-        //     lng: pos.coords.longitude,
-        //     lat: pos.coords.latitude,
-        // };
+        app.START_LOCATION = {
+            lng: pos.coords.longitude,
+            lat: pos.coords.latitude,
+        };
 
-        // if (!firstPosition) {
-        //     getRoute(app, app.router).then(() => {
-        //         console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
-        //     }).catch((error) => {
-        //         console.error('Error fetching route:', error);
-        //     });
-        // }
+        if (!firstPosition) {
+            getRoute(app, app.router).then(() => {
+                console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+            }).catch((error) => {
+                console.error('Error fetching route:', error);
+            });
+        }
 
-        // if (app.NAVIGATION_ROUTE.length < 2) {
-        //     app.dialog.alert("You have arrived to your destination.");
-        //     return;
-        // }
+        if (app.NAVIGATION_ROUTE.length < 2) {
+            app.dialog.alert("You have arrived to your destination.");
+            return;
+        }
 
-        // updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
-        // updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
-        // liveMap1.setCenter(app.USER_LOCATION);
-        // liveMap2.setCenter(app.USER_LOCATION);
+        if (app.liveMap1 && app.liveMap2) {
+            updateRouteLayer(app.liveMap1, app.NAVIGATION_ROUTE);
+            updateRouteLayer(app.liveMap2, app.NAVIGATION_ROUTE);
+            app.liveMap1.setCenter(app.USER_LOCATION);
+            app.liveMap2.setCenter(app.USER_LOCATION);
 
-        // //? pos.coords.bearing
-        // liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
-        // liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+            //? pos.coords.bearing
+            app.liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+            app.liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+        }
 
-        // updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
-        // populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
+        updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
+        populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
         let points = [];
         for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
@@ -76,7 +78,11 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
 
         const mesh = new THREE.Mesh( line, material );
     
-        locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
+        locarInstance.locar.add(
+            mesh, 
+            pos.coords.longitude, //? pos.coords.longitude + points[0].x (place at first point)
+            pos.coords.latitude //? pos.coords.latitude + points[0].y
+        );
 
         firstPosition = false;
 
