@@ -14,7 +14,10 @@ export async function getLocarSuggestions(app, locar) {
 
     await placeSuggestion(app);
 
-    console.log('AR_Suggestions:', app.AR_SUGGESTIONS);
+    if (!app.AR_SUGGESTIONS || app.AR_SUGGESTIONS.length === 0) {
+        console.log('No suggestions available for AR.');
+        return;
+    }
 
     for (const suggestion of app.AR_SUGGESTIONS) {    
         const coords = locar.lonLatToWorldCoords(

@@ -78,7 +78,6 @@
             sheet.stepToggle();
         }
         
-
         $on('page:tabshow', async () => {
             const firstTwoStepscontainer = document.getElementById("first-two-steps");
             const navigationStepsContainer = document.getElementById("navigation-steps");
@@ -102,23 +101,22 @@
             locarContainerId = locarConatiner.id;
             
             try {
-                locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
-                console.log("LocAR instance initialized:", locarInstance); // Debugging line    
-                if (locarInstance) { // Check if initialization was successful
+                locarInstance = await initializeLocAR(app, locarConatiner); 
+                if (locarInstance) { 
                     liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"), false);
                     liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
+
                     runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer);
+
+                    updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name'), $('#navigation-info'));
+                    populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer)      
                 } else {
                     console.error("LocAR initialization failed.");
                     app.dialog.alert("LocAR initialization failed. Please try again.", "Error", () => {
                         $f7.views.main.router.navigate('/route/'); // Navigate to the route page
                     });
                     return;
-                }
-
-                updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name'), $('#navigation-info'));
-                populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer)            
-                
+                }      
             } catch (error) {
                 console.error("Error during LocAR initialization or runLocarNav:", error);
                 app.dialog.alert("An error occurred while initializing LocAR. Please try again.", "Error", () => {

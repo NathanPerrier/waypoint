@@ -11,7 +11,6 @@ export async function placeSuggestion(app) {
     const data = await response.json();
 
     if (data.features.length === 0) {
-        console.error('No suggestions found');
         return;
     }
 
