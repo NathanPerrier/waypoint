@@ -20,36 +20,32 @@ export async function getLocarSuggestions(app, locar) {
     }
 
     for (const suggestion of app.AR_SUGGESTIONS) {    
-        const coords = locar.lonLatToWorldCoords(
-            suggestion.geometry.coordinates[0],
-            suggestion.geometry.coordinates[1]
-        );
+        // const coords = locar.lonLatToWorldCoords(
+        //     suggestion.geometry.coordinates[0],
+        //     suggestion.geometry.coordinates[1]
+        // );
 
-        if (!app.PLACED_AR_SUGGESTIONS[suggestion.id]) {
-            console.log('Suggestion already exists in LocAR:', suggestion);
+        if (app.PLACED_AR_SUGGESTIONS[suggestion.id]) {
             continue;
         }
 
-        //! WORKS?
-        console.log('Suggestion coordinates:', coords);
         const mesh = getMarkerForSuggestion(suggestion);
 
         let height = 0;
         if (suggestion.properties.height) {
             height = suggestion.properties.height;
         }
-        console.log('Height:', height);
 
         locar.add(
             mesh,
-            // EITHER
-            // suggestion.geometry.coordinates[0],
-            // suggestion.geometry.coordinates[0] + coords[0],
-            //app.USER_LOCATION[0] + coords[0],
-            //app.USER_LOCATION[1] + coords[1],
+
+            //*TESTING
+            // app.USER_LOCATION[0],
+            // app.USER_LOCATION[1]+0.00001,
             suggestion.geometry.coordinates[0],
             suggestion.geometry.coordinates[1],
-            height
+            height,
+            mesh.userData
         );
 
         app.PLACED_AR_SUGGESTIONS[suggestion.id] = mesh;
@@ -58,44 +54,48 @@ export async function getLocarSuggestions(app, locar) {
     };
 }
 
-function getIconForType(type) {
-    const iconMap = {
-        'restaurant': 'fa-utensils',
-        'park': 'fa-tree',
-        'shop': 'fa-shopping-bag',
-        'default': 'fa-map-marker'
-    };
-    return iconMap[type] || iconMap['default'];
-}
 
+//* ADD ICON
 function getMarkerForSuggestion(suggestion) {
+    const { coordinates } = suggestion.geometry;
+    const { name, type } = suggestion.properties;
+
+    const markerRadius = 0.25;
+    const innerRadius = 0.18; 
+
+    const markerGeometry = new THREE.SphereGeometry(markerRadius, 32, 32, 0, Math.PI * 2, Math.PI);
+    const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const markerMesh = new THREE.Mesh(markerGeometry, markerMaterial);
+    markerMesh.position.set(0, 0, 0);
+
+    const innerMarkerGeometry = new THREE.SphereGeometry(innerRadius, 32, 32, 0, Math.PI, Math.PI);
+    const innerMarkerMaterial = new THREE.MeshBasicMaterial({ color: app.PRIMARY_COLOR });
+    const innerMarkerMesh = new THREE.Mesh(innerMarkerGeometry, innerMarkerMaterial);
+    innerMarkerMesh.position.set(0, 0, markerRadius - innerRadius * 0.7);
+
+    const markerGroup = new THREE.Group();
+    markerGroup.add(markerMesh);
+    markerGroup.add(innerMarkerMesh);
+
+    const pinHeight = 2;
+    const pinRadius = 0.02;
+    const pinGeometry = new THREE.CylinderGeometry(pinRadius, pinRadius, pinHeight, 8);
+    const pinEdges = new THREE.EdgesGeometry(pinGeometry);
+    const pinMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.2, gapSize: 0.01 });
+    const pinMesh = new THREE.LineSegments(pinEdges, pinMaterial);
+    pinMesh.computeLineDistances();
+    pinMesh.position.y = -markerRadius - pinHeight / 2;
+
+    markerGroup.add(pinMesh);
+
     const group = new THREE.Group();
+    group.add(markerGroup);
 
-    // Create the circle
-    const circleGeometry = new THREE.CircleGeometry(1.0, 3.2);
-    const circleMaterial = new THREE.MeshBasicMaterial({ color: app.PRIMARY_COLOR });
-    const circle = new THREE.Mesh(circleGeometry, circleMaterial);
-    group.add(circle);
-
-    //! FIX
-      // const iconType = getIconForType(suggestion.properties.type);
-    // const iconTexture = new THREE.TextureLoader().load(`/icons/${iconType}.png`); // Assuming icons are stored in /icons
-    // const iconMaterial = new THREE.MeshBasicMaterial({ map: iconTexture, transparent: true });
-    const iconGeometry = new THREE.PlaneGeometry(5, 5);
-    const iconMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const icon = new THREE.Mesh(iconGeometry, iconMaterial);
-    icon.position.set(0, 0, 0.1); // Slightly above the circle
-    group.add(icon);
-
-    // Add the dotted line
-    const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 1, gapSize: 0.5, linewidth: 2 });
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, -10, 0),
-        new THREE.Vector3(0, -20, 0)
-    ]);
-    const line = new THREE.Line(lineGeometry, lineMaterial);
-    line.computeLineDistances(); // Required for dashed lines
-    group.add(line);
+    group.userData = {
+        name: name,
+        type: type,
+        coordinates: coordinates,
+    };
 
     return group;
 }

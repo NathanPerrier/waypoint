@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { getRoute } from '../maps/mapboxRoute.js';
 import { updateRouteData, populateRouteInstructions } from '../../utils/dom.js';
 import { updateRouteLayer } from '../maps/routeOverviewMap.js';
+import { getLocarSuggestions } from './locarSuggestions.js';
 
 export function runLocarNav(app, locarInstance, destinationName, navigationInfo, liveMap1, liveMap2, firstTwoStepscontainer, navigationStepsContainer) {
     let firstPosition = true;
@@ -17,6 +18,8 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
             return;
         } 
+
+        getLocarSuggestions(app, locarInstance.locar);
 
         app.START_LOCATION = {
             lng: pos.coords.longitude,
@@ -49,7 +52,7 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
         //display line
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
         // const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
         // const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
 
@@ -59,9 +62,10 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         }
 
         const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Mesh(lineGeometry, lineMaterial);
+        //const line = new THREE.Mesh(lineGeometry, lineMaterial);
+        const line = new THREE.Line(lineGeometry, lineMaterial); //? CORRECT?
 
-        locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);
+        locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
 
         firstPosition = false;
 
