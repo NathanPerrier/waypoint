@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { MeshLineGeometry, MeshLineMaterial, raycast } from 'meshline'
+
 import { getRoute } from '../maps/mapboxRoute.js';
 import { updateRouteData, populateRouteInstructions } from '../../utils/dom.js';
 import { updateRouteLayer } from '../maps/routeOverviewMap.js';
@@ -51,30 +53,34 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
         populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
-        //display line
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
-        const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
+        let points = [];
+        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+            const coords = locarInstance.locar.lonLatToWorldCoords(
+                app.NAVIGATION_ROUTE[i][0],
+                app.NAVIGATION_ROUTE[i][1]
+            );
+            console.log('Route Coordinates:', coords); //*TEMP
+            points.push(new THREE.Vector3(coords[0], coords[1], 0)); // Changed Z from 1 to 0 to make the line flat
+        }
 
-        //ensure coords are lat, lon not lon, lat
-        console.log('Point 1:', app.START_LOCATION);
-        console.log('Point 2:', app.NAVIGATION_ROUTE[0]); //mainly for this
-        console.log('Position:', pos.coords);
 
+        const line = new MeshLineGeometry();
+        line.setPoints(points);
 
-        //! this was causing locar to not display anything
-        // const points = [];
-        // for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
-        //     points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
-        // }
-        // const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new MeshLineMaterial(
+            {
+                color: app.PRIMARY_COLOR,
+                lineWidth: 5.0, // Increased from 0.1
+                sizeAttenuation: true,
+                depthTest: false,
+                transparent: true, // Kept true for smooth edges, opacity controls visibility
+                opacity: 1.0,    // Increased from 0.5 for full visibility
+            }
+        );
 
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints([point1, point2]);
-
-        //const line = new THREE.Mesh(lineGeometry, lineMaterial);
-        const line = new THREE.Line(lineGeometry, lineMaterial); //? CORRECT? or use line above?
-
-        // locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
+        const mesh = new THREE.Mesh( line, material );
+    
+        locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
 
         firstPosition = false;
 
