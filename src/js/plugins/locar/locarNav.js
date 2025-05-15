@@ -8,67 +8,80 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
     let firstPosition = true;
 
     // --- GPS Update Listener --- 
+    console.log('Initializing GPS update listener in locarNav');
+
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
-        // Update global app state (used by navigationManager)
-        app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
+        try {
+            console.log('GPS Update Event Triggered');
+            console.log('Position:', pos);
+            console.log('Distance Moved:', distMoved);
 
-        console.log('User Location:', app.USER_LOCATION);
-        console.log('Distance Moved:', distMoved);
-        
-        if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
-            return;
-        } 
+            // Update global app state (used by navigationManager)
+            app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
 
-        getLocarSuggestions(app, locarInstance.locar);
+            console.log('User Location Updated:', app.USER_LOCATION);
 
-        app.START_LOCATION = {
-            lng: pos.coords.longitude,
-            lat: pos.coords.latitude,
-        };
+            if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) {
+                console.log('Distance moved is less than buffer, skipping update.');
+                return;
+            }
 
-        if (!firstPosition) {
-            getRoute(app, app.router).then(() => {
-                console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
-            }).catch((error) => {
-                console.error('Error fetching route:', error);
-            });
+            getLocarSuggestions(app, locarInstance.locar);
+
+            app.START_LOCATION = {
+                lng: pos.coords.longitude,
+                lat: pos.coords.latitude,
+            };
+
+            console.log('Start Location Updated:', app.START_LOCATION);
+
+            if (!firstPosition) {
+                getRoute(app, app.router).then(() => {
+                    console.log('Route fetched successfully:', app.NAVIGATION_ROUTE);
+                }).catch((error) => {
+                    console.error('Error fetching route:', error);
+                });
+            }
+
+            if (app.NAVIGATION_ROUTE.length < 2) {
+                console.log('Navigation route is too short, destination reached.');
+                app.dialog.alert("You have arrived to your destination.");
+                return;
+            }
+
+            updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
+            updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
+            liveMap1.setCenter(app.USER_LOCATION);
+            liveMap2.setCenter(app.USER_LOCATION);
+
+            console.log('Route layers updated and maps centered.');
+
+            liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+            liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
+
+            updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
+            populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
+
+            console.log('Route data and instructions updated.');
+
+            // Display line
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+            const points = [];
+            for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+                points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
+            }
+
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+
+            locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);
+
+            console.log('Line added to LocAR instance.');
+
+            firstPosition = false;
+        } catch (error) {
+            console.error('Error during GPS update handling:', error);
         }
-
-        if (app.NAVIGATION_ROUTE.length < 2) {
-            app.dialog.alert("You have arrived to your destination.");
-            return;
-        }
-
-        updateRouteLayer(liveMap1, app.NAVIGATION_ROUTE);
-        updateRouteLayer(liveMap2, app.NAVIGATION_ROUTE);
-        liveMap1.setCenter(app.USER_LOCATION);
-        liveMap2.setCenter(app.USER_LOCATION);
-
-        //? pos.coords.bearing
-        liveMap1.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
-        liveMap2.setBearing(app.NAVIGATION_ROUTE_STEPS[0].instruction.bearing_after);
-
-        updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
-        populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
-
-        //display line
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        // const point1 = new THREE.Vector3(app.START_LOCATION.lng, app.START_LOCATION.lat, 0);
-        // const point2 = new THREE.Vector3(app.NAVIGATION_ROUTE[0][0], app.NAVIGATION_ROUTE[0][1], 0);
-
-        const points = [];
-        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
-            points.push(new THREE.Vector3(app.NAVIGATION_ROUTE[i][0], app.NAVIGATION_ROUTE[i][1], 0));
-        }
-
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        //const line = new THREE.Mesh(lineGeometry, lineMaterial);
-        const line = new THREE.Line(lineGeometry, lineMaterial); //? CORRECT?
-
-        locarInstance.locar.add(line, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
-
-        firstPosition = false;
-
     });
 
     // --- Start GPS and Animation Loop --- 
