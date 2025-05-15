@@ -1,11 +1,12 @@
 import * as turf from '@turf/turf';
+import { populateRouteInstructionsDesktop } from '../../utils/dom.js';
 
 let temp;
 let lastBearing = undefined; // Variable to store the last bearing
 
-export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, arrowIcon) => {
+export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, arrowIcon, firstTwoStepscontainer) => {
     map.resize();
-    const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*200;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
+    const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*300;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
     const relativeCameraAltitude = 10; 
     const routeDistance = turf.length(turf.lineString(targetRoute));
     const cameraRouteDistance = turf.length(
@@ -112,6 +113,19 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
         liveMap.setCenter(cameraPositionCoords);
         liveMap.setBearing(bearing);
 
+
+        // Update the distance to the next step
+        if (app.NAVIGATION_ROUTE_STEPS && app.NAVIGATION_ROUTE_STEPS.length > 0) {
+            const nextStepCoord = app.NAVIGATION_ROUTE_STEPS[0].instruction.location;
+            const distanceToNextStep = turf.distance(
+                turf.point(cameraPositionCoords),
+                turf.point(nextStepCoord)
+            );
+            app.NAVIGATION_ROUTE_STEPS[0].distance = distanceToNextStep*1000;
+        }
+
+        populateRouteInstructionsDesktop(app, firstTwoStepscontainer);
+        
         if (
             app.NAVIGATION_ROUTE_STEPS && app.NAVIGATION_ROUTE_STEPS.length > 1
         ) {
@@ -132,6 +146,7 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
                 app.NAVIGATION_ROUTE_STEPS.splice(0, 1);
             }
         }
+
         window.requestAnimationFrame(frame);
     }
     window.requestAnimationFrame(frame);

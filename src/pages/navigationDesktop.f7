@@ -160,7 +160,7 @@ export default async (props, { $, $on, $f7 }) => {
         });
 
         map.on('idle', () => {
-            runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7, $('#current-direction-arrow-desktop'));
+            runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7, $('#current-direction-arrow-desktop'), firstTwoStepscontainer);
         });
     });
 

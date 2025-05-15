@@ -144,6 +144,8 @@ export const destroyLocARInstance = (app, elementId) => {
         window.removeEventListener('orientationchange', instance.orientationListener);
     }
 
+    instance.locar.stopGps(); 
+
     // Stop webcam, dispose renderer, scene, etc.
     if (instance.cam) {
         instance.cam.dispose(); // Assuming a stop method exists

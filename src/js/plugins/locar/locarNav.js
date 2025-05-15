@@ -11,8 +11,8 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         // Update global app state (used by navigationManager)
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
 
-        console.log('User Location:', app.USER_LOCATION);
-        console.log('Distance Moved:', distMoved);
+        // console.log('User Location:', app.USER_LOCATION);
+        // console.log('Distance Moved:', distMoved);
         
         if (distMoved < app.NAVIGATION_DISTANCE_BUFFER && !firstPosition) { 
             return;
