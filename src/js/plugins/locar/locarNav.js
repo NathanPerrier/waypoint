@@ -37,7 +37,12 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         }
 
         if (app.NAVIGATION_ROUTE.length < 2) {
-            app.dialog.alert("You have arrived to your destination.");
+            app.notification.create({
+                icon: '<i class="fa-solid  icon-center fa-location-dot"></i>',
+                title: 'Arrived at destination',
+                text: 'You have reached your destination. ',
+                closeTimeout: 5000,
+            }).open();
             return;
         }
 
@@ -55,19 +60,27 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
         populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
-        let points = [];
-        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
-            const coords = locarInstance.locar.lonLatToWorldCoords(
-                app.NAVIGATION_ROUTE[i][0],
-                app.NAVIGATION_ROUTE[i][1]
-            );
-            console.log('Route Coordinates:', coords); //*TEMP
-            points.push(new THREE.Vector3(coords[0], coords[1], 0)); // Changed Z from 1 to 0 to make the line flat
-        }
+        // let points = [];
+        // for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+        //     const coords = locarInstance.locar.lonLatToWorldCoords(
+        //         app.NAVIGATION_ROUTE[i][0],
+        //         app.NAVIGATION_ROUTE[i][1]
+        //     );
+        //     console.log('Route Coordinates:', coords); //*TEMP
+        //     points.push(new THREE.Vector3(coords[0], coords[1], 0)); // Changed Z from 1 to 0 to make the line flat
+        // }
 
+        var coords = locarInstance.locar.lonLatToWorldCoords(
+            app.NAVIGATION_ROUTE[0][0],
+            app.NAVIGATION_ROUTE[0][1]
+        );
+        
 
         const line = new MeshLineGeometry();
-        line.setPoints(points);
+        line.setPoints([
+            new THREE.Vector3(0, 0, 0), // user location
+            new THREE.Vector3(coords[0], coords[1], 0), // End point
+        ]);
 
         const material = new MeshLineMaterial(
             {

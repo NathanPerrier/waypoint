@@ -7,31 +7,31 @@ let lastBearing = undefined; // Variable to store the last bearing
 export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, arrowIcon, firstTwoStepscontainer) => {
     map.resize();
     const animationDuration = app.NAVIGATION_ROUTE_DATA.duration*300;   //! TODO: calculate based oof EST travel time dependant on dist and average speed
-    const relativeCameraAltitude = 10; 
+    
     const routeDistance = turf.length(turf.lineString(targetRoute));
     const cameraRouteDistance = turf.length(
         turf.lineString(cameraRoute)
     );
-    // Pre-calculate cumulative distances for segment identification
+  
     const cumulativeDistances = [0];
     for (let i = 0; i < cameraRoute.length - 1; i++) {
         const dist = turf.distance(turf.point(cameraRoute[i]), turf.point(cameraRoute[i+1]));
         cumulativeDistances.push(cumulativeDistances[i] + dist);
     }
-    // Define how far ahead the camera should look
-    const lookAheadFactor = 0.1; // 0.005?
-    const lookAheadDistance = routeDistance * lookAheadFactor;
+  
+    const lookAheadDistance = routeDistance * app.LOOK_AHEAD_FACTOR;
     let start;
-    // Store initial values to avoid repeated decrement
+
     const initialDuration = app.NAVIGATION_ROUTE_DATA.duration;
     const initialDistance = app.NAVIGATION_ROUTE_DATA.distance;
-    // Updated the camera animation logic to ensure smooth transitions between nodes.
+
+    let smoothedAltitude;
+
     function frame(time) {
         if (!map) return; 
         if (!start) start = time;
         const phase = (time - start) / animationDuration;
         if (phase >= 1) {
-            //navigation to routeDesktop
             app.notification.create({
                 icon: '<i class="fa-solid  icon-center fa-location-dot"></i>',
                 title: 'Arrived at destination',
@@ -42,33 +42,41 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
             app.tab.show('#view-route-desktop'); 
             return;
         }
-        // Calculate current position along the camera path
+       
         const currentDistance = cameraRouteDistance * phase;
         const cameraPosition = turf.along(
             turf.lineString(cameraRoute),
             currentDistance
         );
         const cameraPositionCoords = cameraPosition.geometry.coordinates;
-        // Calculate the look-at position slightly ahead on the target path
-        const lookAtTargetDistance = Math.min(routeDistance, currentDistance + lookAheadDistance); // Ensure look-at doesn't go beyond the route end
+
+        const lookAtTargetDistance = Math.min(routeDistance, currentDistance + lookAheadDistance);
         const lookAtPosition = turf.along(
             turf.lineString(targetRoute),
             lookAtTargetDistance
         );
         const lookAtCoords = lookAtPosition.geometry.coordinates;
-        // Calculate terrain elevation at the camera's current position
+        
         const terrainElevation = map.queryTerrainElevation(cameraPositionCoords) || 0;
-        const finalAltitude = Math.max(terrainElevation + relativeCameraAltitude, relativeCameraAltitude); // Ensure a minimum altitude of 100
-        // Set camera options
+
+        let currentFrameTargetAltitude = Math.max(terrainElevation + app.RELATIVE_CAMERA_ALTITUDE, app.RELATIVE_CAMERA_ALTITUDE); 
+
+        if (smoothedAltitude === undefined) {
+            smoothedAltitude = currentFrameTargetAltitude; 
+        } else {
+            smoothedAltitude = smoothedAltitude * (1 - app.ALTITUDE_SMOOTHING_FACTOR) + currentFrameTargetAltitude * app.ALTITUDE_SMOOTHING_FACTOR;
+        }
+
+       
         const camera = map.getFreeCameraOptions();
         camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
             {
                 lng: cameraPositionCoords[0],
                 lat: cameraPositionCoords[1]
             },
-            finalAltitude
+            smoothedAltitude 
         );
-        // Ensure lookAtPoint is valid and ahead of the camera
+        
         if (lookAtCoords && lookAtCoords.length === 2) {
             camera.lookAtPoint({
                 lng: lookAtCoords[0],
@@ -78,8 +86,6 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
             console.warn("Invalid lookAtCoords:", lookAtCoords);
         }
 
-       
-        // Update duration and distance based on animation phase
         app.NAVIGATION_ROUTE_DATA.duration = initialDuration * (1 - phase);
         app.NAVIGATION_ROUTE_DATA.distance = initialDistance * (1 - phase);
 

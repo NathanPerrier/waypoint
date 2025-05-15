@@ -25,6 +25,9 @@ const initializeConfig = (app) => {
         app.SESSION_TIMEOUT_HOURS = 12;
         app.NAVIGATION_DISTANCE_BUFFER = 2.5; //5m
         app.AR_SUGGESTION_RADIUS = 500; //500m
+        app.ALTITUDE_SMOOTHING_FACTOR = 0.1 //0-1 
+        app.LOOK_AHEAD_FACTOR = 0.125; //0-1
+        app.RELATIVE_CAMERA_ALTITUDE = 20; //20m
         app.NOW = new Date().getTime();
         app.DEPARTURE_TIME = app.NOW ;
         app.TRANSPORTATION_MODE = "walking";
@@ -52,14 +55,14 @@ const initializeConfig = (app) => {
         app.MAP_LOCATION_BOUNDS_LNGLATLIKE = [[152.998221, -27.505890], [153.019359, -27.490149]]; 
 
         // Herston Campus
-        app.MAP_LOCATION_BOUNDS_HERSTON = new LngLatBounds([152.992, -27.500], [153.002, -27.490]); 
-        app.MAPBOXGL_LOCATION_BOUNDS_HERSTON = new mapboxgl.LngLatBounds([152.992, -27.500], [153.002, -27.490]); 
-        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON = [[152.992, -27.500], [153.002, -27.490]]; 
+        app.MAP_LOCATION_BOUNDS_HERSTON = new LngLatBounds([153.021008, -27.452443], [153.033357, -27.443910]); 
+        app.MAPBOXGL_LOCATION_BOUNDS_HERSTON = new mapboxgl.LngLatBounds([153.021008, -27.452443], [153.033357, -27.443910]); 
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON = [[153.021008, -27.452443], [153.033357, -27.443910]]; 
 
         // Gatton Campus
-        app.MAP_LOCATION_BOUNDS_GATTON = new LngLatBounds([152.500, -27.500], [152.600, -27.490]); 
-        app.MAPBOXGL_LOCATION_BOUNDS_GATTON = new mapboxgl.LngLatBounds([152.500, -27.500], [152.600, -27.490]); 
-        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON = [[152.500, -27.500], [152.600, -27.490]]; 
+        app.MAP_LOCATION_BOUNDS_GATTON = new LngLatBounds([152.322731, -27.571017], [152.365451, -27.529145]); 
+        app.MAPBOXGL_LOCATION_BOUNDS_GATTON = new mapboxgl.LngLatBounds([152.322731, -27.571017], [152.365451, -27.529145]); 
+        app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON = [[152.322731, -27.571017], [152.365451, -27.529145]]; 
 
         app.MAP_LOCATION_CENTER = defaultUserLocation;
         app.MAP_COUNTRY_RESTRICTIONS = 'au';
@@ -145,12 +148,14 @@ const initializeConfig = (app) => {
             }
 
             if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_GATTON)) {
+                console.log("User location is in Gatton Campus");
                 app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_GATTON;
                 app.MAPBOXGL_LOCATION_BOUNDS = app.MAPBOXGL_LOCATION_BOUNDS_GATTON;
                 app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON;
             }
 
             if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_HERSTON)) {
+                console.log("User location is in Herston Campus");
                 app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_HERSTON;
                 app.MAPBOXGL_LOCATION_BOUNDS = app.MAPBOXGL_LOCATION_BOUNDS_HERSTON;
                 app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON;
