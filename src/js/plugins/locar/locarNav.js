@@ -53,34 +53,30 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, destinationName, navigationInfo);
         populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer);
 
-        let points = [];
-        for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
-            const coords = locarInstance.locar.lonLatToWorldCoords(
-                app.NAVIGATION_ROUTE[i][0],
-                app.NAVIGATION_ROUTE[i][1]
-            );
-            console.log('Route Coordinates:', coords); //*TEMP
-            points.push(new THREE.Vector3(coords[0], coords[1], 0)); // Changed Z from 1 to 0 to make the line flat
-        }
+        // let points = [];
+        // for (let i = 0; i < app.NAVIGATION_ROUTE.length; i++) {
+        //     const coords = locarInstance.locar.lonLatToWorldCoords(
+        //         app.NAVIGATION_ROUTE[i][0],
+        //         app.NAVIGATION_ROUTE[i][1]
+        //     );
+        //     console.log('Route Coordinates:', coords); //*TEMP
+        //     points.push(new THREE.Vector3(coords[0], coords[1], 0)); // Changed Z from 1 to 0 to make the line flat
+        // }
 
 
-        const line = new MeshLineGeometry();
-        line.setPoints(points);
+        // const line = new MeshLineGeometry();
+        // line.setPoints(points);
 
-        const material = new MeshLineMaterial(
-            {
-                color: app.PRIMARY_COLOR,
-                lineWidth: 5.0, // Increased from 0.1
-                sizeAttenuation: true,
-                depthTest: false,
-                transparent: true, // Kept true for smooth edges, opacity controls visibility
-                opacity: 1.0,    // Increased from 0.5 for full visibility
-            }
-        );
+        // const material = new MeshLineMaterial(
+        //     {
+        //         color: app.PRIMARY_COLOR,
+        //         lineWidth: 5.0, // Increased from 0.1
+        //     }
+        // );
 
-        const mesh = new THREE.Mesh( line, material );
+        // const mesh = new THREE.Mesh( line, material );
     
-        locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
+        // locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);  //? SHOULD IT BE PLACED AT USER LOCATION? (because start location is the same as user location it should?)
 
         firstPosition = false;
 
