@@ -123,7 +123,7 @@
                     $f7.views.main.router.navigate('/route/'); // Navigate to the route page
                 });
                 return;
-            }
+            }    
         })
 
         $on('pageInit', async () => {

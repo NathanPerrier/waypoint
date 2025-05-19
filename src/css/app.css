@@ -645,6 +645,23 @@
     line-height: 1;
 }
 
+.mapboxgl-user-location-dot, .mapboxgl-user-location-dot::after, .mapboxgl-user-location-dot::before {
+    background-color: var(--secondary-color) !important;
+} 
+
+.mapboxgl-user-location-accuracy-circle {
+    background-color: var(--secondary-color) !important;
+    opacity: 0.25 !important;
+}
+
+.mapboxgl-user-location-heading, mapboxgl-user-location-heading::after, mapboxgl-user-location-heading::before {
+    background-color: var(--secondary-color) !important;
+}
+
+.mapboxgl-user-location-show-heading .mapboxgl-user-location-heading:after, .mapboxgl-user-location-show-heading .mapboxgl-user-location-heading:before {
+    border-bottom: 7.5px solid var(--secondary-color) !important;
+}
+
 
 @keyframes spin-pause-360 {
     0%      { transform: rotate(0deg); }

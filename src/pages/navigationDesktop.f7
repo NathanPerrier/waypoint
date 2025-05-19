@@ -159,6 +159,8 @@ export default async (props, { $, $on, $f7 }) => {
             }
         });
 
+        //? add user icon to liveMap?
+
         map.on('idle', () => {
             runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7, $('#current-direction-arrow-desktop'), firstTwoStepscontainer);
         });

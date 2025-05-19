@@ -146,7 +146,27 @@ export async function createLiveRouteMap(app, container, interactive = true) {
         });
     } else {
         console.error('NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.');
-    }
+    }    
+
+    const geolocateControl = new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true,
+
+        // make color app.SECONDARY_COLOR
+        style: {
+            backgroundColor: app.SECONDARY_COLOR,
+        },
+    });
+    
+    map.addControl(geolocateControl);
+    map.on('load', () => {
+        setTimeout(() => {
+            geolocateControl.trigger(); 
+        }, 100);
+    });
 
     return map;
 }
