@@ -1,52 +1,65 @@
 import * as THREE from 'three';
 import { getLocarSuggestions } from './locarSuggestions';
+import { debugCameraPosition, showCompassLines, showOriginCube, logCameraChange } from './debugLocar';
 
-import { MeshLineGeometry, MeshLineMaterial, raycast } from 'meshline'
+let compassLines = null;
+let userLine = null; 
+let firstPosition = true;
 
+export function runLocarRoute(app, locarInstance) { 
 
-export function runLocarRoute(app, locarInstance) { // Accept app instance
-    // let firstLocation = true;
+    //! TRIAL CAMERA CHECK
+    let lastCameraPosition = new THREE.Vector3(0, 0, 0);
+        
+    const cameraCheckInterval = setInterval(() => {
+        // Call logCameraChange inside the interval callback
+        if (locarInstance && locarInstance.camera) {
+            lastCameraPosition = logCameraChange(app, locarInstance, lastCameraPosition);
+        }
+    }, 1000);
+    //!
 
+    showOriginCube(app, locarInstance);
+   
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
 
-        //* Use LOCAR.lonLatToWorldCoords to convert lat/lon to world coordinates
-        // const point1 = new THREE.Vector3(0, 0, 0);
-        // const point2 = new THREE.Vector3(10, 0, 0); // Changed Z from 1 to 0 to make the line flat
-
-        // const line = new MeshLineGeometry();
-        // line.setPoints([point1, point2]);
-
-        // const material = new MeshLineMaterial(
-        //     {
-        //         color: app.PRIMARY_COLOR,
-        //         lineWidth: 5.0, // Increased from 0.1
-        //         sizeAttenuation: true,
-        //         depthTest: false,
-        //         transparent: true, // Kept true for smooth edges, opacity controls visibility
-        //         opacity: 1.0,    // Increased from 0.5 for full visibility
-        //     }
-        // );
-
-        // const mesh = new THREE.Mesh( line, material );
-
-        // mesh.raycast = raycast;
-
-        // locarInstance.locar.add(mesh, pos.coords.longitude, pos.coords.latitude);
-
+        app.START_LOCATION = {
+            lng: pos.coords.longitude,
+            lat: pos.coords.latitude,
+        };
 
         if (distMoved > app.NAVIGATION_DISTANCE_BUFFER) {
             getLocarSuggestions(app, locarInstance.locar);
-        }
+        }  
+
+        // firstPosition, compassLines, userLine = showCompassLines(app, firstPosition, locarInstance, pos, compassLines, userLine);
     });
 
     locarInstance.locar.startGps();
 
     locarInstance.renderer.setAnimationLoop(animate);
 
+    //! test camera check
+    
+    locarInstance.cameraCheckInterval = cameraCheckInterval;
+    
+    locarInstance.cleanup = () => {
+        if (locarInstance.cameraCheckInterval) {
+            clearInterval(locarInstance.cameraCheckInterval);
+            locarInstance.cameraCheckInterval = null;
+        }
+    };  
+    //!
+    
     function animate() {
+        const originalPosition = locarInstance.camera.position.clone();
+
         locarInstance.cam.update();
         locarInstance.controls.update();
+
+        debugCameraPosition(app, locarInstance);
+
         locarInstance.renderer.render(locarInstance.scene, locarInstance.camera);
     }
     animate();

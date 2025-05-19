@@ -122,7 +122,7 @@ export const handleSearchClick = async function(app, $f7, searchValue, mapContai
 
 export const handleRedirect = (view, route, $f7) => {         
     $f7.actions.close()
-    $f7.views.navigation.router.navigate(route);
+    // $f7.views.navigation.router.navigate(route);  //! was causing issues with locarJS
     app.tab.show(view);
 };
 

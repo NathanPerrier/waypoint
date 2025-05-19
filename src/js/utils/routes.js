@@ -1,4 +1,3 @@
-import { is } from "dom7";
 import { getRoute } from "../plugins/maps/mapboxRoute";
 import { isWithinBounds } from "./dom";
 
@@ -59,13 +58,14 @@ export async function checkForURLParams(app, router) {
       app.dialog.close();
       app.dialog.preloader('Loading route...');
 
-      getRoute(app, router).then(() => {
-        app.dialog.close();
-
-        if (!isWithinBounds(app, app.START_LOCATION)) {
+      if (!isWithinBounds(app, app.START_LOCATION)) {
+          app.dialog.close();
           app.dialog.alert('Your current location is outside the allowed area. Please select a different location.', 'Invalid Start Location');
           return;
-        }
+      }
+
+      getRoute(app, router).then(() => {
+        app.dialog.close();
 
         if (app.AR) {
           app.tab.show('#view-navigation');

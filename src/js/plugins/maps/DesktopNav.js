@@ -38,7 +38,7 @@ export const runDesktopNav = (app, map, liveMap, targetRoute, cameraRoute, $f7, 
                 text: 'You have reached your destination. ',
                 closeTimeout: 5000,
             }).open();
-            $f7.views.main.router.navigate('/routeDesktop/'); 
+            // $f7.views.main.router.navigate('/routeDesktop/'); 
             app.tab.show('#view-route-desktop'); 
             return;
         }
