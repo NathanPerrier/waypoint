@@ -9,6 +9,8 @@ import { debugCameraPosition, showCompassLines, showOriginCube, logCameraChange 
 let compassLines = null;
 let userLine = null; 
 let firstPosition = true;
+let lineMaterial = null;
+let time = 0;
 
 export function runLocarNav(app, locarInstance, destinationName, navigationInfo, firstTwoStepscontainer, navigationStepsContainer) {
 
@@ -110,6 +112,8 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
         const realWorldDistanceMeters = earthRadiusMeters * c;
 
+        // REMOVE: const alphaMap = createAlphaGradientTexture(256);
+
         const userWorldPos = locarInstance.locar.lonLatToWorldCoords(
             pos.coords.longitude,
             pos.coords.latitude
@@ -146,19 +150,26 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                 }
             } catch (error) {
                 console.error("Error calculating distance:", error);
-                distance = 1.0; // Default fallback
+                distance = 1.0; // Default fallback            
             }
+            // const alphaMap = createAlphaGradientTexture(distance); // Pass the actual distance
+            // alphaMap.needsUpdate = true; // Ensure the texture is updated
 
-                // Create a box with length matching the distance to target
+            lineMaterial = new THREE.MeshBasicMaterial({ 
+                color: app.PRIMARY_COLOR, 
+                // alphaMap: alphaMap,
+                wireframe: false,
+                transparent: true,
+                opacity: .8, 
+                depthTest: false, // Ensure always visible
+                side: THREE.DoubleSide, // Visible from both sides
+                alphaTest: 0.01 // Discard pixels below this threshold
+            });
+            const boxGeometry = new THREE.BoxGeometry(0.2, 0.1, distance); // Width, height, length
+            
             const directionLine = new THREE.Mesh(
-                new THREE.BoxGeometry(0.2, 0.1, distance), // Width, height, length
-                new THREE.MeshBasicMaterial({ 
-                    color: app.PRIMARY_COLOR, // Bright red color
-                    wireframe: false,
-                    transparent: false,
-                    depthTest: false, // Ensure always visible
-                    side: THREE.DoubleSide // Visible from both sides
-                })
+                boxGeometry,
+                lineMaterial
             );
             
             // Calculate an accurate direction based on the longitude/latitude difference
@@ -202,25 +213,27 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                 locarInstance.scene.remove(existingEndMarker);
             }
             
-            const endMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(0.115, 16, 16), 
-                new THREE.MeshBasicMaterial({
-                    color: app.PRIMARY_COLOR,
-                    depthTest: false
-                })
-            );
+            if (app.debug) {
+                const endMarker = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.115, 16, 16), 
+                    new THREE.MeshBasicMaterial({
+                        color: app.PRIMARY_COLOR,
+                        depthTest: false
+                    })
+                );
 
-            endMarker.name = "endMarker";  
+                endMarker.name = "endMarker";  
 
-            try {
-                const endPoint = direction.clone().multiplyScalar(distance);
-                endMarker.position.set(endPoint.x, -0.5, endPoint.z);
-            } catch (error) {
-                console.error("Error positioning end marker:", error);
-                // Fallback position if vector calculation fails
-                endMarker.position.set(0, -0.5, distance);
+                try {
+                    const endPoint = direction.clone().multiplyScalar(distance);
+                    endMarker.position.set(endPoint.x, -0.5, endPoint.z);
+                } catch (error) {
+                    console.error("Error positioning end marker:", error);
+                    // Fallback position if vector calculation fails
+                    endMarker.position.set(0, -0.5, distance);
+                }
+                locarInstance.scene.add(endMarker);
             }
-            locarInstance.scene.add(endMarker);
             
             
             console.log('Created line pointing to specific coordinate:', 
@@ -230,15 +243,26 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
             );
 
         } else {
-            console.error('Failed to convert target coordinates to world position');
+            console.error('Failed to convert target coordinates to world position');            
+            
+            const defaultFallbackLength = 2.0; // Define fallback length
+            // const alphaMapFallback = createAlphaGradientTexture(defaultFallbackLength); // Pass fallback length
+
+            lineMaterial = new THREE.MeshBasicMaterial({ 
+                color: app.PRIMARY_COLOR, 
+                // alphaMap: alphaMapFallback, // Use the correct alphaMap
+                wireframe: false,
+                transparent: true,
+                opacity: .8, // Base opacity for pulsation
+                depthTest: false, // Ensure always visible
+                side: THREE.DoubleSide // Visible from both sides
+            });
+
+            const fallbackGeometry = new THREE.BoxGeometry(0.2, 0.1, 2); // Default 2m line
             
             const directionLine = new THREE.Mesh(
-                new THREE.BoxGeometry(0.2, 0.1, 2), // Default 2m line
-                new THREE.MeshBasicMaterial({ 
-                    color: app.PRIMARY_COLOR,
-                    depthTest: false,
-                    side: THREE.DoubleSide
-                })
+                fallbackGeometry,
+                lineMaterial
             );
             
             directionLine.position.set(0, -0.5, 1);            
@@ -251,16 +275,18 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                 locarInstance.scene.remove(existingEndMarker);
             }
             
-            const endMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(0.115, 16, 16),
-                new THREE.MeshBasicMaterial({
-                    color: app.PRIMARY_COLOR,
-                    depthTest: false
-                })
-            );
-            endMarker.name = "endMarker";
-            endMarker.position.set(0, -0.5, 2);
-            locarInstance.scene.add(endMarker);
+            if (app.debug) {
+                const endMarker = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.115, 16, 16),
+                    new THREE.MeshBasicMaterial({
+                        color: app.PRIMARY_COLOR,
+                        depthTest: false
+                    })
+                );
+                endMarker.name = "endMarker";
+                endMarker.position.set(0, -0.5, 2);
+                locarInstance.scene.add(endMarker);
+            }
             
         }   
         
@@ -278,13 +304,25 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
             locarInstance.cameraCheckInterval = null;
         }
     };  
-      
+        
     function animate() {
         try {
             const originalPosition = locarInstance.camera.position.clone();
 
             locarInstance.cam.update();
             locarInstance.controls.update();
+
+            // Smoother animation with controlled speed
+            time += 0.03; // Increased speed for more visible pulsation
+            
+            // More pronounced pulsation effect with range from 0.6 to 1.0
+            if (lineMaterial) {
+                lineMaterial.opacity = 0.6 + 0.25 * Math.sin(time);
+                
+                // Ensure material's transparent property is true for opacity to work
+                lineMaterial.transparent = true;
+                lineMaterial.needsUpdate = true;
+            }
             
             debugCameraPosition(app, locarInstance, compassLines, userLine);
 
@@ -294,4 +332,32 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
         }
     };
     animate(); // Initial render
+}
+
+function createAlphaGradientTexture(lineLength, textureResolution=512) {
+    // Create a 1D texture that will correctly map along the box's length
+    const canvas = document.createElement('canvas');
+    canvas.width = textureResolution; // Use textureResolution for the gradient direction
+    canvas.height = textureResolution;     // Only need 1 pixel height for a 1D gradient
+    
+    const ctx = canvas.getContext('2d');
+    // Create horizontal gradient (right to left)
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    const gradient = ctx.createLinearGradient(0, textureResolution,  0, 0);
+    gradient.addColorStop(0, 'rgba(118, 44, 239, 1)');    // Start with solid color
+    gradient.addColorStop(1, 'rgba(118, 44, 239, 0)');    // Completely transparent at the end
+    
+    ctx.fillStyle = gradient;
+    ctx.fill()
+    
+    // const texture = new THREE.CanvasTexture(canvas);
+    // texture.magFilter = THREE.LinearFilter;
+    // texture.minFilter = THREE.LinearFilter;
+    
+    // // Important: we must set repeat and wrap mode for proper UV mapping
+    // texture.wrapS = THREE.ClampToEdgeWrapping;
+    // texture.wrapT = THREE.ClampToEdgeWrapping;
+    // texture.repeat.set(1, 1);
+    
+    return new THREE.Texture(canvas);
 }

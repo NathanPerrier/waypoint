@@ -7,6 +7,8 @@ export function showOriginCube(app, locarInstance) {
     }
     
     if (app.DEBUG) {
+        locarInstance.scene.add(new THREE.AxesHelper(20));
+
         const originCube = new THREE.Mesh(
             new THREE.BoxGeometry(10, 10, 10), // 10-meter cube - extremely large
             new THREE.MeshBasicMaterial({ 

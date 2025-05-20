@@ -23,7 +23,7 @@ const initializeConfig = (app) => {
         app.COUNTRY = 'au';
         app.LANGUAGE = 'en';
         app.SESSION_TIMEOUT_HOURS = 12;
-        app.NAVIGATION_DISTANCE_BUFFER = 2.5; //5m
+        app.NAVIGATION_DISTANCE_BUFFER = 1; // 2.5m
         app.AR_SUGGESTION_RADIUS = 50; //500m
         app.ALTITUDE_SMOOTHING_FACTOR = 0.1 //0-1 
         app.LOOK_AHEAD_FACTOR = 0.125; //0-1

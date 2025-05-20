@@ -163,6 +163,7 @@ export async function createLiveRouteMap(app, container, interactive = true) {
     
     map.addControl(geolocateControl);
     map.on('load', () => {
+        map.resize();
         setTimeout(() => {
             geolocateControl.trigger(); 
         }, 100);

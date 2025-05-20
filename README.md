@@ -75,7 +75,13 @@ AR.JS
 
 Mapbox
 
+Exclusion of typical HTML elements (e.g. Section tag)
+--> because it is a web-based app typical html elements were excluded as they do not match 
+
 ## Design Choices
 
 No Nav
+
+
+
 
