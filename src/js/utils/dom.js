@@ -193,7 +193,8 @@ export function populateRouteInstructions(app, firstTwoStepscontainer, navigatio
     });
  
     navigationStepsContainer.innerHTML = ''; 
-    app.NAVIGATION_ROUTE_STEPS.forEach((step, index) => {
+    const lastFewSteps = app.NAVIGATION_ROUTE_STEPS.slice(2);
+    lastFewSteps.forEach((step, index) => {
         const stepElement = document.createElement("div");
         stepElement.classList.add("step-item"); 
         const iconClass = getInstructionIcon(step.instruction.instruction);

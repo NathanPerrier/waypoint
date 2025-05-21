@@ -14,8 +14,8 @@
                                     <div class="row h-100">
                                         <div id="navigation-content" data-sheet=".overview-sheet-swipe-to-step" class="col-10 sheet-open">
                                             <div class="row h-100">
-                                                <div class="col-3">    
-                                                    <i id="current-direction-arrow" class="fa-solid fa-arrow-up"></i>                              
+                                                <div class="col-3 justify-center text-align-center align-content-center">    
+                                                    <i id="current-direction-arrow" class="f7-icons text-primary bold m-auto">arrow_up</i>                              
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="row h-100">
@@ -104,7 +104,7 @@
                 locarInstance = await initializeLocAR(app, locarConatiner); 
                 if (locarInstance) { 
 
-                    runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), firstTwoStepscontainer, navigationStepsContainer, $f7);
+                    runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), firstTwoStepscontainer, navigationStepsContainer, $f7, $('#current-direction-arrow'));
 
                     updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name'), $('#navigation-info'));
                     populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer)      
@@ -116,7 +116,7 @@
                     return;
                 }      
                 app.liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"), false);
-                app.liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"));
+                app.liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"), false);
             } catch (error) {
                 console.error("Error during LocAR initialization or runLocarNav:", error);
                 app.dialog.alert("An error occurred while initializing LocAR. Please try again.", "Error", () => {

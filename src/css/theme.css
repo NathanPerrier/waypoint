@@ -92,7 +92,7 @@ h4 {
 }
 
 .bold {
-    font-weight: bolder;
+    font-weight: bolder !important;
 }
 
 @media screen and (max-width: 578px) {
