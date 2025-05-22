@@ -13,7 +13,8 @@ const initializeConfig = (app) => {
         app.FEEDBACK = true;
 
         app.BASE_URL = 'https://uqunion.info/';
-        app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
+        // app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
+        app.FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdjQ4WbMFqYxILz4BAbiY0EVlkti5qUGWeqYhBZKQ-PCyPSsw/viewform?usp=header';
 
         app.BASE_WEATHER_API_URL = 'https://api.open-meteo.com/v1/';
         app.WEATHER_PARAMETERS = `&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,wind_speed_10m&wind_speed_unit=ms`;
