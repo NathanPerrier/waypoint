@@ -12,6 +12,9 @@ let firstPosition = true;
 let lineMaterial = null;
 let time = 0;
 
+// Add a constant for the user position in AR space
+const USER_POSITION_Y = -0.5; // Height below eye level for visibility
+
 export function runLocarNav(app, locarInstance, destinationName, navigationInfo, firstTwoStepscontainer, navigationStepsContainer, directionArrow) {
 
     let lastCameraPosition = new THREE.Vector3(0, 0, 0);
@@ -23,6 +26,12 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
             lastCameraPosition = logCameraChange(app, locarInstance, lastCameraPosition);
         }
     }, 1000);
+
+    // Add a reference point object to represent user position
+    const userPositionMarker = new THREE.Object3D();
+    userPositionMarker.name = "userPositionMarker";
+    userPositionMarker.position.set(0, USER_POSITION_Y, 0);
+    locarInstance.scene.add(userPositionMarker);
 
     locarInstance.locar.on("gpsupdate", (pos, distMoved) => {
         app.USER_LOCATION = [pos.coords.longitude, pos.coords.latitude];
@@ -142,7 +151,7 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
             
             // Calculate distance to target using the vector
             const vectorDistance = directionVector.length();
-                  // Use either the vector distance if it's non-zero, or our calculated real-world distance
+            // Use either the vector distance if it's non-zero, or our calculated real-world distance
             let distance;
             try {
                 distance = (vectorDistance > 0.01) ? vectorDistance : fixedDistance;
@@ -169,7 +178,11 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                 side: THREE.DoubleSide, 
                 alphaTest: 0.01 
             });
-            const boxGeometry = new THREE.BoxGeometry(0.2, 0.1, distance); // Width, height, length
+            
+            // Create a box geometry with the origin at one end instead of in the middle
+            const boxGeometry = new THREE.BoxGeometry(0.2, 0.1, distance);
+            // Shift the geometry so its origin is at the start of the box instead of its center
+            boxGeometry.translate(0, 0, distance/2);
             
             const directionLine = new THREE.Mesh(
                 boxGeometry,
@@ -192,29 +205,25 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
             console.log('Bearing in degrees:', bearingDeg);
             
             try {
-                // Position the line - start at origin and extend halfway along the direction
-                const halfwayPoint = direction.clone().multiplyScalar(distance / 2);
-                
-                // Set position to halfway from origin along the direction vector
-                // Keep Y slightly below eye level for visibility
-                directionLine.position.set(halfwayPoint.x, -0.5, halfwayPoint.z);
+                // Position the line at the user position (origin in AR space)
+                directionLine.position.set(0, USER_POSITION_Y, 0);
                 
                 // Create rotation to align the box with our direction vector
                 const quaternion = new THREE.Quaternion().setFromUnitVectors(
-                    new THREE.Vector3(0, 0, 0), // Default forward direction of box
+                    new THREE.Vector3(0, 0, 1), // Default forward direction of box
                     direction // Our target direction
                 );
                 directionLine.quaternion.copy(quaternion);
             } catch (error) {
                 console.error("Error positioning direction line:", error);
                 // Fallback position and rotation if the calculations fail
-                directionLine.position.set(0, -0.5, distance / 2);
-                directionLine.lookAt(new THREE.Vector3(0, -0.5, distance));
+                directionLine.position.set(0, USER_POSITION_Y, 0);
+                directionLine.lookAt(new THREE.Vector3(0, USER_POSITION_Y, distance));
             }
 
             directionLine.name = "userDirectionLine";
             locarInstance.scene.add(directionLine);
-            userLine = directionLine;  //! use this to remove from locarInstance.scene on new route (still needed?)
+            userLine = directionLine;  
         
             const existingEndMarker = locarInstance.scene.getObjectByName("endMarker");
             if (existingEndMarker) {
@@ -234,11 +243,11 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
 
                 try {
                     const endPoint = direction.clone().multiplyScalar(distance);
-                    endMarker.position.set(endPoint.x, -0.5, endPoint.z);
+                    endMarker.position.set(endPoint.x, USER_POSITION_Y, endPoint.z);
                 } catch (error) {
                     console.error("Error positioning end marker:", error);
                     // Fallback position if vector calculation fails
-                    endMarker.position.set(0, -0.5, distance);
+                    endMarker.position.set(0, USER_POSITION_Y, distance);
                 }
                 locarInstance.scene.add(endMarker);
             }
@@ -266,14 +275,16 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                 side: THREE.DoubleSide // Visible from both sides
             });
 
-            const fallbackGeometry = new THREE.BoxGeometry(0.2, 0.1, 2); // Default 2m line
+            const fallbackGeometry = new THREE.BoxGeometry(0.2, 0.1, defaultFallbackLength);
+            // Shift the geometry so its origin is at the start of the box instead of its center
+            fallbackGeometry.translate(0, 0, defaultFallbackLength/2);
             
             const directionLine = new THREE.Mesh(
                 fallbackGeometry,
                 lineMaterial
             );
             
-            directionLine.position.set(0, -0.5, 1);            
+            directionLine.position.set(0, USER_POSITION_Y, 0);            
             directionLine.name = "fallbackDirectionLine";
             locarInstance.scene.add(directionLine);
             userLine = directionLine;
@@ -292,10 +303,9 @@ export function runLocarNav(app, locarInstance, destinationName, navigationInfo,
                     })
                 );
                 endMarker.name = "endMarker";
-                endMarker.position.set(0, -0.5, 2);
+                endMarker.position.set(0, USER_POSITION_Y, defaultFallbackLength);
                 locarInstance.scene.add(endMarker);
             }
-            
         }   
         
         // firstPosition, compassLines, userLine = showCompassLines(app, firstPosition, locarInstance, pos, compassLines, userLine);
