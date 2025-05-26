@@ -29,16 +29,14 @@ window.$ = jQuery;
 (async () => {
   // Initialize Framework7 app
   var app = new Framework7({
-      name: 'Waypoint', // App name
-      theme: 'md', // auto
+      name: 'Waypoint', 
+      theme: 'md', 
       colors: {
           primary: '#782cf6',
       },
       darkMode: false,
-      el: '#app', // App root element
-      component: App, // App main component
-
-      // App routes
+      el: '#app',
+      component: App, 
       routes: routes,
       
   });

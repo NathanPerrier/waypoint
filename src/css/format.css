@@ -1,3 +1,9 @@
+/*
+    * Format CSS
+    * This file contains utility classes for layout, spacing, and alignment.
+    * It is designed to be used in conjunction with other CSS files.
+*/  
+
 .col {
     display: flex;
     flex-direction: column;

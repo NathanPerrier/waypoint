@@ -1,30 +1,41 @@
 <template>
+    <!-- Main page container for desktop route planning -->
     <div class="page" data-name="routeDesktopPage">
         <div class="page-content">
 
+            <!-- Back button to navigate to the home view -->
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
+            <!-- Map container for desktop route planning -->
             <div id="mapDesktopRoute" class="h-100 w-100"></div>
+            <!-- Route input section with search and settings -->
             <div id="route-input">
                 <div class="tabs-animated-wrap">
                     <div class="tabs">
+                        <!-- Main tab for search input and results -->
                         <div id="tab1" class="tab tab-active">
+                            <!-- Container for displaying search results -->
                             <div id="search-results-list-route">
 
                             </div>
+                            <!-- Navigation bar for search input and settings button -->
                             <div class="nav">
                                 <div class="row h-100">
+                                    <!-- Search input and search button -->
                                     <div class="col-10">
                                         <div class="row h-100">
+                                            <!-- Search input field -->
                                             <div class="col-9 p-0">    
                                                 <input id="search-input-route" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
                                             </div>
+                                            <!-- Search button -->
                                             <div class="col-3">
                                                 <a id="search-button-route" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
                                             </div> 
                                         </div>  
                                     </div>
+                                    <!-- Settings button -->
                                     <div class="col-2 ml-2">
                                         <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
                                     </div>
@@ -36,11 +47,13 @@
                 
             </div>
 
+            <!-- Actions modal for settings (transportation mode and map) -->
             <div class="actions-modal settings-actions bg-white" id="settings-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
                     <h1 class="text-align-center mb-2">Settings</h1>
                     <ul>
                         <li>
+                            <!-- Segmented control for selecting transportation mode -->
                             <p class="segmented segmented-raised segmented-round mx-5">
                                 <a class="button button-round" data-value="walking">Walking</a>
                                 <a class="button button-round" data-value="cycling">Biking</button>
@@ -48,26 +61,31 @@
                             </p>
                         </li>
                         <li>
+                            <!-- Container for the settings map -->
                             <div class="settings-map-div m-4">
                                 <div id="settings-map"></div>
                             </div>
                         </li>
                       
                     </ul>
+                    <!-- Done button to close the settings modal -->
                     <div class="d-flex justify-content-center h-100  mx-4 align-items-center">
                         <a id="settings-submit" data-actions=".settings-actions" class="actions-close button button-fill h-100 w-100 r-2 button-raised">Done</a>
                     </div>
                 </form>
             </div>
 
+            <!-- Actions modal for confirming the selected route -->
             <div class="actions-modal confirm-route-actions-desktop bg-white" id="confirm-route-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data mx-4" id="confirm-route-form">
                     <h1 class="text-align-center mb-2">Confirm Your Route</h1>
                     <ul>
                         <li>
+                            <!-- Container for the route confirmation map -->
                             <div class="confirm-route-map-div">
                                 <div id="confirm-route-map-desktop"></div>
                             </div>
+                            <!-- Overview of the route information (destination, distance, time, mode) -->
                             <div id="route-info-overview">
                                 <div class="row">
                                     <h3 class="text-left text-black">Navigate To <span id="destination_name_desktop"></span>?</h3>
@@ -88,10 +106,12 @@
                         </li>
                     </ul>
                     <div class="row h-100">
+                        <!-- Confirm route button -->
                         <div class="col-9">
                             <a id="confirm-route-button-route" class="button button-fill r-2 button-raised">Confirm</a>
 
                         </div>
+                        <!-- Close button for the confirm route modal -->
                         <div class="col-3 ml-2">
                             <a id="close-button" class="actions-close button button-outline r-2 button-raised"><i class="fa fa-arrow-left"></i></a>
                         </div>
@@ -103,24 +123,32 @@
 
 </template>
 <script>    
+// Import utility functions and plugins
 import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
 import { waitForElement, handleSearchClick, handleRedirect, isWithinBounds } from "../js/utils/dom.js";
 import { initSettingsMap } from "../js/plugins/maps/settingsSearchMap.js";
 
+// Component export
 export default async (props, { $, $on, $f7 }) => {
 
+    // Initialize component variables
     const app = window.app;
 
+    // Define bound event handlers for confirm route and search click
     const boundConfirmRouteHandler = () => handleRedirect('#view-navigation-desktop', '/navigationDesktop/', $f7);
     const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input-route').value, 'confirm-route-map-desktop', 'time-desktop', 'distance-desktop', 'mode-desktop', 'destination_name_desktop', '.confirm-route-actions-desktop');
    
+    // Event listener for when the tab is shown
     $on('page:tabshow', async () => {
 
+        // Set Mapbox access token
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
+        // Wait for map container elements
         const mapContainer = await waitForElement('mapDesktopRoute')
         const settingsMapContainer = await waitForElement('settings-map')
 
+        // Check if user location is within bounds, otherwise reset to default
         if (!isWithinBounds(app, {
             lat: app.USER_LOCATION[1],
             lng: app.USER_LOCATION[0],
@@ -132,6 +160,7 @@ export default async (props, { $, $on, $f7 }) => {
             };
         } 
 
+        // Initialize the main map for route planning
         const map = new mapboxgl.Map({
             container: mapContainer, 
             zoom: 20,
@@ -143,13 +172,16 @@ export default async (props, { $, $on, $f7 }) => {
             maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
         });
 
+        // Initialize the settings map
         const settingsMapItems = await initSettingsMap(settingsMapContainer);
         const settingsMap = settingsMapItems.map;
         const settingsMapMarker = settingsMapItems.marker;
 
+        // Resize maps to ensure proper rendering
         map.resize();
         settingsMap.resize();
 
+        // Event listener for main map movement to update user location
         map.on('move', () => {
             const center = map.getCenter();
             app.USER_LOCATION = [center.lng, center.lat];
@@ -163,14 +195,18 @@ export default async (props, { $, $on, $f7 }) => {
 
     });
 
+    // Event listener for page initialization
     $on('pageInit', async () => {
+        // Get search input and results elements
         var searchInput = document.getElementById('search-input-route');
         var searchResults = document.getElementById('search-results-list-route');
 
+        // Add event listener for search input to trigger autocomplete
         searchInput.addEventListener('input', async function() {
             autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
         });
 
+        // Set active transportation mode button based on app state
         var modeButtons = document.querySelectorAll('.segmented .button');
         modeButtons.forEach(function(button) {
             if (button.getAttribute('data-value') === app.TRANSPORTATION_MODE) {
@@ -180,8 +216,10 @@ export default async (props, { $, $on, $f7 }) => {
             }
         });
 
+        // Add event listeners for transportation mode buttons
         modeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
+                // Update active button and app state for transportation mode
                 modeButtons.forEach(function(btn) {
                     btn.classList.remove('button-active');
                 });
@@ -193,11 +231,13 @@ export default async (props, { $, $on, $f7 }) => {
             });            
         });
 
+        // Get search and confirm route buttons
         var searchButton = document.getElementById('search-button-route');
         var confirmRouteButton = document.getElementById('confirm-route-button-route');
 
 
 
+        // Add event listeners for confirm route and search buttons
         // --- Add listeners using the bound references ---
         if (confirmRouteButton) {
             // Remove listener first to prevent duplicates if pageInit runs again unexpectedly
@@ -211,9 +251,11 @@ export default async (props, { $, $on, $f7 }) => {
         }
     });
 
-    // Add cleanup logic
+    // Event listener for before page transitions out (cleanup logic)
     $on('pageBeforeOut', () => {
-        const mapContainer = document.getElementById('mapDesktopRoute'); // Get container reference
+        // Get map container reference
+        const mapContainer = document.getElementById('mapDesktopRoute'); 
+        // Remove main map instance and clear container
         if (map) {
             map.remove();
             map = null;
@@ -226,15 +268,19 @@ export default async (props, { $, $on, $f7 }) => {
         }
     });
 
+    // Event listener for when the tab is hidden
     $on('page:tabhide', () => {
+        // Close confirm route actions modal
         $f7.actions.close('.confirm-route-actions-desktop');
         
+        // Clean up event listeners for settings modal
         const settingsModal = $f7.actions.get('.settings-actions');
         if (settingsModal) {
             settingsModal.off('actionsOpened');
             settingsModal.off('actionsClose');
             settingsModal.off('actionsClosed');
         }
+        // Remove settings map instance if it exists
         const mapContainer = document.getElementById('settings-map');
 
         if (mapContainer._mapInstance) {
@@ -242,6 +288,7 @@ export default async (props, { $, $on, $f7 }) => {
             container._mapInstance = null;
         }
 
+        // Remove confirm route map instance if it exists
         const confirmMapContainer = document.getElementById('confirm-route-map-desktop');
 
         if (confirmMapContainer._mapInstance) {
@@ -251,6 +298,7 @@ export default async (props, { $, $on, $f7 }) => {
 
     });
 
+    // Return the render function
     return $render;
 }
 </script>

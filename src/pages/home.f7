@@ -1,23 +1,32 @@
 <template>
+  <!-- Page container with white background and name "home" -->
   <div class="page bg-white" data-name="home">
+    <!-- Link to the route view, styled as a go-back button with Waypoint logo -->
     <a href="#view-route" id="go-back" class="tab-link tab-link-active bg-primary overflow-hidden">         
       <img id="waypoint-logo" src="/logos/650x650Logo.png" alt="Waypoint" style="width: 27.5px; height: 27.5px;"/>     
     </a>
+    <!-- Main content area of the page, allowing horizontal overflow to be hidden -->
     <div class="page-content overflow-x-hidden">
+      <!-- Row for the hero section -->
       <div class="row w-100 d-flex p-0 m-0">
+        <!-- Column for hero text content -->
         <div class="col-5 h-100 justify-center align-center align-content-center" id="hero-section">
               <h1 class="hero-header">Welcome to Waypoint!</h1>
               <p class="hero-sub-header">Your Campus Companion</p>
               <p class="hero-text">Waypoint is a webapp brought to you by UQUnion that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging all that UQU has to offer we provide students with their very own campus companion.</p>
               <a style="width:200px; display: block;" id="hero-button" href="#view-route" class="tab-link tab-link-active button hero-button r-2 button-large button-fill button-raised">Get Started</a>
         </div>
+        <!-- Column for hero image -->
         <div class="col-7 h-100 text-center justify-center align-center align-content-center" id="hero-image">
               <img class="h-100 w-100" src="/images/hero-image.png" alt="Waypoint"/>
         </div>  
       </div>
       
+      <!-- Swiper component for image carousel -->
       <div class="swiper custom-swiper">
+        <!-- Wrapper for swiper slides -->
         <div class="swiper-wrapper">
+          <!-- First swiper slide with background image and overlay content -->
           <div class="swiper-slide slide-card" style="background-image: url('/images/modwest.jpg');">
             <div class="slide-overlay">
               <p class="slide-label">Navigate To?</p>
@@ -25,6 +34,7 @@
               <button class="go-button">Go!</button>
             </div>
           </div>
+          <!-- Second swiper slide -->
           <div class="swiper-slide slide-card" style="background-image: url('/images/forgan.jpg');">
             <div class="slide-overlay">
               <p class="slide-label">Navigate To?</p>
@@ -32,6 +42,7 @@
               <button class="go-button">Go!</button>
             </div>
           </div>
+          <!-- Third swiper slide -->
           <div class="swiper-slide slide-card" style="background-image: url('/images/gci.jpg');">
             <div class="slide-overlay">
               <p class="slide-label">Navigate To?</p>
@@ -39,6 +50,7 @@
               <button class="go-button">Go!</button>
             </div>
           </div>
+          <!-- Fourth swiper slide -->
           <div class="swiper-slide slide-card" style="background-image: url('/images/engirneering.jpg');">
             <div class="slide-overlay">
               <p class="slide-label">Navigate To?</p>
@@ -48,29 +60,40 @@
           </div>
         </div>
       </div>
+      <!-- Row for wave SVG images -->
       <div class="row">
+        <!-- Container for wave images -->
         <div class="wave-container">
             <img class="wave wave-1" src="/images/wave-haikei-1.svg" alt="wave-1"/>
             <img class="wave wave-2" src="/images/wave-haikei-2.svg" alt="wave-2"/>
             <img class="wave wave-3" src="/images/wave-haikei-3.svg" alt="wave-3"/>
         </div>
       </div>
+      <!-- Row with primary background and text color, for guided tour description -->
       <div class="row h-100 bg-primary text-on-primary">
+        <!-- Column for navigation description text and image -->
         <div class="col-7 m-16" id="nav-desc">
           <h1 class="hero-header text-on-primary">A Guided Tour In Your Pocket!</h1>
           <p class="hero-text text-on-primary mt-5">Through integrating with UQU and UQ data, we can deliver personalised recommendations for events, locations, and promotions based on each user's profile, interests, and behaviour. 
            By leveraging real-time access to UQ's scheduling systems, campus maps, and faculty-specific activities, as well as UQU’s clubs, events, and vendor deals.</p>
           <img class="w-100" id="waypoint-places" src="/images/group.png" alt="Waypoint Places"/>
         </div>
+        <!-- Column for navigation demo image -->
         <div class="col-5 m-16" id="nav-demo">
           <img class="h-100" src="/images/nav-demo.png" alt="Nav Demo"/>
         </div>
       </div>
+      <!-- Row for map content overview -->
       <div class="row h-100">
+        <!-- Container for map content overview with background image -->
         <div id="map-content-overview">
+          <!-- Inner row for founder section layout -->
           <div class="row h-100 founder-row">
+            <!-- Empty column for layout spacing -->
             <div class="col-6 h-100" id="nav-demo-empty-col"></div>
+            <!-- Column for map overview content -->
             <div class="col-6 h-100 justify-center align-center align-content-center" id="map-overview-content-container-col">
+              <!-- Container for map overview text and button -->
               <div id="map-overview-content-container">
                 <h1 class="hero-header">Campus Map</h1>
                 <p class="mt-5">Waypoint is a webapp brought to you by UQUnion that utilizes revolutionary AR capabilities to provide users with an intuitive and simple navigation experience. By leveraging all that UQU has to offer we provide students with their very own campus companion.</p>
@@ -80,11 +103,15 @@
           </div>
         </div>
       </div>  
+      <!-- Row for desktop demo section -->
       <div class="row" id="desktop-demo">
+        <!-- Column for desktop map image -->
         <div class="col-4-5">
           <img class="w-100 h-100" src="/images/desktop-map.png" alt="Desktop Demo"/>         
         </div>
+        <!-- Column for desktop demo text content -->
         <div class="col-7-5 justify-center align-center align-content-center">
+          <!-- Inner container for text and button -->
           <div class="m-16 justify-center align-center align-content-center">
             <h1 class=" hero-header">Don't Have A Phone?<br/><span class="text-primary">No Problem!</span></h1>
             <p class="my-8">Our AR navigation also extends to your desktop through integrating with <strong>MapBox™</strong> and three.js to virtually guide you through a 3D campus.  
@@ -94,16 +121,22 @@
           </div>
         </div>
       </div> 
+      <!-- Row for UQU demo section -->
       <div class="row" id="uqu-demo">
+        <!-- Column for UQU demo text content -->
         <div class="col-6 uqu-demo-col justify-center align-center align-content-center">
+          <!-- Inner container for text and button -->
           <div class="m-16 justify-center align-center align-content-center">
             <h1 class="hero-header">Your Campus Companion!</h1>
             <p class="my-8">Through partnering with UQU we are able to present an experience like no other — a unique blend of technology and campus culture that brings events to life through augmented reality. From discovering upcoming festivals as you walk through the Great Court, to unlocking exclusive offers and interactive previews, our collaboration transforms student engagement into a seamless, immersive experience that feels both natural and exciting.</p>
             <a id="desktop-button" target="_blank" href="https://uqu.com.au/" class="button hero-button r-2 col-6 button-large button-fill button-raised">Learn More</a>
           </div>
         </div>
+        <!-- Column for UQU demo blob images and SVG clip paths -->
         <div class="col-6 col-blobs justify-center align-center align-content-center">
+          <!-- Container for blob elements -->
           <div class="blobs m-16">
+            <!-- SVG definitions for clip paths (hidden) -->
             <svg viewBox="0 0 398.6 435.4" width="0" height="0">
               <clipPath id="blob-bg" clipPathUnits="objectBoundingBox" transform="scale(0.002508, 0.002296)">
                 <path class="st0" d="M332.3,48.8c32.6,18.1,58.5,49.4,64.7,83.7c6.3,34.3-7.1,71.5-15.8,107.1c-8.6,35.7-12.6,69.7-26,108.4
@@ -111,8 +144,11 @@
                 c-6.2-46.8-16.4-92.6-8-138c8.3-45.3,35.3-90,74.7-105s91.3-0.3,136.9,9.6C260.4,25.8,299.7,30.6,332.3,48.8z"/>
               </clipPath>
             </svg>
+            <!-- Background blob element -->
             <div class="blob-bg"></div>
+            <!-- Clipped image within a blob shape -->
             <img class="clip-blob" src="/images/ar-ad.png" alt="UQU Ad Demo"/>
+            <!-- SVG definitions for another clip path (hidden) -->
             <svg viewBox="0 0 390.3 414.4" width="0" height="0">
               <clipPath id="blob" clipPathUnits="objectBoundingBox" transform="scale(0.002562, 0.002413)">
                 <path class="st0" d="M276.8,56.9c23.5,25.9,33.9,61.3,53.7,95.3c19.8,33.9,49,66.4,57.3,104.6c8.2,38.2-4.5,82.3-35.2,102.2
@@ -123,12 +159,17 @@
           </div>
         </div>
       </div>
+      <!-- Row for founder section -->
       <div class="row" id="founder">
+        <!-- Background blob image for founder section -->
         <img class="founder-blob-bg" src="/images/blob-background.svg"/>
+        <!-- Column for founder image -->
         <div class="col-5 founder-img-col justify-center align-center align-content-center">
           <img class="w-100" src="/images/founder.png" alt="Founder"/>
         </div>
+        <!-- Column for founder text content -->
         <div class="col-7 founder-col justify-center align-center align-content-center">
+          <!-- Inner container for text and button -->
           <div class="m-16 justify-center align-center align-content-center">
             <h3 class="hero-sub-header">Founder</h3>
             <h1 class="hero-header invert-text hero-inverted">Nathan Perrier</h1>
@@ -137,6 +178,7 @@
           </div>
         </div> 
       </div> 
+      <!-- Commented out timeline section -->
       <!--<div class="row bg-primary" id="timeline">
         <div class="col-6 timeline-col justify-center align-center align-content-center">
           <div class="m-16 justify-center align-center align-content-center">
@@ -186,8 +228,7 @@
   
 </template>
 <script>
-
-
+// Script for the home page
 export default (props, { $, $on, $f7 }) => {
   const app = window.app;
 
@@ -203,6 +244,7 @@ export default (props, { $, $on, $f7 }) => {
       });
     }
       
+    // Initialize the swiper component for the image carousel
     var swiper = app.swiper.create('.swiper', {
       speed: 200,
       spaceBetween: -200,
@@ -215,6 +257,7 @@ export default (props, { $, $on, $f7 }) => {
   });
 
   $on('page:tabshow', () => {
+    // Check if the webcam is enabled, if not, show an alert and disable AR
     if (app.WEBCAM_ENABLED === false) {
       app.dialog.alert("Webcam is not enabled. Please enable it in the settings.", "Error");
       app.AR = false;

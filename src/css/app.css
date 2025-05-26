@@ -1,33 +1,43 @@
+/*
+ * App CSS
+ *
+ * This file contains the main styles for the application.
+ * It includes styles for the navigation, map, and various UI components.
+*/
+
 .tabs-animated-wrap {
+    /* Ensures the wrapper for animated tabs takes up full height. */
     height: 100%;
 }
 
-#locarjs, #NavLocarjs { /* Apply styles to both possible IDs */
+#locarjs, #NavLocarjs { 
+    /* Styles for locarjs and NavLocarjs elements, ensuring they fit and cover the viewport. */
     object-fit: cover !important;
-    flex-grow: 1; /* If the parent is a flex container */
-    height: 100vh; /* Or adjust as needed based on parent layout */
+    flex-grow: 1; 
+    height: 100vh; 
     width: 100vw;
-    overflow: hidden !important; /* Ensure canvas doesn't overflow */
+    overflow: hidden !important; 
 }
 
-/* Ensure the parent container allows the LocAR view to grow */
 .page-content {
+    /* Defines the flex layout and height for page content. */
     display: flex;
     flex-direction: column;
-    height: 100%; /* Make sure page-content has height */
+    height: 100%; 
 }
 
-
-
 #navbar .tab-link:first-child {
+    /* Rounds the top-left and bottom-left corners of the first tab link in the navbar. */
     border-radius: 2rem 0rem 0rem 2rem;
 }
 
 #navbar .tab-link:nth-child(2) {
+    /* Rounds the top-right and bottom-right corners of the second tab link in the navbar. */
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
 #nav-directions-overview-desktop {
+    /* Styles for the desktop navigation directions overview panel. */
     position: fixed;
     top: 0;
     right: 0;
@@ -39,6 +49,7 @@
 }
 
 #nav-directions-overview-desktop .content {
+    /* Styles for the content area within the desktop navigation directions overview. */
     border-radius: 2rem;
     margin: 1rem 1rem 0rem 1rem;
     display: grid; 
@@ -50,6 +61,7 @@
 }
 
 #nav-directions-overview-desktop .content #nav-directions-overview-map-desktop {
+    /* Styles for the map within the desktop navigation directions overview. */
     width: 100%;
     max-height: 200px;
     z-index: 98 !important;
@@ -57,6 +69,7 @@
 }
 
 #nav-directions-overview-map-desktop canvas {
+    /* Styles for the canvas element within the desktop navigation overview map. */
     grid-row: 1 / 2; 
     grid-column: 1 / 2; 
     height: 100%; 
@@ -69,6 +82,7 @@
 }
 
 #nav-directions-overview-desktop .content #nav-directions-overview-content-desktop {
+    /* Styles for the content area of the desktop navigation directions overview. */
     height: 100% !important;
     width: 100% !important;
     max-width: calc(100% - 2rem);
@@ -83,6 +97,7 @@
 }
 
 #nav-directions-overview-content-desktop .list {
+    /* Styles for the list within the desktop navigation directions overview content. */
     overflow-y: scroll;
     max-height: 225px;
     width: 100%;
@@ -90,10 +105,12 @@
 }
 
 #nav-directions-overview-content-desktop .list .step-item {
+    /* Styles for individual step items in the desktop navigation list. */
     width: 100%;
 }
 
 #route-input, #nav-overview {
+    /* Styles for the route input and navigation overview elements. */
     position: fixed;
     bottom: 0;
     left: 0;
@@ -102,39 +119,42 @@
     flex-shrink: 0; 
 }
 
-#navbar, #route-input:not(#navigation-overview #route-input) { /* Exclude route-input inside navigation-overview from default fixed positioning */
+#navbar, #route-input:not(#navigation-overview #route-input) { 
+    /* Styles for the navbar and route input (excluding when inside navigation overview). */
     margin: 0rem 1rem 2rem 1rem;
     border-radius: 2rem;
     width: calc(100% - 2rem);
     filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
     position: fixed;
     bottom: 0;
-    left: 0; /* Centering might need adjustment if left is not 0 */
+    left: 0; 
     z-index: 100;
     background-color: var(--background-color);
     flex-shrink: 0; 
 }
 
 #navigation-overview {
-    display: grid; /* Use Grid layout */
-    grid-template-columns: 1fr; /* Single column */
-    grid-template-rows: auto auto; /* Row for input content, Row for map (20vh height) */
+    /* Styles for the main navigation overview container. */
+    display: grid; 
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto; 
     position: fixed;
     bottom: 0;
     left: 0; 
-    width: calc(100vw - 2rem); /* Full viewport width */
+    width: calc(100vw - 2rem); 
     margin: 0rem 1rem 2rem 1rem;
-    z-index: 98; /* Ensure it's above other content but potentially below modals */
-    /* Remove fixed height, background, border-radius, filter from the container */
+    z-index: 98; 
 }
 
 #navigation-overview-map-container {
+    /* Styles for the container of the navigation overview map. */
     height: 15vh !important;
     overflow: hidden !important;
     width: 100%;
 }
 
 #navigation-overview #navigation-overview-map, #navigation-overview-map canvas {
+    /* Styles for the map and its canvas within the navigation overview. */
     grid-row: 1 / 2; /* Place in the first row */
     grid-column: 1 / 2; /* Place in the first column */
     height: 100%; /* Fill the grid row height (20vh) */
@@ -148,6 +168,7 @@
 
 /* Styles for #route-input specifically when inside #navigation-overview */
 #navigation-overview #route-input, #navigation-overview #nav-overview {
+    /* Styles for route input and nav overview when they are inside the navigation overview. */
     grid-row: 2 / 3; /* Place in the second row */
     grid-column: 1 / 2; /* Place in the first column */
     z-index: 100; /* Ensure it's on top */
@@ -167,11 +188,13 @@
 }
 
 #nav-overview {
+    /* Makes the background of the nav overview transparent. */
     background-color: transparent !important; /* Make background transparent */
 }
 
 
 #route-input .nav, .desktop-navigation-overview-content {
+    /* Styles for navigation elements within route input and desktop navigation overview. */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -182,6 +205,7 @@
 }
 
 #route-input .nav #search-input, #search-input-route {
+    /* Styles for search input fields. */
     width: 100%;
     height: 100%;
     border: .1rem solid var(--primary-color);
@@ -191,10 +215,12 @@
 }
 
 #search-button, #search-button-route {
+    /* Styles for search buttons. */
     border-radius: 0rem 2rem 2rem 0rem;
 }
 
 #settings-button, #close-button {
+    /* Styles for settings and close buttons. */
     border-radius: 2rem;
     background: var(--background-color);
     font-weight: bold;
@@ -203,6 +229,7 @@
 
 
 #go-back {
+    /* Styles for the go back button. */
     position: absolute;
     top: -1rem;
     left: -1rem;
@@ -218,12 +245,14 @@
 
 
 #search-results-list, #search-results-list-route {
+    /* Removes default padding and margin from search result lists. */
     padding: 0;
     margin: 0;
 }
 
 
 #search-results-list li, #search-results-list-route li {
+    /* Styles for list items in search results. */
     padding: 0.5rem;
     border-radius: 2rem;
     background: var(--background-color);
@@ -236,10 +265,12 @@
 }
 
 .confirm-route-map-div, .settings-map-div {
+    /* Sets the height for map divs used in route confirmation and settings. */
     height: 20vh !important;
 }
 
 #settings-map {
+    /* Styles for the settings map. */
     height: 100%;
     width: 100%;
     border-radius: 2rem;
@@ -247,12 +278,14 @@
 }
 
 #confirm-route-map, #confirm-route-map-desktop {
+    /* Styles for the confirm route map, for both mobile and desktop. */
     height: 100%;
     width: 100%;
     border-radius: 2rem 2rem 0rem 0rem;
 }
 
 #route-info-overview {
+    /* Styles for the route information overview section. */
     filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
     border-radius: 0rem 0rem 2rem 2rem;
     background-color: var(--background-color);
@@ -262,6 +295,7 @@
 }
 
 #route-info-overview .col-3 {
+    /* Styles for 3-column layouts within the route info overview. */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -275,6 +309,7 @@
 }
 
 .blobs {
+    /* Styles for a container with blob shapes. */
     position: relative; /* Ensure .col-3 is the positioning context for its children */
     height: calc(70vh - 8rem);
     width: calc(100% - 8rem);
@@ -282,6 +317,7 @@
 }
 
 .blob-bg {
+    /* Styles for the background blob shape. */
     z-index: -2 !important; /* Ensure it is below .clip-blob */
     color: var(--primary-color);
     background-color: var(--primary-color); 
@@ -294,6 +330,7 @@
 }
 
 .clip-blob {
+    /* Styles for the foreground blob shape, clipped to a path. */
     z-index: 1; /* Ensure it is above .blob-bg */
     height: 90%; /* Full parent height */
     max-width: 100%;
@@ -303,10 +340,12 @@
 }
 
 .mapboxgl-ctrl-top-right {
+    /* Hides the default Mapbox GL top-right controls. */
     display: none !important;
 }
 
 .mapboxgl-canvas, .mapboxgl-canvas-container {
+    /* Ensures Mapbox GL canvas and its container fill their parent and content fits. */
     height: 100% !important;
     width: 100% !important;
     object-fit: cover;
@@ -314,6 +353,7 @@
 }
 
 #current-direction-arrow, #current-direction-arrow-desktop {
+    /* Styles for the current direction arrow icon. */
     color: var(--primary-color);
     font-size: 2rem;
     display: flex;
@@ -323,12 +363,14 @@
 }
 
 #navigation-content, #navigation-content .row, .desktop-navigation-overview-content {
+    /* Flexbox centering for navigation content elements. */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #destination-name, #destination-name-desktop {
+    /* Styles for the destination name text. */
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-color);
@@ -337,6 +379,7 @@
 }
 
 #navigation-info, #navigation-info-desktop {
+    /* Styles for navigation information text. */
     font-size: .75rem;
     color: var(--sub-text-color);
     margin: 0;
@@ -344,11 +387,13 @@
 }
 
 .desktop-navigation-overview-content {
+    /* Styles for the content area of the desktop navigation overview. */
     border-radius: 2rem;
     background-color: var(--background-color);
 }
 
 #app-preloader {
+  /* Styles for the application preloader screen. */
   position: fixed;
   left: 0;
   top: 0;
@@ -363,6 +408,7 @@
 
 /* Optional: Style the Framework7 preloader itself if needed */
 #app-preloader .preloader {
+    /* Styles for the preloader animation/icon. */
     width: 5rem;
     height: 5rem; 
     background-image: url('/icons/256x256.png');
@@ -373,6 +419,7 @@
 }
 
 #qr-navigation {
+    /* Styles for the QR code navigation element. */
     border-radius: 2rem;
     background-color: #782cf6 !important;
     background-image: url('/icons/256x256.png');
@@ -382,11 +429,13 @@
 }
 
 #hero-section {
+    /* Styles for the hero section, aligning text to the left. */
     text-align: left;
     margin-left: 4rem;
 }
 
 .hero-header {
+    /* Styles for the main hero header text. */
     font-size: 4rem;
     font-weight: 800;
     margin: 0;
@@ -395,6 +444,7 @@
 }
 
 .hero-sub-header {
+    /* Styles for the hero sub-header text. */
     font-size: 1.2rem;
     margin-top: -.5rem;
     font-weight: 600;
@@ -403,10 +453,12 @@
 }
 
 .hero-text {
+    /* Initially hides the hero text. */
     display: none;
 }
 
 .custom-swiper {
+    /* Styles for a custom swiper/slider. */
     width: 50%;
     overflow: visible;
     z-index: 1;
@@ -414,6 +466,7 @@
   }
   
   .swiper-slide.slide-card {
+    /* Styles for individual slides within the swiper. */
     height: 350px;
     border-radius: 2rem;
     background-size: cover;
@@ -428,24 +481,29 @@
 
   
   .swiper-slide-active {
+    /* Ensures the active slide is on top. */
     z-index: 10;
   }
 
   .swiper-slide {
+    /* Makes non-active slides initially transparent. */
     opacity: 0 !important;
   }
 
   .swiper-slide-next, .swiper-slide-prev, .swiper-slide-active {
+    /* Makes active, next, and previous slides visible. */
     opacity: 1 !important;
   }
     
   .swiper-slide:not(.swiper-slide-active) {
+    /* Styles for non-active slides, scaling them down and reducing opacity. */
     transform: scale(0.7);
     opacity: 0.85;
     box-shadow: none;
   }
 
   .slide-overlay {
+    /* Styles for an overlay on swiper slides, creating a gradient effect. */
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
     width: 100%;
     padding: 2rem;
@@ -454,23 +512,27 @@
   }
 
   .swiper-slide:not(.swiper-slide-active) .slide-overlay {
+    /* Styles for the overlay on non-active slides. */
     background: rgba(0, 0, 0, 0.3);
     height: 100vh;
   }
   
   .slide-label {
+    /* Styles for labels on swiper slides. */
     margin: 0;
     font-size: 0.9rem;
     opacity: 0.9;
   }
   
   .slide-title {
+    /* Styles for titles on swiper slides. */
     margin: 0.2rem 0 0.5rem;
     font-size: 1.3rem;
     color: #caa9ff;
   }
 
   .wave-container {
+    /* Styles for a container holding wave SVG elements. */
     position: relative;
     width: 100%;
     height: 140px;
@@ -479,10 +541,12 @@
   }
 
   .swiper {
-    z-index: 0; /* Ensure swiper is below waves */
+    /* Sets the z-index for the swiper container. */
+    z-index: 0; 
   }
 
   .wave {
+    /* Positions wave SVG elements at the bottom of their container. */
     position: absolute;
     width: 100%;
     left: 0;
@@ -490,18 +554,22 @@
   }
 
   .wave-1 {
+    /* Z-index for the first wave layer. */
     z-index: -3;
   }
 
   .wave-2 {
+    /* Z-index for the second wave layer. */
     z-index: -2;
   }
 
   .wave-3 {
+    /* Z-index for the third wave layer. */
     z-index: -1;
   }
   
   .go-button {
+    /* Styles for a "Go" button. */
     background-color: #caa9ff;
     border: none;
     border-radius: 20px;
@@ -515,6 +583,7 @@
   }
 
   #map-content-overview {
+    /* Styles for the map content overview section, including a background image. */
     width: 100% !important;
     min-height: 70vh; 
     height: 100%;
@@ -525,6 +594,7 @@
   }
 
   #map-overview-content-container {
+    /* Styles for the content container within the map overview. */
     justify-content: center;
     align-items: center;
     max-height: calc(100% - 16rem);
@@ -539,38 +609,46 @@
   }
 
   .col-7-5 {
+    /* Defines a column width, likely part of a grid system. */
     width: 66.15%
   }
 
   .col-4-5 {
+    /* Defines another column width. */
     width: 33.85%
   }
 
   #gif-demo {
+    /* Ensures the GIF demo takes full height. */
     height: 100%
   }
 
   #gif-demo img {
+    /* Styles for the image within the GIF demo, ensuring it covers the area. */
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
   #uqu-demo {
+    /* Ensures the UQU demo takes full height. */
     height: 100%
   }
 
   #uqu-demo .col-6 {
+    /* Ensures columns within the UQU demo take full height. */
     height: 100%
   }
 
   #founder {
+    /* Styles for the founder section. */
     height: 100%;
     position: relative;
     overflow-y: visible !important;
   }
 
   .founder-blob-bg {
+    /* Styles for a blob background in the founder section. */
     position: absolute;
     left: 0;
     bottom: 0;
@@ -580,16 +658,19 @@
   }
 
   .founder-col .hero-sub-header {
+    /* Styles for the sub-header within the founder column. */
     color: var(--secondary-color);
     font-size: 1.5rem;
     margin: 0;
   }
 
   .founder-img-col img {
+    /* Ensures the founder image does not exceed its container's height. */
     max-height: 100% !important;
   }
 
   #navigation-overview-map-sheet {
+    /* Styles for the map sheet in the navigation overview. */
     height: 200px !important;
     width: 100%;
     border-radius: 2rem;
@@ -597,6 +678,7 @@
  
 
 .purple-divider {
+    /* Styles for a purple horizontal divider. */
     border: none;
     height: 2px;
     width: 80%;
@@ -605,6 +687,7 @@
 }
 
 .step-item {
+    /* Styles for individual step items, likely in a list of directions. */
     display: flex;
     align-items: center;
     margin: 1rem 0;
@@ -612,10 +695,12 @@
 }
 
 .step-item .row {
+    /* Ensures rows within step items inherit height. */
     height: inherit !important;
 }
 
 .step-item h3 {
+    /* Styles for headings within step items. */
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
@@ -624,14 +709,17 @@
 }
 
 #nav-desc {
+    /* Positions the navigation description. */
     position: relative;
 }
 
 #waypoint-places {
+    /* Adds top margin to the waypoint places section. */
     margin-top: 2rem;
 }
 
 #weather {
+    /* Styles for the weather display section. */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -639,6 +727,7 @@
 }
 
 #weather-text {
+    /* Styles for the text displaying weather information. */
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--text-color);
@@ -646,24 +735,29 @@
 }
 
 .mapboxgl-user-location-dot, .mapboxgl-user-location-dot::after, .mapboxgl-user-location-dot::before {
+    /* Customizes the appearance of the Mapbox GL user location dot. */
     background-color: var(--secondary-color) !important;
 } 
 
 .mapboxgl-user-location-accuracy-circle {
+    /* Customizes the appearance of the Mapbox GL user location accuracy circle. */
     background-color: var(--secondary-color) !important;
     opacity: 0.25 !important;
 }
 
 .mapboxgl-user-location-heading, mapboxgl-user-location-heading::after, mapboxgl-user-location-heading::before {
+    /* Customizes the appearance of the Mapbox GL user location heading indicator. */
     background-color: var(--secondary-color) !important;
 }
 
 .mapboxgl-user-location-show-heading .mapboxgl-user-location-heading:after, .mapboxgl-user-location-show-heading .mapboxgl-user-location-heading:before {
+    /* Customizes the border of the Mapbox GL user location heading indicator. */
     border-bottom: 7.5px solid var(--secondary-color) !important;
 }
 
 
 @keyframes spin-pause-360 {
+    /* Defines a keyframe animation for a spinning and pausing effect. */
     0%      { transform: rotate(0deg); }
     8.33%   { transform: rotate(90deg); }  /* 0.5s spin */
     25%     { transform: rotate(90deg); }  /* 1.0s pause */
@@ -676,54 +770,65 @@
 }
 
 @media screen and (min-width: 769px) {
+    /* Styles for screens wider than 768px. */
     #navbar, #route-input:not(#navigation-overview #route-input) {
+        /* Adjusts margins and width for navbar and route input on larger screens. */
         margin: 0rem 15vw 2rem 15vw;
         width: calc(100% - 30vw);
     }
 
 
     #navigation-overview {
+        /* Adjusts width and positioning for navigation overview on larger screens. */
         width: 100vw; 
         left: 0;
     }
 
 
     #settings-actions, #confirm-route-actions {
+        /* Adjusts width and positioning for settings and confirm route actions on larger screens. */
         width: 100vw;
         left: 0;
         bottom: 0;
     }
 
     #settings-actions, #confirm-route-actions, #navigation-overview #route-input, #navigation-overview #nav-overview, #navigation-overview #navigation-overview-map {
+        /* Adjusts margins and width for various navigation elements on larger screens. */
         margin-left: 15vw;
         margin-right: 15vw;
         width: calc(100% - 30vw);
     }
 
     #navigation-overview #nav-overview {
+        /* Makes the nav overview background transparent and removes border radius on larger screens. */
         background-color: transparent !important;
         border-radius: 0rem;
     }
 
     #settings-form {
+        /* Adjusts margins for the settings form on larger screens. */
         margin: 0rem 4rem 2rem 4rem;
     }
 
     #settings-form #settings-submit {
+        /* Sets a max-width for the settings submit button on larger screens. */
         max-width: 450px;
 
     }
 
     .settings-map-div, .confirm-route-map-div {
+        /* Increases the height of map divs in settings and route confirmation on larger screens. */
         height: 30vh !important;
         
     }
 
     #waypoint-places {
+        /* Hides waypoint places on medium-sized screens. */
         display: none;
     }
 
     #nav-desc {
+        /* Centers the navigation description text on medium-sized screens. */
         justify-content: center;
         align-items: center;
         text-align: center;
@@ -732,11 +837,14 @@
 }
 
 @media screen and (min-width: 1000px) {
+    /* Styles for screens wider than 999px. */
      #waypoint-places {
+        /* Displays waypoint places on larger screens. */
         display: block
     }
 
     #nav-desc {
+        /* Adjusts layout and alignment for navigation description on larger screens. */
         display: flex;
         flex-direction: column;
         text-align: left;
@@ -746,40 +854,50 @@
 }
 
 @media screen and (min-width: 1768px) {
+    /* Styles for screens wider than 1767px. */
     .hero-text {
+        /* Displays hero text and adds bottom margin on very large screens. */
         display: block;
         margin-bottom: 3rem
     }
 
     #nav-desc {
+        /* Aligns navigation description to the left on very large screens. */
         text-align: left !important;
         align-items: flex-start;
     }
 
     .custom-swiper {
+        /* Adjusts padding and width for the custom swiper on very large screens. */
         padding-bottom: 4rem;
         width: 45%;
     }
 
     .swiper-slide.slide-card {
+        /* Increases the height of swiper slides on very large screens. */
         height: 450px;
     }
 
     .col-7-5 {
+        /* Adjusts a column width on very large screens. */
         width: 64.5%
     }
 
     .col-4-5 {
+        /* Adjusts another column width on very large screens. */
         width: 35.5%
     }
 
     p {
+        /* Increases the font size of paragraph text on very large screens. */
         font-size: 1.15rem;
     }
 }
 
 @media screen and (max-width: 768px) {
+    /* Styles for screens narrower than 769px (tablets and mobiles). */
     #hero-section {
+        /* Adjusts hero section for smaller screens. */
         width: 100% !important;
         text-align: center;
         height: 100vh;
@@ -787,35 +905,42 @@
     }
 
     #map-overview-content-container {
+        /* Adjusts padding, margin, and max-height for map overview content on smaller screens. */
         padding: 1rem;
         margin: 1rem;
         max-height: calc(100% - 4rem);
     }
 
     #nav-directions-overview-desktop {
+        /* Hides the desktop navigation overview on smaller screens. */
         display: none;
     }
 
     #nav-desc, #map-overview-content-container-col, .col-7-5, .uqu-demo-col, .founder-col, #navigation-content {
+        /* Makes various column elements full width and centers text on smaller screens. */
         width: 100% !important;
         text-align: center;
     }
 
     #navigation-content {
+        /* Aligns navigation content text to the left on smaller screens. */
         text-align: left;
     }
 
     .uqu-demo-col, .uqu-demo-col .hero-header {
+        /* Styles for UQU demo columns on smaller screens, changing background and text color. */
         background-color: var(--secondary-color);
         color: var(--background-color);
     }
 
     #hero-image, #nav-demo, #nav-demo-empty-col, .col-4-5, .col-blobs, .founder-img-col, #weather-div {
+        /* Hides various elements on smaller screens. */
         width: 0%;
         display: none;
     }   
 
     .hero-button {
+        /* Centers the hero button horizontally on smaller screens. */
         margin: auto;
         display: flex;
         justify-content: center;
@@ -825,23 +950,28 @@
     }
 
     .hero-text {
+        /* Displays hero text, centers it, and adds bottom margin on smaller screens. */
         display: block;
         text-align: center;
         margin-bottom: 2rem;
     }
 
     #nav-demo {
+        /* Hides the navigation demo on smaller screens. */
         display: none;
     }
 
     .custom-swiper {
+        /* Adjusts width and padding for the custom swiper on smaller screens. */
         width: 80%;
         padding-top: 4rem;
     }
 }
 
 @media screen and (max-width: 500px) {
+    /* Styles for screens narrower than 501px (small mobiles). */
     #waypoint-places {
+        /* Hides waypoint places on very small screens. */
         display: none;
     }
 }

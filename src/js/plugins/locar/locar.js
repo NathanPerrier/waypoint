@@ -1,7 +1,19 @@
 import * as THREE from 'three';
 import * as LocAR from 'locar';
 
+/**
+ * Initializes a LocAR instance for a given element.
+ * 
+ * @param {Object} app - The Framework7 app instance.
+ * @param {HTMLElement} locarElement - The HTML element where LocAR will be rendered.
+ * 
+ * @return {Promise<Object>} - A promise that resolves to the LocAR instance or rejects with an error.
+ * 
+ * @throws {Error} - If the locarElement is not provided or does not have a unique ID.
+ * 
+ */
 export const initializeLocAR = async (app, locarElement) => {
+    // check if locarElement is provided and has a unique ID
     if (!locarElement || !locarElement.id) {
         console.error("LocAR initialization requires a locarElement with a unique ID.");
         app.dialog.alert('LocAR initialization requires a locarElement with a unique ID.','Error', {
@@ -28,10 +40,12 @@ export const initializeLocAR = async (app, locarElement) => {
     app.locarInstances[elementId] = {};
     const instance = app.locarInstances[elementId];
 
-    instance.renderer = new THREE.WebGLRenderer({ alpha: true }); // Ensure background can be transparent if needed
+    // Initialize LocAR components
+    instance.renderer = new THREE.WebGLRenderer({ alpha: true }); 
     instance.scene = new THREE.Scene();
-    instance.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000); // Consider element dimensions?
+    instance.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 1000); 
 
+    // set renderer size based on the locarElement dimensions
     const width = locarElement.clientWidth;
     const height = locarElement.clientHeight;
     instance.renderer.setSize(window.innerWidth, window.innerHeight); // Use element dimensions
@@ -42,6 +56,7 @@ export const initializeLocAR = async (app, locarElement) => {
     instance.controls = new LocAR.DeviceOrientationControls(instance.camera);
     instance.cam = new LocAR.WebcamRenderer(instance.renderer);
 
+    // if app is not defined, return an error
     if (!app) {
         console.error("Framework7 app instance not found. LocAR cannot initialize.");
         app.dialog.alert('Framework7 app instance not found. LocAR cannot initialize.','Error', {
@@ -53,9 +68,10 @@ export const initializeLocAR = async (app, locarElement) => {
         return;
     }
 
+    // Ensure the app has been initialized and configuration is ready
     try {
-        await app.initializationPromise; // Assuming this is a global app promise
-      } catch (error) {
+        await app.initializationPromise; 
+    } catch (error) {
         console.error("Config initialization failed, cannot proceed:", error);
         app.dialog.alert('Config initialization failed. Please try again later.', 'Error', {
             onClose: () => {
@@ -66,7 +82,7 @@ export const initializeLocAR = async (app, locarElement) => {
         return;
     }
 
-    // Assuming app.AR and app.DESKTOP_DEVICE are global settings
+    // Check if AR is enabled in the app
     if (!app.AR) {
         console.warn("AR is not enabled. LocAR cannot initialize. Desktop device:", app.DESKTOP_DEVICE);
         app.dialog.alert('AR is not enabled. LocAR cannot initialize.','Error', {
@@ -90,14 +106,13 @@ export const initializeLocAR = async (app, locarElement) => {
         return;
     }
 
-    // --- Event Listeners ---
     // Store listeners perhaps on the instance object to remove them later if needed
     instance.resizeListener = () => {
         const width = locarElement.clientWidth;
         const height = locarElement.clientHeight;
         instance.renderer.setSize(width, height);
         instance.camera.aspect = width / height;
-        instance.renderer.setPixelRatio(window.devicePixelRatio); // Re-set pixel ratio on resize
+        instance.renderer.setPixelRatio(window.devicePixelRatio); 
         instance.camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", instance.resizeListener);
@@ -108,22 +123,30 @@ export const initializeLocAR = async (app, locarElement) => {
         setTimeout(() => {
             const width = locarElement.clientWidth;
             const height = locarElement.clientHeight;
-            // instance.renderer.setSize(width, height); // Resize handles this
+            // instance.renderer.setSize(width, height); 
             instance.camera.aspect = width / height;
             instance.camera.updateProjectionMatrix();
-        }, 100); // Adjust delay as needed
+        }, 100); 
     };
     window.addEventListener("orientationchange", instance.orientationListener);
-    // --- End Event Listeners ---
 
-
+    // Start the LocAR instance
     instance.container = locarElement.appendChild(instance.renderer.domElement);
 
     return instance;
 };
 
-// Example of how you might clean up an instance later
+/**
+ * Destroys a LocAR instance for a given element ID.
+ * 
+ * @param {Object} app - The Framework7 app instance.
+ * @param {string} elementId - The unique ID of the HTML element where LocAR was initialized.
+ * 
+ * @throws {Error} - If the app or the specific LocAR instance does not exist.
+ * 
+ */
 export const destroyLocARInstance = (app, elementId) => {
+    // Check if the app and locarInstances exist
     if (!app || !app.locarInstances || !app.locarInstances[elementId]) {
         console.warn(`No LocAR instance found for element ID '${elementId}' to destroy.`);
         app.dialog.alert(`No LocAR instance found. Please try again later.`, 'Error', {
@@ -144,9 +167,9 @@ export const destroyLocARInstance = (app, elementId) => {
         window.removeEventListener('orientationchange', instance.orientationListener);
     }
 
+    // Stop gps, webcam, dispose renderer, scene, etc.
     instance.locar.stopGps(); 
 
-    // Stop webcam, dispose renderer, scene, etc.
     if (instance.cam) {
         instance.cam.dispose(); // Assuming a stop method exists
     }
@@ -156,8 +179,6 @@ export const destroyLocARInstance = (app, elementId) => {
     if (instance.container && instance.container.parentNode) {
         instance.container.parentNode.removeChild(instance.container);
     }
-    // Add disposal for scene geometries, materials, textures if necessary
 
     delete app.locarInstances[elementId];
-    console.log(`LocAR instance for element ID '${elementId}' destroyed.`);
 };

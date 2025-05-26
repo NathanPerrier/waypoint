@@ -2,54 +2,77 @@ import { SearchBoxCore } from '@mapbox/search-js-core';
 import { getCoordinatesFromMapboxId } from '../../utils/coordinates';
 import debounce from 'lodash/debounce';
 
-const searchCache = new Map(); // Cache for search results
+// Cache for search results
+const searchCache = new Map(); 
 
+/**
+ * Performs an autocomplete search using Mapbox SearchBoxCore.
+ * 
+ * @param {HTMLInputElement} searchInput - The input element where the user types the search query.
+ * @param {HTMLElement} searchResults - The element where the search results will be displayed.
+ * @param {Object} [startLocation] - Optional starting location for the search, defaults to user's current location.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the search is complete.
+ * 
+ */
 export async function autocompleteSearch(searchInput, searchResults, startLocation) {
     const app = window.app;
 
+    // if startLocation is not provided, use the user's current location
     if (!startLocation) {
         startLocation = {lng: app.USER_LOCATION[0], lat: app.USER_LOCATION[1]};
     }
 
+    // Debounce the search function to limit the number of API calls
     const debouncedSearch = debounce(async () => {
+        // Clear previous results if input is empty or below minimum length
         if (searchInput.value.length < app.MIN_SEARCH_LENGTH) { 
             searchResults.innerHTML = '';
             return;
         }
 
+        // Check if the search input is already cached
         if (searchCache.has(searchInput.value)) {
-            // Use cached results if available
             const cachedHTML = searchCache.get(searchInput.value);
             searchResults.innerHTML = cachedHTML;
             return;
         }
 
+        // Initialize SearchBoxCore with the necessary parameters
         const search = new SearchBoxCore({ 
             accessToken: app.MAPBOX_ACCESS_TOKEN, 
             bbox: app.MAP_LOCATION_BOUNDS, 
             countries: app.SEARCH_COUNTRY_RESTRICTIONS, 
-            types: app.SEARCH_TYPES, //! fix
-            limit: app.SEARCH_RESULT_LIMIT, // Limit suggestions to 5
+            types: app.SEARCH_TYPES, 
+            limit: app.SEARCH_RESULT_LIMIT, 
             language: app.LANGUAGE, 
             navigation_profile: app.TRANSPORTATION_MODE, 
             proximity: app.USER_LOCATION, 
             origin: startLocation 
         }); 
 
+        // Check if SessionToken exists, if not create a new one
         let mapSessionToken = app.MAP_SESSION_TOKEN;
         if (!mapSessionToken) {
             mapSessionToken = app.MAP_SESSION_TOKEN = new SessionToken(); // Reuse session token
         }
 
+        // Perform the search using the SearchBoxCore instance
         const result = await search.suggest(searchInput.value, { sessionToken : mapSessionToken });
+
+        // Check if the result contains suggestions
         if (result.suggestions.length === 0) return;
 
+        // Ensure only the first 3 suggestions are displayed
         result.suggestions = result.suggestions.slice(0, 3);
 
-        let suggestionsHTML = ''; // Initialize an empty string to accumulate HTML
+        // for each suggestion, fetch the coordinates and build the HTML
+        let suggestionsHTML = '';
         for (const suggestion of result.suggestions) {
+            // retrieve coordinates from Mapbox ID
             const suggestionFeatures = await getCoordinatesFromMapboxId(suggestion.mapbox_id, mapSessionToken) || [];
 
+            // create a suggestion data object
             const suggestionData = {
                 name: suggestion.name,
                 place_formatted: suggestion.place_formatted,
@@ -61,6 +84,7 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
                 wheelchair_accessible: suggestionFeatures.features[0]?.properties.metadata.wheelchair_accessible,
             };
 
+            // Escape single quotes in the suggestion data to prevent breaking the HTML
             const escapedName = suggestionData.name.replace(/'/g, "\\'");
             const escapedPlaceFormatted = suggestionData.place_formatted?.replace(/'/g, "\\'") || '';
             const escapedFullAddress = suggestionData.full_address?.replace(/'/g, "\\'") || '';
@@ -97,7 +121,7 @@ export async function autocompleteSearch(searchInput, searchResults, startLocati
 
         // Cache the results
         searchCache.set(searchInput.value, suggestionsHTML);
-    }, 300); // Debounce delay of 300ms
+    }, app.DEBOUNCE_DELAY);
 
     debouncedSearch();
 }

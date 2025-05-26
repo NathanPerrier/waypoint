@@ -1,3 +1,9 @@
+/*
+    * THEME CSS
+    * This file contains the theme styles for the application.
+    * It defines colors, fonts, and utility classes for consistent styling.
+*/
+
 :root {
     --primary-color: #762CEF;
     --secondary-color: #b694f2;

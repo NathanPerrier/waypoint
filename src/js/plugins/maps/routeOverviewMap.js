@@ -1,6 +1,17 @@
 import mapboxgl from 'mapbox-gl';
 
+/**
+ * Creates a static route map using Mapbox GL JS.
+ * 
+ * @param {Object} app - The Framework7 app instance containing configuration and state.
+ * @param {HTMLElement} container - The HTML element to render the map in.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the map is created.
+ * @throws {Error} - If the container is not defined or if the NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.
+ * 
+ */
 export async function createStaticRouteMap(app, container) {
+    // Check if the container is defined
     if (!container) {
         console.error('Container is not defined');
         return;
@@ -12,6 +23,7 @@ export async function createStaticRouteMap(app, container) {
         container._mapInstance = null;
     }
 
+    // Create a new Mapbox map instance
     const map = new mapboxgl.Map({
         container: container, // Use the container element reference
         style: app.MAP_LIGHT_STYLE,
@@ -80,8 +92,22 @@ export async function createStaticRouteMap(app, container) {
     }
 }
 
+
+/**
+ * Creates a live route map using Mapbox GL JS.
+ * 
+ * @async
+ * 
+ * @param {Object} app - The Framework7 app instance containing configuration and state.
+ * @param {HTMLElement} container - The HTML element to render the map in.
+ * @param {boolean} [interactive=true] - Whether the map should be interactive.
+ * 
+ * @returns {Promise<mapboxgl.Map>} - A promise that resolves to the created Mapbox map instance.
+ * @throws {Error} - If the container is not defined or if the NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.
+ * 
+ */
 export async function createLiveRouteMap(app, container, interactive = true) {
-    console.log(container);
+    // Check if the container is defined
     if (!container) {
         console.error('Container is not defined');
         return;
@@ -93,8 +119,9 @@ export async function createLiveRouteMap(app, container, interactive = true) {
         container._mapInstance = null;
     }
 
+    // Create a new Mapbox map instance
     const map = new mapboxgl.Map({
-        container: container, // Use the container element reference
+        container: container, 
         style: app.MAP_LIGHT_STYLE,
         center: app.START_LOCATION,
         zoom: 16,
@@ -148,6 +175,7 @@ export async function createLiveRouteMap(app, container, interactive = true) {
         console.error('NAVIGATION_ROUTE_COORDINATES is missing or not in the correct format.');
     }    
 
+    // add user location and orientation control
     const geolocateControl = new mapboxgl.GeolocateControl({
         positionOptions: {
             enableHighAccuracy: true
@@ -161,6 +189,7 @@ export async function createLiveRouteMap(app, container, interactive = true) {
         },
     });
     
+    // Add the geolocate control to the map
     map.addControl(geolocateControl);
     map.on('load', () => {
         map.resize();
@@ -172,8 +201,19 @@ export async function createLiveRouteMap(app, container, interactive = true) {
     return map;
 }
 
+/**
+ * Updates the route layer on the map with new route coordinates.
+ * 
+ * @param {mapboxgl.Map} map - The Mapbox map instance.
+ * @param {Array} routeCoordinates - An array of coordinates representing the route.
+ * 
+ * @throws {Error} - If the map or route source is not defined.
+ * 
+ */
 export function updateRouteLayer(map, routeCoordinates) {
+    // Check if the map and route source are defined
     if (map && map.getSource('route')) {
+        // Update the route source with new coordinates
         map.getSource('route').setData({
             type: 'Feature',
             geometry: {

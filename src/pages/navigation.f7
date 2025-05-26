@@ -1,22 +1,32 @@
 <template>
+    <!-- Main page container for navigation -->
     <div class="page" data-name="navigation">
         <div class="page-content">
+            <!-- Container for LocAR.js plugin -->
             <div id="NavLocarjs">
                 
             </div>
+            <!-- Container for navigation overview map and controls -->
             <div id="navigation-overview">
+                <!-- Container for the main navigation overview map -->
                 <div id="navigation-overview-map-container"><div id="navigation-overview-map"></div></div>
+                <!-- Container for route input and navigation controls -->
                 <div id="route-input">
                     <div class="tabs-animated-wrap">
                         <div class="tabs">
+                            <!-- Tab for active navigation view -->
                             <div id="tab1" class="tab tab-active">
+                                <!-- Navigation bar with current instruction and stop button -->
                                 <div class="nav">
                                     <div class="row h-100">
+                                        <!-- Navigation content display (direction, destination, time, distance) -->
                                         <div id="navigation-content" data-sheet=".overview-sheet-swipe-to-step" class="col-10 sheet-open">
                                             <div class="row h-100">
+                                                <!-- Current direction arrow icon -->
                                                 <div class="col-3 justify-center text-align-center align-content-center">    
                                                     <i id="current-direction-arrow" class="f7-icons text-primary bold m-auto">arrow_up</i>                              
                                                 </div>
+                                                <!-- Destination name and navigation info -->
                                                 <div class="col-9">
                                                     <div class="row h-100">
                                                         <div class="col-12"> 
@@ -31,6 +41,7 @@
                                                 </div> 
                                             </div>  
                                         </div>
+                                        <!-- Stop navigation button -->
                                         <div class="col-2 ml-2">
                                             <button id="stop-button" href="#view-route"  class="tab-link tab-link-active button button-fill r-2 h-100">Stop</button> 
                                         </div>
@@ -41,17 +52,23 @@
                     </div> 
                 </div>        
             </div>
+            <!-- Sheet modal for displaying detailed navigation steps -->
             <div class="sheet-modal overview-sheet-swipe-to-step" style="height:auto">
                 <div class="sheet-modal-inner">
+                  <!-- Swipeable step for initial overview and map -->
                   <div class="sheet-modal-swipe-step">
                     <div class="display-flex justify-content-space-between align-items-center">
+                      <!-- Container for the map within the sheet modal -->
                       <div class="w-100" id="navigation-overview-map-sheet"></div>
                     </div>
                     <div class="padding-horizontal padding-bottom">
+                        <!-- Container for the first two navigation steps -->
                         <div id="first-two-steps" class="list"></div>
+                      <!-- Chevron icon to indicate more content below -->
                       <div class="text-align-center"><i class="text-secondary f7-icons">chevron_down</i></div>
                     </div>
                   </div>
+                  <!-- Container for the full list of navigation steps -->
                   <div class="list" id="navigation-steps"></div>
                 </div>
             </div>
@@ -61,12 +78,15 @@
    
 </template>
 <script>    
+    // Import utility functions and plugins
     import { waitForElement, updateRouteData, getInstructionIcon, populateRouteInstructions } from "../js/utils/dom.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { runLocarNav } from "../js/plugins/locar/locarNav.js";
     import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 
+    // Component export
     export default async (props, { $, $on, $f7 }) => {
+        // Initialize component variables
         const app = window.app;
         let locarInstance = null; 
         let locarContainerId = null; 
@@ -74,14 +94,18 @@
         let liveMap1 = null;
         let liveMap2 = null;
 
+        // Function to toggle the swipe step sheet
         const toggleSwipeStep = () => {
             sheet.stepToggle();
         }
         
+        // Event listener for when the navigation tab is shown
         $on('page:tabshow', async () => {
+            // Get DOM elements for navigation steps
             const firstTwoStepscontainer = document.getElementById("first-two-steps");
             const navigationStepsContainer = document.getElementById("navigation-steps");
 
+            // Validate if navigation data is available
             if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
                 console.error("Navigation data missing. Cannot start navigation.");
                 app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
@@ -90,6 +114,7 @@
                 return;
             }
 
+            // Wait for LocAR container to be available
             const locarConatiner = await waitForElement("NavLocarjs");
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found."); 
@@ -100,24 +125,28 @@
             }
             locarContainerId = locarConatiner.id;
             
+            // Try to initialize LocAR and start navigation
             try {
                 locarInstance = await initializeLocAR(app, locarConatiner); 
                 if (locarInstance) { 
-
+                    // Run LocAR navigation and update UI elements
                     runLocarNav(app, locarInstance, $('#destination-name'), $('#navigation-info'), firstTwoStepscontainer, navigationStepsContainer, $f7, $('#current-direction-arrow'));
 
                     updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name'), $('#navigation-info'));
                     populateRouteInstructions(app, firstTwoStepscontainer, navigationStepsContainer)      
                 } else {
+                    // Handle LocAR initialization failure
                     console.error("LocAR initialization failed.");
                     app.dialog.alert("LocAR initialization failed. Please try again.", "Error", () => {
                         $f7.views.main.router.navigate('/route/'); // Navigate to the route page
                     });
                     return;
                 }      
+                // Create live maps for navigation overview
                 app.liveMap1 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map"), false);
                 app.liveMap2 = await createLiveRouteMap(app, await waitForElement("navigation-overview-map-sheet"), false);
             } catch (error) {
+                // Handle errors during LocAR initialization or navigation
                 console.error("Error during LocAR initialization or runLocarNav:", error);
                 app.dialog.alert("An error occurred while initializing LocAR. Please try again.", "Error", () => {
                     $f7.views.main.router.navigate('/route/'); // Navigate to the route page
@@ -126,7 +155,9 @@
             }    
         })
 
+        // Event listener for page initialization
         $on('pageInit', async () => {
+            // Create the sheet modal for navigation steps
             sheet = $f7.sheet.create({
                 el: '.overview-sheet-swipe-to-step',
                 swipeToClose: true,
@@ -136,11 +167,14 @@
             });
         });
 
+        // Event listener for when the navigation tab is hidden
         $on('page:tabhide', () => {
+            // Close the sheet and reset navigation data
             $f7.sheet.close();
             app.NAVIGATION_ROUTE = null;
             app.NAVIGATION_ROUTE_STEPS = null;
             app.NAVIGATION_ROUTE_DATA = null;      
+            // Destroy LocAR instance if it exists
             if (locarContainerId) { 
                 destroyLocARInstance(app, locarContainerId);
                 locarInstance = null; 
@@ -148,10 +182,13 @@
             }
         });
 
+        // Event listener before the page is removed
         $on('pageBeforeRemove', () => {
+            // Destroy the sheet if it exists
             if (sheet) sheet.destroy();
         });
 
+        // Return the render function
         return $render;
     };
 </script>

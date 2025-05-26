@@ -1,17 +1,26 @@
-
-
-
+/**
+ * Creates the settings map that allows desktop users to click on the map to set a new start location.
+ * 
+ * @async
+ * 
+ * @param {HTMLElement} mapContainer - The container element for the Mapbox map.
+ * 
+ * @returns {Promise<Object>} - A promise that resolves to an object containing the map instance and a marker.
+ * @throws {Error} - If the map container is not found or if the Mapbox access token is missing.
+ * 
+ */
 export async function initSettingsMap(mapContainer) {
     const app = window.app;
 
     mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
+    // Check if the map container is defined
     if (!mapContainer) {
         app.dialog.alert('Map container not found', 'Error');
         return;
     }
 
-
+    // create a new Mapbox map instance
     const map = new mapboxgl.Map({
         container: mapContainer, 
         zoom: 16, 
@@ -26,10 +35,12 @@ export async function initSettingsMap(mapContainer) {
         maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
+    // on map load, resize the map
     map.on('load', () => {
         map.resize();
     });
 
+    // create a geocoder control for searching locations
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
@@ -37,13 +48,13 @@ export async function initSettingsMap(mapContainer) {
         maxBounds: app.MAP_LOCATION_BOUNDS_LNGLATLIKE,
     });
 
-
+    // add the geocoder control to the map
     map.addControl(
         geocoder
     );
 
+    // create a marker for the start location and add it to the map at the initial start location
     let marker = null
-
     marker = new mapboxgl.Marker({
         color: "#762CEF",
         draggable: true,
@@ -55,11 +66,11 @@ export async function initSettingsMap(mapContainer) {
     .addTo(map);
 
 
+    // update the start location when the marker is dragged or map is clicked
     map.on('click', function (e) {
         app.START_LOCATION = {lng: e.lngLat.lng, lat: e.lngLat.lat};
 
-        console.log('Updated startLocation input value:', app.START_LOCATION);
-
+        // Update the marker position
         if (marker == null) {
             marker = new mapboxgl.Marker(
                 {
@@ -76,10 +87,10 @@ export async function initSettingsMap(mapContainer) {
         }
     });
 
+    // Resize the map when the window is resized
     window.addEventListener('resize', function () {
         map.resize();
     });
-
 
     return {map: map, marker: marker};
 };

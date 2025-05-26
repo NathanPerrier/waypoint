@@ -1,21 +1,30 @@
 <template>
+    <!-- Main page container for desktop navigation -->
     <div class="page" data-name="navigationDesktopPage">
         <div class="page-content">
+            <!-- Map container for desktop navigation -->
             <div id="mapDesktopNavigation" class="h-100 w-100"></div>
+            <!-- Navigation overview section -->
             <div id="navigation-overview">
+                <!-- Navigation overview content -->
                 <div id="nav-overview">
                     <div class="row h-100">
+                        <!-- QR code section for AR navigation -->
                         <div class="col-1 h-100 mr-4">                 
                             <div id="qr-navigation" class="desktop-navigation-overview-content sheet-open" data-sheet=".qr-sheet-swipe-to-close"> </div>
                         </div>
+                        <!-- Main navigation content and weather information -->
                         <div class="col-10">
                             <div class="desktop-navigation-overview-content">                              
                                 <div class="row h-100">
+                                    <!-- Navigation details (direction, destination, time, distance) -->
                                     <div id="navigation-content" class="col-8">
                                         <div class="row h-100">
+                                            <!-- Current direction arrow icon -->
                                             <div class="col-1 icon-center">    
                                                 <i id="current-direction-arrow-desktop" class="fa-solid fa-arrow-up"></i>                              
                                             </div>
+                                            <!-- Destination name and navigation information -->
                                             <div class="col-11 ml-2">
                                                 <div class="row h-100">
                                                     <div class="col-12"> 
@@ -30,12 +39,14 @@
                                             </div> 
                                         </div>  
                                     </div>
+                                    <!-- Weather information display -->
                                     <div id="weather-div" class="col-4 ml-2">
                                         <div id="weather" class="desktop-navigation-overview-content bg-secondary p-0 h-100 text-on-primary">LOADING...</div>
                                     </div>
                                 </div>                                           
                             </div>                         
                         </div>
+                        <!-- Back button to route view -->
                         <div class="col-1 h-100 ml-4">
                             <div class="desktop-navigation-overview-content">
                                 <a class="w-100 h-100 tab-link tab-link-active" href="#view-route-desktop">
@@ -46,24 +57,32 @@
                     </div>   
                 </div>    
             </div>
+            <!-- Navigation directions overview section -->
             <div id="nav-directions-overview-desktop">
                 <div class="content">
+                    <!-- Map for navigation directions overview -->
                     <div id="nav-directions-overview-map-desktop"></div>
+                    <!-- Content for navigation directions overview -->
                     <div id="nav-directions-overview-content-desktop">
                         <div  class="list" id="nav-directions-overview-content-list-desktop"></div>                     
                     </div>
                 </div>
             </div>
+            <!-- Sheet modal for QR code to continue in AR -->
             <div class="sheet-modal qr-sheet-swipe-to-close" id="settings-actions" style="height:auto">
             <div class="sheet-modal-inner">
                 <div class="swipe-handler"></div>
                     <div class="page-content p-4">
+                    <!-- Title for AR continuation -->
                     <div class="block-title block-title-large text-align-center hero-header">Continue In AR?</div>
+                    <!-- Instructions and QR code display -->
                     <div class="block justify-center align-content-center text-align-center">
                         <small class="text-align-center mb-4">Scan the QR code to navigate to your destination.</small>
+                        <!-- QR code container -->
                         <div class="text-align-center justify-center align-content-center d-flex justify-content-center align-items-center my-8" style="height: 100%;">
                             <div id="qrCode"></div>
                         </div>
+                        <!-- Close button for the sheet modal -->
                         <div class="row">
                             <div class="col-12">
                                 <button class="button button-fill r-2 w-100 sheet-close" data-sheet=".qr-sheet-swipe-to-close">Close</button>
@@ -78,22 +97,27 @@
     </div>
 </template>
 <script>    
+// Import utility functions and plugins
 import { waitForElement, isWithinBounds, updateRouteData, getInstructionIcon, populateRouteInstructionsDesktop } from "../js/utils/dom.js";
 import * as turf from '@turf/turf';
 import { createLiveRouteMap } from '../js/plugins/maps/routeOverviewMap.js';
 import { addTerrainLayer, runDesktopNav } from '../js/plugins/maps/DesktopNav.js';
 import { displayWeather } from '../js/utils/weather.js';
 
+// Component export
 export default async (props, { $, $on, $f7 }) => {
 
+    // Initialize component variables
     const app = window.app;
     let mapContainer;
     let map;
     let liveMap;   
     let sheetSwipeToClose;
 
+    // Event listener for when the navigation tab is shown
     $on('page:tabshow', async () => {  
 
+        // Validate if navigation data is available
         if (!app.NAVIGATION_ROUTE || !app.NAVIGATION_ROUTE_STEPS || !app.NAVIGATION_ROUTE_DATA) {
             console.error("Navigation data missing. Cannot start navigation.");
             app.dialog.alert("Navigation data is missing. Please try again.", "Error", () => {
@@ -102,6 +126,7 @@ export default async (props, { $, $on, $f7 }) => {
             return;
         }
 
+        // Generate QR code for AR navigation
         var qrcode = new QRCode("qrCode", {
             text: `${app.BASE_URL}?startLocation=${encodeURIComponent(JSON.stringify(app.START_LOCATION))}&destinationLocation=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION))}&destinationLocationCoordinates=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION_COORDINATES))}&destinationLocationData=${encodeURIComponent(JSON.stringify(app.DESTINATION_LOCATION_DATA))}&mode=${encodeURIComponent(app.TRANSPORTATION_MODE)}`,
             width: 200,
@@ -111,15 +136,20 @@ export default async (props, { $, $on, $f7 }) => {
             correctLevel : QRCode.CorrectLevel.H
         });
 
+        // Set Mapbox access token
         mapboxgl.accessToken = app.MAPBOX_ACCESS_TOKEN;
 
+        // Define target and camera routes
         const targetRoute = app.NAVIGATION_ROUTE
         const cameraRoute = app.NAVIGATION_ROUTE
 
+        // Remove the first step from navigation steps (if needed)
         app.NAVIGATION_ROUTE_STEPS.splice(0, 1);
 
+        // Wait for map container element
         mapContainer = await waitForElement('mapDesktopNavigation')
         
+        // Initialize or update the Mapbox map
         if (!map) {
             map = new mapboxgl.Map({
                 container: mapContainer, //! TODO: change to du=ocument and rename id
@@ -146,27 +176,34 @@ export default async (props, { $, $on, $f7 }) => {
             }
         }
 
+        // Create live route map and display weather information
         liveMap = await createLiveRouteMap(app, await waitForElement("nav-directions-overview-map-desktop"), false);
         var weatherContent = await displayWeather(app, $f7);
         $('#weather').html(weatherContent);
 
+        // Populate route instructions
         const firstTwoStepscontainer = $('#nav-directions-overview-content-list-desktop');
         populateRouteInstructionsDesktop(app, firstTwoStepscontainer);
 
+        // Event listener for map render start to update route data
         map.on('renderstart', () => {  
             if (map.getLayer('line')) {  
                 updateRouteData(app.DESTINATION_LOCATION, `${Math.round(app.NAVIGATION_ROUTE_DATA.duration/60)} min`, `${Math.round(app.NAVIGATION_ROUTE_DATA.distance)} m`, $('#destination-name-desktop'), $('#navigation-info-desktop'));
             }
         });
 
+        // Placeholder comment for future development
         //? add user icon to liveMap?
 
+        // Event listener for map idle to run desktop navigation logic
         map.on('idle', () => {
             runDesktopNav(app, map, liveMap, targetRoute, cameraRoute, $f7, $('#current-direction-arrow-desktop'), firstTwoStepscontainer);
         });
     });
 
+    // Event listener for page initialization
     $on('pageInit', () => {
+        // Create the sheet modal for QR code
         sheetSwipeToClose = $f7.sheet.create({
             el: '.qr-sheet-swipe-to-close',
             swipeToClose: true,
@@ -175,11 +212,15 @@ export default async (props, { $, $on, $f7 }) => {
         });
     });
 
+    // Event listener before page transitions out
     $on('pageBeforeOut', () => {
+      // Close the sheet modal
       $f7.sheet.close();
     });
     
+    // Event listener for when the navigation tab is hidden
     $on('page:tabhide', () => {
+        // Reset navigation data and remove map layers
         app.NAVIGATION_ROUTE = null;
         app.NAVIGATION_ROUTE_STEPS = null;
         app.NAVIGATION_ROUTE_DATA = null; 
@@ -187,7 +228,9 @@ export default async (props, { $, $on, $f7 }) => {
         map.removeSource('trace');
     });
 
+    // Event listener before the page is removed
     $on('pageBeforeRemove', () => {
+        // Destroy sheet modal and map instance if they exist
         if (sheetSwipeToClose) {
             sheetSwipeToClose.destroy();
         }
@@ -198,6 +241,7 @@ export default async (props, { $, $on, $f7 }) => {
 
     });
 
+    // Return the render function
     return $render;
 }
 </script>

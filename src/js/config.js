@@ -10,10 +10,9 @@ const initializeConfig = (app) => {
     app.initializationPromise = new Promise(async (resolve, reject) => {
 
         app.DEBUG = false;
-        app.FEEDBACK = true;
+        app.FEEDBACK = false;
 
         app.BASE_URL = 'https://uqunion.info/';
-        // app.FEEDBACK_URL = 'https://www.surveymonkey.com/r/H6SGDY8';
         app.FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdjQ4WbMFqYxILz4BAbiY0EVlkti5qUGWeqYhBZKQ-PCyPSsw/viewform?usp=header';
 
         app.BASE_WEATHER_API_URL = 'https://api.open-meteo.com/v1/';
@@ -28,6 +27,7 @@ const initializeConfig = (app) => {
         app.AR_SUGGESTION_RADIUS = 50; //500m
         app.ALTITUDE_SMOOTHING_FACTOR = 0.1 //0-1 
         app.LOOK_AHEAD_FACTOR = 0.125; //0-1
+        app.USER_POSITION_Y = -0.5; //-0.5m
         app.RELATIVE_CAMERA_ALTITUDE = 20; //20m
         app.NOW = new Date().getTime();
         app.DEPARTURE_TIME = app.NOW ;
@@ -71,6 +71,8 @@ const initializeConfig = (app) => {
         app.MAP_3D_STYLE = 'mapbox://styles/mapbox/standard';
         app.MAP_SESSION_TOKEN = null; 
         app.MIN_SEARCH_LENGTH = 3; 
+        app.SEARCH_RESULT_LIMIT = 3;
+        app.DEBOUNCE_DELAY = 500; // 500ms
 
         //! fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
         app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbWEzYWk4Zm0wc293MmpvazltbnVxNWZqIn0.CZY6oAZgkYGHvxlGmwcdQw'; // Set your Mapbox access token here
@@ -87,6 +89,7 @@ const initializeConfig = (app) => {
         app.CAM = null;
         app.AR = true; 
 
+        // clear session storage if it has been more than 12 hours since the last setup
         var setupTime = sessionStorage.getItem('setupTime');
         if (setupTime == null) {
             sessionStorage.setItem('setupTime', app.NOW)
@@ -97,10 +100,11 @@ const initializeConfig = (app) => {
             }
         }
 
+        // Check if the Mapbox session token exists in sessionStorage, if not create a new one
         if (sessionStorage.getItem('mapbox_session_token')) {
             app.MAP_SESSION_TOKEN = sessionStorage.getItem('mapbox_session_token')
         } else {
-            app.MAP_SESSION_TOKEN = new SessionToken(); // Fallback to a new session token
+            app.MAP_SESSION_TOKEN = new SessionToken(); 
             sessionStorage.setItem('mapbox_session_token', app.MAP_SESSION_TOKEN);
         }
 
@@ -127,7 +131,7 @@ const initializeConfig = (app) => {
                         return {
                             deviceInstance: {
                                 detectWebcam: () => false,
-                                isDesktop: () => true, // Assume desktop if detection fails
+                                isDesktop: () => true, 
                                 isTablet: () => false,
                             },
                             webcamEnabled: false,
@@ -136,7 +140,6 @@ const initializeConfig = (app) => {
                 })(),
             ]);
 
-            // Set values on the app instance
             app.USER_LOCATION = userLocation;
             app.START_LOCATION = { lng: userLocation[0], lat: userLocation[1] };
             app.DEVICE = device.deviceInstance;
@@ -144,10 +147,12 @@ const initializeConfig = (app) => {
             app.DESKTOP_DEVICE = app.DEVICE.device.desktop;
             app.MOBILE_DEVICE = app.DEVICE.device.ios || app.DEVICE.device.android || app.DEVICE.device.iphone || app.DEVICE.device.androidChrome || app.DEVICE.device.cordova || app.DEVICE.device.ipad; 
 
+            // check if device is not mobile or tablet or if webcam is not enabled, if so, disable AR
             if (!app.MOBILE_DEVICE || !app.WEBCAM_ENABLED) {
                 app.AR = false; 
             }
 
+            // check if user location is within the specified bounds of the gatton campus, if so, set the map bounds to the gatton campus bounds
             if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_GATTON)) {
                 console.log("User location is in Gatton Campus");
                 app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_GATTON;
@@ -155,6 +160,7 @@ const initializeConfig = (app) => {
                 app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_GATTON;
             }
 
+            // check if user location is within the specified bounds of the herston campus, if so, set the map bounds to the herston campus bounds
             if (isWithinSpecifiedBounds(app.USER_LOCATION, app.MAPBOXGL_LOCATION_BOUNDS_HERSTON)) {
                 console.log("User location is in Herston Campus");
                 app.MAP_LOCATION_BOUNDS = app.MAP_LOCATION_BOUNDS_HERSTON;
@@ -162,6 +168,7 @@ const initializeConfig = (app) => {
                 app.MAP_LOCATION_BOUNDS_LNGLATLIKE = app.MAP_LOCATION_BOUNDS_LNGLATLIKE_HERSTON;
             }
 
+            // retrieve weather data for the user's location
             await queryWeatherAPI(app, app.USER_LOCATION[1], app.USER_LOCATION[0], app.BASE_WEATHER_API_URL, app.WEATHER_PARAMETERS);
 
             resolve();
@@ -172,6 +179,7 @@ const initializeConfig = (app) => {
             reject(error);
         }
 
+        // if the app is in debug mode, set test values for the map bounds
         if (app.DEBUG) {
             console.warn("APP DEBUG MODE ENABLED. TEST VALUES SET.");
             app.MAP_LOCATION_BOUNDS = null;

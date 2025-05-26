@@ -1,9 +1,6 @@
 
 <template>
   <div id="app">
-
-
-    
     <div class="views tabs no-safe-areas">
       <!-- <div id="navbar" class="toolbar toolbar-bottom tabbar-icons">
         <div class="toolbar-inner">
@@ -20,10 +17,8 @@
         </div>
       </div> -->
 
-      
+      <!-- Tabs/Views for each page -->
       <div id="view-home" class="view view-main view-init tab tab-active" data-url="/"></div>
-
-
       <div id="view-route" class="view view-init tab" data-name="route" data-url="/route/"></div>
       <div id="view-navigation" class="view view-init tab" data-name="navigation" data-url="/navigation/"></div>
       <div id="view-route-desktop" class="view view-init tab" data-name="routeDesktopPage" data-url="/routeDesktop/"></div>

@@ -1,32 +1,43 @@
 <template>
+    <!-- Main page container for route planning -->
     <div class="page" data-name="route">
         <div class="page-content">
 
+            <!-- Back button to navigate to the home view -->
             <a href="#view-home" id="go-back"  class="tab-link tab-link-active">        
                 <i class="fa fa-arrow-left fa-2x"></i>        
             </a>
+            <!-- Container for LocAR.js plugin -->
             <div id="locarjs">
                 
             </div>
+            <!-- Route input section with search and settings -->
             <div id="route-input">
                 <div class="tabs-animated-wrap">
                     <div class="tabs">
+                        <!-- Main tab for search input and results -->
                         <div id="tab1" class="tab tab-active">
+                            <!-- Container for displaying search results -->
                             <div id="search-results-list">
 
                             </div>
+                            <!-- Navigation bar for search input and settings button -->
                             <div class="nav">
                                 <div class="row h-100">
+                                    <!-- Search input and search button -->
                                     <div class="col-10">
                                         <div class="row h-100">
+                                            <!-- Search input field -->
                                             <div class="col-9 p-0">    
                                                 <input id="search-input" autocomplete="street-address" type="text" name="search-input" placeholder="ModWest (Building 11A)" />                                           
                                             </div>
+                                            <!-- Search button -->
                                             <div class="col-3">
                                                 <a id="search-button" href="#" data-tab=".tab2" class="button button-fill h-100 tab-link tab-link-active"><strong>Search</strong></a>
                                             </div> 
                                         </div>  
                                     </div>
+                                    <!-- Settings button -->
                                     <div class="col-2 ml-2">
                                         <button id="settings-button" data-actions=".settings-actions" class="actions-open button button-outline h-100"><i class="fa-solid fa-sliders fa-2x"></i></button>
                                     </div>
@@ -38,11 +49,13 @@
                 
             </div>
 
+            <!-- Actions modal for settings (transportation mode) -->
             <div class="actions-modal settings-actions bg-white" id="settings-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data" id="settings-form">
                     <h1 class="text-align-center">Settings</h1>
                     <ul>
                         <li>
+                            <!-- Segmented control for selecting transportation mode -->
                             <p class="segmented segmented-raised segmented-round mx-5">
                                 <a class="button button-round" data-value="walking">Walking</a>
                                 <a class="button button-round" data-value="cycling">Biking</button>
@@ -50,18 +63,22 @@
                             </p>
                         </li>
                     </ul>
+                    <!-- Done button to close the settings modal -->
                     <a data-actions=".settings-actions" class="actions-close button button-fill mx-4 r-2 button-raised">Done</a>
                 </form>
             </div>
 
+            <!-- Actions modal for confirming the selected route -->
             <div class="actions-modal confirm-route-actions bg-white" id="confirm-route-actions">
                 <form class="list list-strong-ios list-dividers-ios list-outline-ios form-store-data mx-4" id="confirm-route-form">
                     <h1 class="text-align-center mb-2">Confirm Your Route</h1>
                     <ul>
                         <li>
+                            <!-- Container for the route confirmation map -->
                             <div class="confirm-route-map-div">
                                 <div id="confirm-route-map"></div>
                             </div>
+                            <!-- Overview of the route information (destination, distance, time, mode) -->
                             <div id="route-info-overview">
                                 <div class="row">
                                     <h3 class="text-left text-black">Navigate To <span id="destination_name"></span>?</h3>
@@ -82,10 +99,12 @@
                         </li>
                     </ul>
                     <div class="row h-100">
+                        <!-- Confirm route button -->
                         <div class="col-9">
                             <a id="confirm-route-button" class="button button-fill r-2 button-raised">Confirm</a>
 
                         </div>
+                        <!-- Close button for the confirm route modal -->
                         <div class="col-3 ml-2">
                             <a id="close-button" class="actions-close button button-outline r-2 button-raised"><i class="fa fa-arrow-left"></i></a>
                         </div>
@@ -98,24 +117,31 @@
    
 </template>
 <script>    
+    // Import necessary modules and utility functions
     import { autocompleteSearch } from "../js/plugins/maps/mapboxSearch.js";
     import { runLocarRoute } from "../js/plugins/locar/locarRoute.js";
     import { initializeLocAR, destroyLocARInstance } from "../js/plugins/locar/locar.js";
     import { waitForElement, handleSearchClick, handleRedirect } from "../js/utils/dom.js";
     
       
+    // Component export
     export default async (props, { $, $on, $f7 }) => {
 
+        // Initialize component variables
         const app = window.app;
         let locarInstance = null; 
         let locarContainerId = null; 
 
     
+        // Define bound event handlers for confirm route and search click
         const boundConfirmRouteHandler = () => handleRedirect('#view-navigation', '/navigation/', $f7);
         const boundSearchClickHandler = () => handleSearchClick(app, $f7, document.getElementById('search-input').value, 'confirm-route-map', 'time', 'distance', 'mode', 'destination_name', '.confirm-route-actions');
 
+        // Event listener for when the tab is shown
         $on('page:tabshow', async () => {
+            // Wait for the LocAR container element
             const locarConatiner = await waitForElement("locarjs");
+            // Handle if LocAR container is not found
             if (!locarConatiner) {
                 console.error("LocAR container 'NavLocarjs' not found.");
                 app.dialog.alert("LocAR container not found. Please try again later.", "Error" , () => {
@@ -124,23 +150,29 @@
                 return;
             }
 
+            // Store LocAR container ID and initialize LocAR
             locarContainerId = locarConatiner.id; // Store the ID
 
             locarInstance = await initializeLocAR(app, locarConatiner); // Assign to the outer scope variable
+            // Run LocAR route planning if initialization is successful
             if (locarInstance) { // Check if initialization was successful
                 runLocarRoute(app, locarInstance);
             }
         });
 
+        // Event listener for page initialization
         $on('pageInit', async () => {
 
+            // Get search input and results elements
             var searchInput = document.getElementById('search-input');
             var searchResults = document.getElementById('search-results-list');
 
+            // Add event listener for search input to trigger autocomplete
             searchInput.addEventListener('input', async function() {
                 autocompleteSearch(searchInput, searchResults, app.START_LOCATION);
             });
             
+            // Set active transportation mode button based on app state
             var modeButtons = document.querySelectorAll('.segmented .button');
             modeButtons.forEach(function(button) {
                 if (button.getAttribute('data-value') === app.TRANSPORTATION_MODE) {
@@ -150,8 +182,10 @@
                 }
             });
 
+            // Add event listeners for transportation mode buttons
             modeButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
+                    // Update active button and app state for transportation mode
                     modeButtons.forEach(function(btn) {
                         btn.classList.remove('button-active');
                     });
@@ -163,9 +197,11 @@
                 });            
             });
 
+            // Get search and confirm route buttons
             var searchButton = document.getElementById('search-button');
             var confirmRouteButton = document.getElementById('confirm-route-button');
 
+            // Add event listeners for confirm route and search buttons
             // --- Add listeners using the bound references ---
             if (confirmRouteButton) {
                 // Remove listener first to prevent duplicates if pageInit runs again unexpectedly
@@ -181,21 +217,26 @@
         });
 
 
+        // Event listener for when the tab is hidden
         $on('page:tabhide', () => {
+            // Close confirm route actions modal
             $f7.actions.close('.confirm-route-actions');
             
+            // Destroy LocAR instance if it exists
             if (locarInstance) { 
                 destroyLocARInstance(app, locarContainerId);
                 locarInstance = null; // Clear the instance variable
                 locarContainerId = null; // Clear the ID
             }
 
+            // Clean up event listeners for settings modal
             const settingsModal = $f7.actions.get('.settings-actions');
             if (settingsModal) {
                 settingsModal.off('actionsOpened');
                 settingsModal.off('actionsClose');
                 settingsModal.off('actionsClosed');
             }
+            // Remove settings map instance if it exists
             const mapContainer = document.getElementById('settings-map');
    
             if (mapContainer._mapInstance) {
@@ -203,6 +244,7 @@
                 container._mapInstance = null;
             }
 
+            // Remove confirm route map instance if it exists
             const confirmMapContainer = document.getElementById('confirm-route-map');
 
             if (confirmMapContainer._mapInstance) {
@@ -212,6 +254,7 @@
 
         });
     
+        // Return the render function
         return $render;
     };
 </script>
