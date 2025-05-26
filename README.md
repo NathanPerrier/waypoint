@@ -97,5 +97,13 @@ The design choices reinforce the mobile-first, app-like experience.
 *   **Emphasis on Touch Interactions**: The design incorporates swipe gestures and touch-friendly controls (e.g., swipe-to-close sheets), further enhancing the native mobile feel.
 
 
+## REFERENCES
+
+*   Mapbox. (2025). Mapbox [Web mapping platform]. https://www.mapbox.com/
+*   The AR.js Organization. (2025). AR.js Documentation [Augmented reality library documentation]. https://ar-js-org.github.io/AR.js-Docs/
+*   The AR.js Organization. (2025). LocAR.js API Documentation [Location-based AR library API]. https://ar-js-org.github.io/locar.js/api/
+*   The AR.js Organization. (2025). Locar.js (github) [GitHub Repository]. https://github.com/AR-js-org/locar.js
+*   Framework7. (2025). Framework7 [Mobile HTML framework]. https://framework7.io/
+
 
 
