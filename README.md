@@ -12,11 +12,15 @@
     </p>     
 </div>
 
+<br />
+
 <img src="./public/images/gif-demo.gif" width="100%">
 
 <br />
 
 ## About The Project
+
+Project for DECO1400 | Asessment 1 & 2 
 
 Waypoint is an innovative solution for navigating the University of Queensland campus, using augmented reality (AR) directions to guide students and visitors with clarity and ease. By overlaying real-time navigation cues onto the physical environment, Waypoint transforms how users explore the university — whether finding lecture halls, libraries, or student events. Beyond navigation, the platform introduces native mobile design features directly into the web experience, offering a seamless and responsive interface that feels intuitive on both desktop and mobile. This ensures every user, regardless of device, enjoys a smooth and immersive experience that bridges the gap between physical and digital spaces.
 
