@@ -12,8 +12,9 @@
     </p>     
 </div>
 
-<br />
+<img src="./public/images/gif-demo.gif" width="100%">
 
+<br />
 
 ## About The Project
 
