@@ -101,7 +101,7 @@ The design choices reinforce the mobile-first, app-like experience.
 *   **Emphasis on Touch Interactions**: The design incorporates swipe gestures and touch-friendly controls (e.g., swipe-to-close sheets), further enhancing the native mobile feel.
 
 
-## REFERENCES
+## References
 
 *   Mapbox. (2025). Mapbox [Web mapping platform]. https://www.mapbox.com/
 *   The AR.js Organization. (2025). AR.js Documentation [Augmented reality library documentation]. https://ar-js-org.github.io/AR.js-Docs/
