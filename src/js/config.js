@@ -74,8 +74,7 @@ const initializeConfig = (app) => {
         app.SEARCH_RESULT_LIMIT = 3;
         app.DEBOUNCE_DELAY = 500; // 500ms
 
-        //! fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
-        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : env.MAPBOX_SECRET_TOKEN;
+        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
         
         app.DEVICE = null;
         app.WEBCAM_ENABLED = false;
