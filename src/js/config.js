@@ -75,7 +75,7 @@ const initializeConfig = (app) => {
         app.DEBOUNCE_DELAY = 500; // 500ms
 
         //! fix --> import.meta.env.VITE_MAPBOX_ACCESS_TOKEN does work in prod
-        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : 'pk.eyJ1IjoibmF0aGFuLXBlcnJpZXIyMyIsImEiOiJjbWEzYWk4Zm0wc293MmpvazltbnVxNWZqIn0.CZY6oAZgkYGHvxlGmwcdQw'; // Set your Mapbox access token here
+        app.MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ? import.meta.env.VITE_MAPBOX_ACCESS_TOKEN : env.MAPBOX_SECRET_TOKEN;
         
         app.DEVICE = null;
         app.WEBCAM_ENABLED = false;

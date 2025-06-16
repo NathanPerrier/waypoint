@@ -29,6 +29,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: GH Actions Environment
+        env: 
+          MAPBOX_SECRET: ${{ secrets.MAPBOX_TOKEN }}
+        run: |
+          echo "The GitHub Action Secret will be masked:  "
+          echo ${{ secrets.MAPBOX_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Use Node.js

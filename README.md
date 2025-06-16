@@ -32,6 +32,12 @@ Waypoint is your campus companion!
 
 ## Manual Build 
 
+> 👉 Set System Policy
+
+```bash
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
 > 👉 Download code
 
 ```bash
